@@ -7,13 +7,14 @@
 ;; * "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves"
 ;; * "if state is grassland and 4 neighbours have state equal to water then state should be village"
 ;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
-;; * "if 6 neighbours have state equal to water then state should be fishery"
+;; * "if 6 neighbours have state equal to water then state should be village"
+;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
 ;;
 ;; It should also but does not yet parse rules of the form:
 
 ;; * "if state is forest or state is climax and some neighbours have state is fire then 3 in 5 chance that state should be fire"
 ;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
-;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
+;; * 
 ;;
 ;; it generates rules in the form expected by mw-engine.core
 
@@ -79,9 +80,8 @@
   "Parse a list of values from among these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   [[OR token & tokens] expect-int]
-  (println OR)
   (cond (member? OR '("or" "in"))
-    (let [[others remainder] (parse-disjunct-value2 tokens expect-int)]
+    (let [[others remainder] (parse-disjunct-value tokens expect-int)]
       [(cons 
          (cond 
            expect-int (first (parse-simple-value (list token) true))
@@ -171,9 +171,15 @@
         (let [[value & remainder] rest]
           (gen-neighbours-condition '= quantity :state value remainder))
         (= have-or-are "have")
-        (let [[property EQUAL TO value & remainder] rest]
-          (cond (and (= EQUAL "equal") (= TO "to"))
-            (gen-neighbours-condition '= quantity property value remainder)))))))
+        (let [[property comp1 comp2 value & remainder] rest]
+          (cond (and (= comp1 "equal") (= comp2 "to"))
+            (gen-neighbours-condition '= quantity property value remainder)
+;;            (and (= comp1 "more") (= comp2 "than"))
+;;            (gen-neighbours-condition '> quantity property value remainder)
+;;            (and (= comp1 "less") (= comp2 "than"))
+;;            (gen-neighbours-condition '< quantity property value remainder)
+            )
+          )))))
   
 (defn parse-neighbours-condition
   "Parse conditions referring to neighbours"
