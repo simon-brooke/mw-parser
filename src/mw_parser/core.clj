@@ -6,13 +6,14 @@
 ;; * "if deer is more than 2 and wolves is 0 and fertility is more than 20 then deer should be deer + 2"
 ;; * "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves"
 ;; * "if state is grassland and 4 neighbours have state equal to water then state should be village"
+;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
+;; * "if 6 neighbours have state equal to water then state should be fishery"
 ;;
 ;; It should also but does not yet parse rules of the form:
 
-;; * "if 6 neighbours have state is water then state should be fishery"
 ;; * "if state is forest or state is climax and some neighbours have state is fire then 3 in 5 chance that state should be fire"
-;; * "if state is pasture and more than 3 neighbours have state is scrub then state should be scrub"
-;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
+;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
+;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
 ;;
 ;; it generates rules in the form expected by mw-engine.core
 
@@ -76,25 +77,19 @@
 
 (defn parse-disjunct-value
   "Parse a list of values from among these `tokens`. If `expect-int` is true, return
-   an integer or something which will evaluate to an integer.
-
-   NOTE: contrary to the general behaviour of `parse-` functions, this one
-   returns a vector [nil unconsumed-tokens] when it cannot find any further
-   disjuncts. TODO: doesn't work."
-  [[OR & tokens] expect-int]
-  (cond 
-    (member? OR '("in" "or"))
-    (cond expect-int
-      (let [[member r] (parse-simple-value tokens)
-            [others remainder] (parse-disjunct-value r expect-int)]
-        (cond member [(cons member others) remainder])
-        true
-        (let [[member r] tokens
-              [others remainder] (parse-disjunct-value r expect-int)]
-          (cond member [(cons (keyword member) others) remainder]
-            true [(list member) r]))))
-    true [nil (cons OR tokens)]))
-    
+   an integer or something which will evaluate to an integer."
+  [[OR token & tokens] expect-int]
+  (println OR)
+  (cond (member? OR '("or" "in"))
+    (let [[others remainder] (parse-disjunct-value2 tokens expect-int)]
+      [(cons 
+         (cond 
+           expect-int (first (parse-simple-value (list token) true))
+           true (keyword token)) 
+         others) 
+       remainder])
+    true [nil (cons OR (cons token tokens))]))
+   
 (defn parse-value 
   "Parse a value from among these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
@@ -108,7 +103,7 @@
 (defn parse-member-condition
   [[property IN & rest]]
   (if (= IN "in")
-    (let [[l & remainder] (parse-disjunct-value (cons "in" rest) false)]
+    (let [[l remainder] (parse-disjunct-value (cons "in" rest) false)]
       [(list 'member? (keyword property) l) remainder])))
 
 (defn parse-less-condition
