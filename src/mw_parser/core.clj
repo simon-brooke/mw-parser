@@ -285,3 +285,12 @@
           (list 'fn ['cell 'world] (list 'if left right))
           )))
 
+(defn compile-rule 
+  "Parse this `rule`, a string conforming to the grammar of MicroWorld rules,
+   into Clojure source, and then compile it into an anonymous
+   function object, getting round the problem of binding mw-engine.utils in
+   the compiling environment."
+  [rule-text]
+  (do
+    (use 'mw-engine.utils)
+    (eval (parse-rule rule-text))))  

@@ -1,5 +1,5 @@
 (ns mw-parser.core-test
-  (:use mw-engine.utils)
+  (:use [mw-engine.utils :refer :all])
   (:require [clojure.test :refer :all]
             [mw-parser.core :refer :all]))
 
@@ -16,11 +16,20 @@
            (is (parse-rule "if state is forest and fertility is between 55 and 75 then state should be climax"))
            (is (parse-rule "if 6 neighbours have state equal to water then state should be village"))
            (is (parse-rule "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"))
-
-           ;; ideally should also test that the rule works, but I haven't worked out how to make mw-engine.utils available
-           ;; during eval
-           ;;           (is (let [cell (apply (eval (parse-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3"))
-           ;;                                 (list {:state :forest :altitude 99} nil))]
-           ;;                 (and (= (:state cell) :climax) (= (:deer cell) 3))))
            ))
-          
+
+;; ideally should also test that the rule works, but I haven't worked out how 
+;; to make mw-engine.utils available during eval          
+(deftest generation-tests
+  (testing "Code generation"
+          (is 
+            (do 
+              (use 'mw-engine.utils)
+              (eval 
+                (parse-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3"))))))
+
+(deftest correctness-tests
+  (testing "Testing that generated code performs as expected."
+          (is (let [afn (compile-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3")
+                    cell (apply afn (list {:state :forest :altitude 99} nil))]
+                            (and (= (:state cell) :climax) (= (:deer cell) 3))))))
