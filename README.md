@@ -4,8 +4,8 @@ A rule parser for MicroWorld
 
 ## Usage
 
-Main entry point is (parse-rule <string>), where string takes a form detailed
-in **grammar**, below. If the rule is interpretted correctly the result will
+Main entry point is (parse-rule _string_), where string takes a form detailed
+in __grammar__, below. If the rule is interpretted correctly the result will
 be a Clojure anonymous function; if the rule is not interpretted, currently nil
 is returned and there's no helpful error message.
 
@@ -13,71 +13,76 @@ is returned and there's no helpful error message.
 
 The generated function is a function of two arguments
 
-* **cell** a cell in a world as defined in mw-engine.world, q.v.;
-* **world** the world of which that cell forms part.
+_ __cell__ a cell in a world as defined in mw-engine.world, q.v.;
+_ __world__ the world of which that cell forms part.
 
 It returns a new cell, based on the cell passed.
 
 Actions of the rule will (can only) modify properties of the cell; there are two
 properties which are special and SHOULD NOT be modified, namely the properties
-**x** and **y**. Currently there is no policing that these properties are not
+__x__ and __y__. Currently there is no policing that these properties are not
 modified.
 
 ### Grammar
 
 A rule comprises:
 
-*    if *conditions* then *actions*
++ if _conditions_ then _actions_
 
 #### Conditions
 
-where *conditions* is:
+where _conditions_ is:
 
-*    *condition* 
++ _condition_
++ _condition_ and _conditions_
++ _condition_ or _conditions_
 
-or
-*	*condition* and *conditions*
+Note that 'and' takes precedence over or, so
 
-A *condition* is one of:
+    conditionA and conditionB or conditionC and conditionD
 
-*	*property* is *value*
-*	*property* is not *value*
-*	*property* is in *values*
-*	*property* is not in *values*
-*	*property* is more than *numeric-value*
-*	*property* is less than *numeric-value*
-*	*number* neighbours have *property* equal to *value*
-*	more than *number* neighbours have *property* equal to *value*
-*	fewer than *number* neighbours have *property* equal to *value*
+is interpreted as
+
+	(conditionA and (conditionB or (conditionC and conditionD)))
+
+A _condition_ is one of:
+
++ _property_ is _value_
++ _property_ is not _value_
++ _property_ is in _values_
++ _property_ is not in _values_
++ _property_ is more than _numeric-value_
++ _property_ is less than _numeric-value_
++ _number_ neighbours have _property_ equal to _value_
++ more than _number_ neighbours have _property_ equal to _value_
++ fewer than _number_ neighbours have _property_ equal to _value_
 
 #### Actions
 
-Where *actions* is:
+Where _actions_ is:
 
-*	*action*
++ _action_ 
++ _action_ and _actions_
 
-or
-*	*action* and *actions*
+and _action_ is:
 
-and *action* is:
-
-*	*property* should be *value*
++ _property_ should be _value_
 
 #### Properties
 
-In the above, *property* is the name of any property of a cell. Any alpha-numeric
+In the above, _property_ is the name of any property of a cell. Any alpha-numeric
 string of characters can form the name of a property. Actions should NOT refer
-to the reserved properties **x** and **y**.
+to the reserved properties __x__ and __y__.
 
 #### Values in Conditions
 
 Values in conditions and actions are considered slightly differently. In a 
 condition, a value is one of
 
-*   *symbolic-value*
-*   *numeric-value*
++ _symbolic-value_
++ _numeric-value_
 
-The '...more than...' and '...less than...' conditions imply a *numeric-value*.
+The '...more than...' and '...less than...' conditions imply a _numeric-value_.
 Thus "if altitude is more than fertility..." is interpreted as meaning "if the value 
 of the property of the current cell called 'altitude' is greater than the value
 of the property of the current cell called 'fertility'", whereas the apparently
@@ -85,29 +90,29 @@ similar condition 'if altitude is fertility...' is interpreted as meaning
 "if the value of the property of the current cell called 'altitude' is the symbol
 'fertility'".
 
-Thus *symbolic-value* is any sequence of alphanumeric characters, whereas 
-*numeric-value* is one of:
+Thus _symbolic-value_ is any sequence of alphanumeric characters, whereas 
+_numeric-value_ is one of:
 
-*    *number*
-*    *property*
++ _number_
++ _property_
 
-and *number* is any sequence of the decimal digits 0...9, the minus character 
+and _number_ is any sequence of the decimal digits 0...9, the minus character 
 '-' and the period character '.', provided that the minus character can only be 
 in the first position, and  the period character can only appear once.
 
 #### Values in Actions
 
-A *value* in an action is one of
+A _value_ in an action is one of
 
-*    *symbolic-value*
-*    *arithmetic-value*
-*    *number*
++ _symbolic-value_
++ _arithmetic-value_
++ _number_
 
-where *arithmetic-value* is:
+where _arithmetic-value_ is:
 
-*    *property* *operator* *numeric-value*
++ _property_ _operator_ _numeric-value_
 
-and *operator* is one of the simple arithmetic operators '+', '-', '*' and '/'.
+and _operator_ is one of the simple arithmetic operators '+', '-', '*' and '/'.
 
 ### Shorthand
 
