@@ -268,11 +268,27 @@
                 (parse-actions left (rest remainder))
                 true (list left)))))
 
+(defn parse-probability 
+  "Parse a probability of an action from this collection of tokens"
+  [previous [n CHANCE IN m & tokens]]
+  (cond 
+    (and (= CHANCE "chance")(= IN "in"))
+    (let [[action remainder] (parse-actions previous tokens)]
+      (cond action
+        [(list 'cond 
+              (list '< 
+                    (list 'rand 
+                          (first (parse-simple-value (list m) true)))
+                    (first (parse-simple-value (list n) true))) 
+              action) remainder])))) 
+
 (defn parse-right-hand-side
   "Parse the right hand side ('then...') of a production rule."
-  [tokens]
-  (if (= (first tokens) "then")
-    (parse-actions nil (rest tokens))))
+  [[THEN & tokens]]
+  (if (= THEN "then")
+    (or
+      (parse-probability nil tokens)
+      (parse-actions nil tokens))))
 
 (defn parse-rule 
   "Parse a complete rule from this string or sequence of string tokens."
@@ -286,7 +302,7 @@
           )))
 
 (defn compile-rule 
-  "Parse this `rule`, a string conforming to the grammar of MicroWorld rules,
+  "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
    function object, getting round the problem of binding mw-engine.utils in
    the compiling environment."
