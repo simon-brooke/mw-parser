@@ -9,14 +9,19 @@
 ;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
 ;; * "if 6 neighbours have state equal to water then state should be village"
 ;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
-;;
-;; It should also but does not yet parse rules of the form:
-
-;; * "if state is forest or state is climax and some neighbours have state is fire then 3 in 5 chance that state should be fire"
+;; * "if state is forest or state is climax and some neighbours have state equal to fire then 3 in 5 chance that state should be fire"
 ;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
 ;; * 
 ;;
-;; it generates rules in the form expected by mw-engine.core
+;; it generates rules in the form expected by `mw-engine.core`, q.v.
+;;
+;; It is, as I say, very simple; it generates a complete rule, or it fails completely, returning nil. 
+;; Very occasionally it generates a wrong rule - one which is not a correct translation of the rule
+;; semantics - but that is buggy behaviour, which I'll try to fix over the next few weeks, not a
+;; design fault.
+;;
+;; More significantly it does not generate useful error messages on failure. This is, I think, a much
+;; more complex issue which I don't yet know how to address.
 
 (ns mw-parser.core
   (:use mw-engine.utils
@@ -153,15 +158,48 @@
         (let [[condition remainder] partial]
           [(list 'not condition) remainder])))))
 
-(defn gen-neighbours-condition
+(defn- gen-neighbours-condition
   [comparator quantity property value remainder] 
-  [(list comparator quantity 
+  [(list comparator  
          (list 'count
                (list 'get-neighbours-with-property-value 'world 'cell 
-                     (keyword property) (keyword-or-numeric value))))
+                     (keyword property) (keyword-or-numeric value)))
+         quantity)
            remainder])
 
+(defn parse-comparator-neighbours-condition
+  "Parse conditions of the form '...more than 6 neighbours are [condition]'"
+  [[MORE THAN n NEIGHBOURS have-or-are & rest]]
+  (let [quantity (first (parse-numeric-value (list n)))
+        comparator (cond (= MORE "more") '>
+                     (member? MORE '("fewer" "less")) '<)]       
+    (cond
+      (and quantity 
+           comparator
+           (= THAN "than")
+           (= NEIGHBOURS "neighbours"))
+      (cond
+        (= have-or-are "are") 
+        (let [[value & remainder] rest]
+          (gen-neighbours-condition comparator quantity :state value remainder))
+        (= have-or-are "have")
+        (let [[property comp1 comp2 value & remainder] rest]
+          (cond (and (= comp1 "equal") (= comp2 "to"))
+            (gen-neighbours-condition comparator quantity property value remainder)
+;;            (and (= comp1 "more") (= comp2 "than"))
+;;            (gen-neighbours-condition '> quantity property value remainder)
+;;            (and (= comp1 "less") (= comp2 "than"))
+;;            (gen-neighbours-condition '< quantity property value remainder)
+            ))))))
+  
+(defn parse-some-neighbours-condition
+  [[SOME NEIGHBOURS & rest]]
+  (cond
+    (and (= SOME "some") (= NEIGHBOURS "neighbours"))
+    (parse-comparator-neighbours-condition (concat '("more" "than" "0" "neighbours") rest))))
+
 (defn parse-simple-neighbours-condition
+  "Parse conditions of the form '...6 neighbours are condition'"
   [[n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))]       
     (cond
@@ -178,23 +216,22 @@
 ;;            (gen-neighbours-condition '> quantity property value remainder)
 ;;            (and (= comp1 "less") (= comp2 "than"))
 ;;            (gen-neighbours-condition '< quantity property value remainder)
-            )
-          )))))
+            ))))))
   
 (defn parse-neighbours-condition
   "Parse conditions referring to neighbours"
   [tokens]
   (or
     (parse-simple-neighbours-condition tokens)
-;;    (parse-more-than-neighbours-condition tokens)
-;;    (parse-fewer-than-neighbours-condition tokens)
+    (parse-comparator-neighbours-condition tokens)
+    (parse-some-neighbours-condition tokens)
     ))
 
 (defn parse-simple-condition
   "Parse conditions of the form '[property] [comparison] [value]'."
   [tokens]
   (or
-    (parse-simple-neighbours-condition tokens)
+    (parse-neighbours-condition tokens)
     (parse-member-condition tokens)
     (parse-not-condition tokens)
     (parse-is-condition tokens)
