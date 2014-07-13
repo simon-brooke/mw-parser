@@ -5,7 +5,7 @@ A rule parser for MicroWorld
 ## Usage
 
 Main entry point is (parse-rule _string_), where string takes a form detailed
-in __grammar__, below. If the rule is interpretted correctly the result will
+in __[grammar](#grammar)__, below. If the rule is interpretted correctly the result will
 be a Clojure anonymous function; if the rule is not interpretted, currently nil
 is returned and there's no helpful error message.
 
@@ -23,7 +23,7 @@ properties which are special and SHOULD NOT be modified, namely the properties
 __x__ and __y__. Currently there is no policing that these properties are not
 modified.
 
-### Grammar
+### <a name="grammar"></a>Grammar
 
 A rule comprises:
 

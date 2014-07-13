@@ -47,29 +47,34 @@
 ;; sequence of tokens (and in some cases other optional arguments) and return a
 ;; vector comprising
 ;;
-;; # A code fragment parsed from the front of the sequence of tokens, and
-;; # the remaining tokens which were not consumed in constructing that sequence.
+;; 1. A code fragment parsed from the front of the sequence of tokens, and
+;; 2. the remaining tokens which were not consumed in constructing that fragment.
 ;;
 ;; In every case if the function cannot parse the desired construct from the
 ;; front of the sequence of tokens it returns nil.
 
-(defn- parse-numeric-value
+(defn parse-numeric-value
   "Parse a number."
   [[value & remainder]]
   (if (re-matches re-number value) [(read-string value) remainder]))
 
-(defn- parse-property-int
+(defn parse-property-int
   "Parse a token assumed to be the name of a property of the current cell, 
   whose value is assumed to be an integer."
   [[value & remainder]]
   (if value [(list 'get-int 'cell (keyword value)) remainder]))
 
-(defn- parse-property-value
+(defn parse-property-value
   "Parse a token assumed to be the name of a property of the current cell."
   [[value & remainder]]
   (if value [(list (keyword value) 'cell) remainder]))
 
-(defn- parse-simple-value
+(defn parse-token-value
+  "Parse a token assumed to be a simple token value."
+  [[value & remainder]]
+  (if value [(keyword value) remainder]))
+
+(defn parse-simple-value
   "Parse a value from the first of these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   ([tokens expect-int]
@@ -77,25 +82,24 @@
         (parse-numeric-value tokens)
         (cond expect-int
           (parse-property-int tokens)
-          true (parse-property-value tokens))))
+          true (parse-token-value tokens))))
   ([tokens]
     (parse-simple-value tokens false)))
 
-(defn- parse-disjunct-value
+(defn parse-disjunct-value
   "Parse a list of values from among these `tokens`. If `expect-int` is true, return
-   an integer or something which will evaluate to an integer."
+   integers or things which will evaluate to integers."
   [[OR token & tokens] expect-int]
   (cond (member? OR '("or" "in"))
-    (let [[others remainder] (parse-disjunct-value tokens expect-int)]
-      [(cons 
-         (cond 
-           expect-int (first (parse-simple-value (list token) true))
-           true (keyword token)) 
-         others) 
-       remainder])
-    true [nil (cons OR (cons token tokens))]))
+    (let [value (first (parse-simple-value (list token) expect-int))
+          seek-others (= (first tokens) "or")]
+      (cond seek-others
+        (let [[others remainder] (parse-disjunct-value tokens expect-int)]
+          [(cons value others) remainder])
+        true
+        [(list value) tokens]))))
    
-(defn- parse-value 
+(defn parse-value 
   "Parse a value from among these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   ([tokens expect-int]
@@ -107,26 +111,28 @@
 
 (defn- parse-member-condition
   "Parses a condition of the form '[property] in [value] or [value]...'"
-  [[property IN & rest]]
-  (if (= IN "in")
+  [[property IS IN & rest]]
+  (if (and (member? IS '("is" "are")) (= IN "in"))
     (let [[l remainder] (parse-disjunct-value (cons "in" rest) false)]
       [(list 'member? (keyword property) l) remainder])))
 
 (defn- parse-less-condition
   "Parse '[property] less than [value]'."
-  [[property LESS THAN value & rest]]
-  (cond (and (= LESS "less") (= THAN "than"))
-        [(list '< (list 'get-int 'cell (keyword property)) (read-string value)) rest]))
+  [[property IS LESS THAN & rest]]
+  (cond (and (member? IS '("is" "are")) (member? LESS '("less" "fewer")) (= THAN "than"))
+    (let [[value remainder] (parse-value rest true)]
+        [(list '< (list 'get-int 'cell (keyword property)) value) remainder])))
 
 (defn- parse-more-condition
   "Parse '[property] more than [value]'."
-  [[property MORE THAN value & rest]]
-  (cond (and (= MORE "more") (= THAN "than"))
-        [(list '> (list 'get-int 'cell (keyword property)) (read-string value)) rest]))
+  [[property IS MORE THAN & rest]]
+  (cond (and (member? IS '("is" "are")) (member? MORE '("more" "greater")) (= THAN "than"))
+    (let [[value remainder] (parse-value rest true)]
+        [(list '> (list 'get-int 'cell (keyword property)) value) remainder])))
 
 (defn- parse-between-condition
-  [[p BETWEEN v1 AND v2 & rest]]
-  (cond (and (= BETWEEN "between") (= AND "and") (not (nil? v2)))
+  [[p IS BETWEEN v1 AND v2 & rest]]
+  (cond (and (member? IS '("is" "are")) (= BETWEEN "between") (= AND "and") (not (nil? v2)))
     (let [property (first (parse-simple-value (list p) true))
           value1 (first (parse-simple-value (list v1) true))
           value2 (first (parse-simple-value (list v2) true))]
@@ -143,10 +149,6 @@
     (member? IS '("is" "are"))
     (let [tokens (cons property (cons value rest))]
       (cond 
-        (= value "in") (parse-member-condition tokens)
-        (= value "between") (parse-between-condition tokens)
-        (= value "more") (parse-more-condition tokens)
-        (= value "less") (parse-less-condition tokens)
         (re-matches re-number value) [(list '= (list 'get-int 'cell (keyword property)) (read-string value)) rest]
         value [(list '= (list (keyword property) 'cell) (keyword value)) rest]))))
 
@@ -160,15 +162,15 @@
           [(list 'not condition) remainder])))))
 
 (defn- gen-neighbours-condition
-  [comparator quantity property value remainder] 
+  [comparator quantity property value remainder comp2] 
   [(list comparator  
          (list 'count
-               (list 'get-neighbours-with-property-value 'world 'cell 
-                     (keyword property) (keyword-or-numeric value)))
+               (list 'get-neighbours-with-property-value 'world '(cell :x) '(cell :y) 
+                     (keyword property) (keyword-or-numeric value) comp2))
          quantity)
            remainder])
 
-(defn- parse-comparator-neighbours-condition
+(defn parse-comparator-neighbours-condition
   "Parse conditions of the form '...more than 6 neighbours are [condition]'"
   [[MORE THAN n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))
@@ -182,24 +184,24 @@
       (cond
         (= have-or-are "are") 
         (let [[value & remainder] rest]
-          (gen-neighbours-condition comparator quantity :state value remainder))
+          (gen-neighbours-condition comparator quantity :state value remainder =))
         (= have-or-are "have")
         (let [[property comp1 comp2 value & remainder] rest]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition comparator quantity property value remainder)
-;;            (and (= comp1 "more") (= comp2 "than"))
-;;            (gen-neighbours-condition '> quantity property value remainder)
-;;            (and (= comp1 "less") (= comp2 "than"))
-;;            (gen-neighbours-condition '< quantity property value remainder)
+            (gen-neighbours-condition comparator quantity property value remainder =)
+            (and (= comp1 "more") (= comp2 "than"))
+            (gen-neighbours-condition '> quantity property value remainder >)
+            (and (= comp1 "less") (= comp2 "than"))
+            (gen-neighbours-condition '< quantity property value remainder <)
             ))))))
   
-(defn- parse-some-neighbours-condition
+(defn parse-some-neighbours-condition
   [[SOME NEIGHBOURS & rest]]
   (cond
     (and (= SOME "some") (= NEIGHBOURS "neighbours"))
     (parse-comparator-neighbours-condition (concat '("more" "than" "0" "neighbours") rest))))
 
-(defn- parse-simple-neighbours-condition
+(defn parse-simple-neighbours-condition
   "Parse conditions of the form '...6 neighbours are condition'"
   [[n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))]       
@@ -219,7 +221,7 @@
 ;;            (gen-neighbours-condition '< quantity property value remainder)
             ))))))
   
-(defn- parse-neighbours-condition
+(defn parse-neighbours-condition
   "Parse conditions referring to neighbours"
   [tokens]
   (or
@@ -228,16 +230,17 @@
     (parse-some-neighbours-condition tokens)
     ))
 
-(defn- parse-simple-condition
+(defn parse-simple-condition
   "Parse conditions of the form '[property] [comparison] [value]'."
   [tokens]
   (or
     (parse-neighbours-condition tokens)
     (parse-member-condition tokens)
     (parse-not-condition tokens)
-    (parse-is-condition tokens)
     (parse-less-condition tokens)
-    (parse-more-condition tokens)))
+    (parse-more-condition tokens)
+    (parse-between-condition tokens)
+    (parse-is-condition tokens)))
 
 (defn- parse-disjunction-condition
   "Parse '... or [condition]' from `tokens`, where `left` is the already parsed first disjunct."
@@ -281,10 +284,11 @@
            (= be "be")
            (member? operator '("+" "-" "*" "/")))
     [(list 'merge (or previous 'cell)
-           {(keyword prop1) (list (symbol operator) (list 'get-int 'cell (keyword prop2))
-                                  (cond
-                                    (re-matches re-number value) (read-string value)
-                                    true (list 'get-int 'cell (keyword value))))}) rest]))
+           {(keyword prop1) (list 'int 
+                                  (list (symbol operator) (list 'get-int 'cell (keyword prop2))
+                                        (cond
+                                          (re-matches re-number value) (read-string value)
+                                          true (list 'get-int 'cell (keyword value)))))}) rest]))
 
 (defn- parse-set-action 
   "Parse actions of the form '[property] should be [value].'"
@@ -329,21 +333,31 @@
       (parse-actions nil tokens))))
 
 (defn parse-rule 
-  "Parse a complete rule from this string or sequence of string tokens."
+  "Parse a complete rule from this `line`, expected to be either a string or a 
+   sequence of string tokens. Return the rule in the form of an S-expression.
+
+   Throws an exception if parsing fails."
   [line]
   (cond
-   (string? line) (parse-rule (split (triml line) #"\s+"))
-   true (let [[left remainder] (parse-left-hand-side line)
+   (string? line) 
+   (let [rule (parse-rule (split (triml line) #"\s+"))]
+     (cond rule rule
+       true (throw (Exception. (str "I did not understand '" line "'")))))
+   true 
+   (let [[left remainder] (parse-left-hand-side line)
               [right junk] (parse-right-hand-side remainder)]
-          ;; there shouldn't be any junk (should be null)
-          (list 'fn ['cell 'world] (list 'if left right))
-          )))
+          ;; TODO: there shouldn't be any junk (should be null)
+     (cond 
+       (and left right (nil? junk))
+       (list 'fn ['cell 'world] (list 'if left right))))))
 
 (defn compile-rule 
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
    function object, getting round the problem of binding mw-engine.utils in
-   the compiling environment."
+   the compiling environment.
+
+   Throws an exception if parsing fails."
   [rule-text]
   (do
     (use 'mw-engine.utils)
