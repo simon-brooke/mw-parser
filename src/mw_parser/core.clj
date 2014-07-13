@@ -188,11 +188,11 @@
         (= have-or-are "have")
         (let [[property comp1 comp2 value & remainder] rest]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition comparator quantity property value remainder =)
+            (gen-neighbours-condition comparator quantity property value remainder '=)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition '> quantity property value remainder >)
+            (gen-neighbours-condition '> quantity property value remainder '>)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition '< quantity property value remainder <)
+            (gen-neighbours-condition '< quantity property value remainder '<)
             ))))))
   
 (defn parse-some-neighbours-condition
@@ -202,7 +202,7 @@
     (parse-comparator-neighbours-condition (concat '("more" "than" "0" "neighbours") rest))))
 
 (defn parse-simple-neighbours-condition
-  "Parse conditions of the form '...6 neighbours are condition'"
+  "Parse conditions of the form '...6 neighbours are [condition]'"
   [[n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))]       
     (cond
@@ -215,10 +215,10 @@
         (let [[property comp1 comp2 value & remainder] rest]
           (cond (and (= comp1 "equal") (= comp2 "to"))
             (gen-neighbours-condition '= quantity property value remainder)
-;;            (and (= comp1 "more") (= comp2 "than"))
-;;            (gen-neighbours-condition '> quantity property value remainder)
-;;            (and (= comp1 "less") (= comp2 "than"))
-;;            (gen-neighbours-condition '< quantity property value remainder)
+            (and (= comp1 "more") (= comp2 "than"))
+            (gen-neighbours-condition '> quantity property value remainder '>)
+            (and (= comp1 "less") (= comp2 "than"))
+            (gen-neighbours-condition '< quantity property value remainder '<)
             ))))))
   
 (defn parse-neighbours-condition
