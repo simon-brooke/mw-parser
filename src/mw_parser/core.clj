@@ -25,7 +25,7 @@
 
 (ns mw-parser.core
   (:use mw-engine.utils
-        [clojure.string :only [split triml]]))
+        [clojure.string :only [split trim triml]]))
 
 (declare parse-conditions)
 (declare parse-not-condition)
@@ -34,7 +34,7 @@
 ;; a regular expression which matches string representation of numbers
 (def re-number #"^[0-9.]*$")
 
-(defn keyword-or-numeric
+(defn- keyword-or-numeric
   "If this token appears to represent an explicit number, return that number;
    otherwise, make a keyword of it and return that."
   [token]
@@ -53,23 +53,23 @@
 ;; In every case if the function cannot parse the desired construct from the
 ;; front of the sequence of tokens it returns nil.
 
-(defn parse-numeric-value
+(defn- parse-numeric-value
   "Parse a number."
   [[value & remainder]]
   (if (re-matches re-number value) [(read-string value) remainder]))
 
-(defn parse-property-int
+(defn- parse-property-int
   "Parse a token assumed to be the name of a property of the current cell, 
   whose value is assumed to be an integer."
   [[value & remainder]]
   (if value [(list 'get-int 'cell (keyword value)) remainder]))
 
-(defn parse-property-value
+(defn- parse-property-value
   "Parse a token assumed to be the name of a property of the current cell."
   [[value & remainder]]
   (if value [(list (keyword value) 'cell) remainder]))
 
-(defn parse-simple-value
+(defn- parse-simple-value
   "Parse a value from the first of these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   ([tokens expect-int]
@@ -81,7 +81,7 @@
   ([tokens]
     (parse-simple-value tokens false)))
 
-(defn parse-disjunct-value
+(defn- parse-disjunct-value
   "Parse a list of values from among these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   [[OR token & tokens] expect-int]
@@ -95,7 +95,7 @@
        remainder])
     true [nil (cons OR (cons token tokens))]))
    
-(defn parse-value 
+(defn- parse-value 
   "Parse a value from among these `tokens`. If `expect-int` is true, return
    an integer or something which will evaluate to an integer."
   ([tokens expect-int]
@@ -105,25 +105,26 @@
   ([tokens]
     (parse-value tokens false)))
 
-(defn parse-member-condition
+(defn- parse-member-condition
+  "Parses a condition of the form '[property] in [value] or [value]...'"
   [[property IN & rest]]
   (if (= IN "in")
     (let [[l remainder] (parse-disjunct-value (cons "in" rest) false)]
       [(list 'member? (keyword property) l) remainder])))
 
-(defn parse-less-condition
+(defn- parse-less-condition
   "Parse '[property] less than [value]'."
   [[property LESS THAN value & rest]]
   (cond (and (= LESS "less") (= THAN "than"))
         [(list '< (list 'get-int 'cell (keyword property)) (read-string value)) rest]))
 
-(defn parse-more-condition
+(defn- parse-more-condition
   "Parse '[property] more than [value]'."
   [[property MORE THAN value & rest]]
   (cond (and (= MORE "more") (= THAN "than"))
         [(list '> (list 'get-int 'cell (keyword property)) (read-string value)) rest]))
 
-(defn parse-between-condition
+(defn- parse-between-condition
   [[p BETWEEN v1 AND v2 & rest]]
   (cond (and (= BETWEEN "between") (= AND "and") (not (nil? v2)))
     (let [property (first (parse-simple-value (list p) true))
@@ -133,7 +134,7 @@
             (list '< value1 property value2)
             (list '> value1 property value2)) rest])))
 
-(defn parse-is-condition
+(defn- parse-is-condition
   "Parse clauses of the form 'x is y', 'x is in y or z...', 
    'x is between y and z', 'x is more than y' or 'x is less than y'.
    It is necessary to disambiguate whether value is a numeric or keyword."
@@ -149,7 +150,7 @@
         (re-matches re-number value) [(list '= (list 'get-int 'cell (keyword property)) (read-string value)) rest]
         value [(list '= (list (keyword property) 'cell) (keyword value)) rest]))))
 
-(defn parse-not-condition 
+(defn- parse-not-condition 
   "Parse the negation of a simple condition."
   [[property IS NOT & rest]]
   (cond (and (member? IS '("is" "are")) (= NOT "not"))
@@ -167,7 +168,7 @@
          quantity)
            remainder])
 
-(defn parse-comparator-neighbours-condition
+(defn- parse-comparator-neighbours-condition
   "Parse conditions of the form '...more than 6 neighbours are [condition]'"
   [[MORE THAN n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))
@@ -192,13 +193,13 @@
 ;;            (gen-neighbours-condition '< quantity property value remainder)
             ))))))
   
-(defn parse-some-neighbours-condition
+(defn- parse-some-neighbours-condition
   [[SOME NEIGHBOURS & rest]]
   (cond
     (and (= SOME "some") (= NEIGHBOURS "neighbours"))
     (parse-comparator-neighbours-condition (concat '("more" "than" "0" "neighbours") rest))))
 
-(defn parse-simple-neighbours-condition
+(defn- parse-simple-neighbours-condition
   "Parse conditions of the form '...6 neighbours are condition'"
   [[n NEIGHBOURS have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))]       
@@ -218,7 +219,7 @@
 ;;            (gen-neighbours-condition '< quantity property value remainder)
             ))))))
   
-(defn parse-neighbours-condition
+(defn- parse-neighbours-condition
   "Parse conditions referring to neighbours"
   [tokens]
   (or
@@ -227,7 +228,7 @@
     (parse-some-neighbours-condition tokens)
     ))
 
-(defn parse-simple-condition
+(defn- parse-simple-condition
   "Parse conditions of the form '[property] [comparison] [value]'."
   [tokens]
   (or
@@ -238,7 +239,7 @@
     (parse-less-condition tokens)
     (parse-more-condition tokens)))
 
-(defn parse-disjunction-condition
+(defn- parse-disjunction-condition
   "Parse '... or [condition]' from `tokens`, where `left` is the already parsed first disjunct."
   [left tokens]
   (let [partial (parse-conditions tokens)]
@@ -246,7 +247,7 @@
       (let [[right remainder] partial]
         [(list 'or left right) remainder]))))
 
-(defn parse-conjunction-condition
+(defn- parse-conjunction-condition
   "Parse '... and [condition]' from `tokens`, where `left` is the already parsed first conjunct."
   [left tokens]
   (let [partial (parse-conditions tokens)]
@@ -254,7 +255,7 @@
       (let [[right remainder] partial]
         [(list 'and left right) remainder]))))
 
-(defn parse-conditions
+(defn- parse-conditions
   "Parse conditions from `tokens`, where conditions may be linked by either 'and' or 'or'."
   [tokens]
   (let [partial (parse-simple-condition tokens)]
@@ -265,14 +266,14 @@
           (= next "or") (parse-disjunction-condition left remainder)
           true partial)))))
 
-(defn parse-left-hand-side
+(defn- parse-left-hand-side
  "Parse the left hand side ('if...') of a production rule."
- [tokens]
+ [[IF & tokens]]
  (if
-   (= (first tokens) "if")
-   (parse-conditions (rest tokens))))
+   (= IF "if")
+   (parse-conditions tokens)))
 
-(defn parse-arithmetic-action 
+(defn- parse-arithmetic-action 
   "Parse actions of the form '[property] should be [property] [arithmetic-operator] [value]',
    e.g. 'fertility should be fertility + 1', or 'deer should be deer - wolves'."
   [previous [prop1 should be prop2 operator value & rest]]
@@ -285,18 +286,18 @@
                                     (re-matches re-number value) (read-string value)
                                     true (list 'get-int 'cell (keyword value))))}) rest]))
 
-(defn parse-set-action 
+(defn- parse-set-action 
   "Parse actions of the form '[property] should be [value].'"
   [previous [property should be value & rest]]
   (if (and (= should "should") (= be "be"))
     [(list 'merge (or previous 'cell)
            {(keyword property) (cond (re-matches re-number value) (read-string value) true (keyword value))}) rest]))
 
-(defn parse-simple-action [previous tokens]
+(defn- parse-simple-action [previous tokens]
   (or (parse-arithmetic-action previous tokens)
       (parse-set-action previous tokens)))
 
-(defn parse-actions
+(defn- parse-actions
   "Parse actions from tokens."
   [previous tokens]
   (let [[left remainder] (parse-simple-action previous tokens)]
@@ -305,7 +306,7 @@
                 (parse-actions left (rest remainder))
                 true (list left)))))
 
-(defn parse-probability 
+(defn- parse-probability 
   "Parse a probability of an action from this collection of tokens"
   [previous [n CHANCE IN m & tokens]]
   (cond 
@@ -319,7 +320,7 @@
                     (first (parse-simple-value (list n) true))) 
               action) remainder])))) 
 
-(defn parse-right-hand-side
+(defn- parse-right-hand-side
   "Parse the right hand side ('then...') of a production rule."
   [[THEN & tokens]]
   (if (= THEN "then")
