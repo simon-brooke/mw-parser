@@ -19,7 +19,8 @@ if state is forest and fertility is more than 5 then state should be climax
 if state is climax then 1 chance in 500 state should be fire
 
 ;; Climax forest neighbouring fires is likely to catch fire
-
+;; TODO: this rule, and specifically the 'some neighbours' clause, seems to give
+;; rise to the 'Keyword cannot be cast to Number' bug.
 if state is climax and some neighbours are fire then 1 chance in 3 state should be fire
 
 ;; After fire we get waste
@@ -34,8 +35,9 @@ if state is waste and some neighbours are forest then state should be heath
 if state is waste and some neighbours are climax then state should be heath
 if state is waste then state should be grassland
 
-;; Forest increases soil fertility
-if state is in forest or climax then fertility should be fertility - 1
+;; Forest increases soil fertility. TODO: this rule compiles to what looks like
+;; the right code but it never fires.
+if state is in forest or climax then fertility should be fertility + 1
 
 ## Herbivore rules
 

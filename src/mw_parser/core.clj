@@ -190,9 +190,9 @@
           (cond (and (= comp1 "equal") (= comp2 "to"))
             (gen-neighbours-condition comparator quantity property value remainder '=)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition '> quantity property value remainder '>)
+            (gen-neighbours-condition comparator quantity property value remainder '>)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition '< quantity property value remainder '<)
+            (gen-neighbours-condition comparator quantity property value remainder '<)
             ))))))
   
 (defn parse-some-neighbours-condition
