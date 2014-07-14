@@ -1,182 +1,96 @@
 ## Vegetation rules
 ;; rules which populate the world with plants
+
 ;; Occasionally, passing birds plant tree seeds into grassland 
-;;    (fn [cell world] (cond (and (= (:state cell) :grassland)(< (rand 10) 1))(merge cell {:state :heath})))
 
 if state is grassland then 1 chance in 10 state should be heath
 
 ;; heath below the treeline grows gradually into forest, providing browsing pressure is not to high
-;;    (fn [cell world]
-;;      (cond (and
-;;              (= (:state cell) :heath)
-;;              ;; browsing limit really ought to vary with soil fertility, but...
-;;              (< (+ (get-int cell :deer)(get-int cell :sheep)) 6)
-;;              (< (get-int cell :altitude) treeline))
-;;        (merge cell {:state :scrub})))
 
 if state is heath and deer are fewer than 6 and altitude is less than 150 then state should be scrub 
-
-;;    (fn [cell world] (cond (= (:state cell) :scrub) (merge cell {:state :forest})))
-
 if state is scrub then 1 chance in 5 state should be forest
 
 ;; Forest on fertile land grows to climax
-;;    (fn [cell world]
-;;      (cond
-;;        (and
-;;          (= (:state cell) :forest)
-;;          (> (get-int cell :fertility) 10))
-;;        (merge cell {:state :climax})))
 
 if state is forest and fertility is more than 5 then state should be climax   
     
 ;; Climax forest occasionally catches fire (e.g. lightning strikes)
-;;    (fn [cell world] (cond (and (= (:state cell) :climax)(< (rand lightning-probability) 1)) (merge cell {:state :fire})))
 
 if state is climax then 1 chance in 500 state should be fire
 
 ;; Climax forest neighbouring fires is likely to catch fire
-;;    (fn [cell world]
-;;      (cond
-;;        (and (= (:state cell) :climax)
-;;             (< (rand 3) 1)
-;;             (not (empty? (get-neighbours-with-state world (:x cell) (:y cell) 1 :fire))))
-;;        (merge cell {:state :fire})))
 
 if state is climax and some neighbours are fire then 1 chance in 3 state should be fire
 
 ;; After fire we get waste
-;;    (fn [cell world] (cond (= (:state cell) :fire) (merge cell {:state :waste})))
 
 if state is fire then state should be waste
 
 ;; And after waste we get pioneer species; if there's a woodland seed
 ;; source, it's going to be heath, otherwise grassland.
-;;    (fn [cell world]
-;;      (cond
-;;        (and (= (:state cell) :waste)
-;;             (not
-;;               (empty?
-;;                 (flatten
-;;                   (list
-;;                     (get-neighbours-with-state world (:x cell) (:y cell) 1 :scrub)
-;;                     (get-neighbours-with-state world (:x cell) (:y cell) 1 :forest)
-;;                     (get-neighbours-with-state world (:x cell) (:y cell) 1 :climax))))))
-;;        (merge cell {:state :heath})))
 
 if state is waste and some neighbours are scrub then state should be heath
 if state is waste and some neighbours are forest then state should be heath
 if state is waste and some neighbours are climax then state should be heath
-
-;;    (fn [cell world]
-;;      (cond (= (:state cell) :waste)
-;;        (merge cell {:state :grassland})))
-
 if state is waste then state should be grassland
 
 ;; Forest increases soil fertility
-;;    (fn [cell world]
-;;      (cond (member? (:state cell) '(:forest :climax))
-;;        (merge cell {:fertility (+ (get-int cell :fertility) 1)})))
-
 if state is in forest or climax then fertility should be fertility - 1
 
 ## Herbivore rules
+
 ;; rules describing the impact of herbivores on the environment
     
 ;; if there are too many deer for the fertility of the area to sustain,
 ;; some die or move on.
-;;    (fn [cell world]
-;;      (cond (> (get-int cell :deer) (get-int cell :fertility))
-;;        (merge cell {:deer (get-int cell :fertility)})))
-
 if deer are more than fertility then deer should be fertility / 2
 
 ;; deer arrive occasionally at the edge of the map.
-;;    (fn [cell world]
-;;      (cond (and (< (count (get-neighbours world cell)) 8)
-;;                 (< (rand 50) 1)
-;;                 (> (get-int cell :fertility) 0)
-;;                 (= (get-int cell :deer) 0))
-;;        (merge cell {:deer 2})))
 
-if x is 0 or y is 0 and deer are 0 then 1 chance in 5 deer should be 2 
+if x is 0 or y is 0 and deer are 0 then 1 chance in 50 deer should be 2 
         
 ;; deer gradually spread through the world by breeding or migrating.
-;;    (fn [cell world]
-;;      (let [n (apply + (map #(get-int % :deer) (get-neighbours world cell)))]
-;;        (cond (and
-;;                (> (get-int cell :fertility) 0)
-;;                (= (get-int cell :deer) 0)
-;;                (>= n 2))
-;;          (merge cell {:deer (int (/ n 2))}))))
 
 if fertility is more than 10 and deer is 0 and some neighbours have deer more than 2 then deer should be 2
 
 ;; deer breed.
-;;    (fn [cell world]
-;;      (cond
-;;        (>= (get-int cell :deer) 2)
-;;        (merge cell {:deer (int (* (:deer cell) 2))})))))
 
 if deer are more than 1 then deer should be deer * 2
 
 ## Predator rules
+
 ;; rules describing the impact of predator behaviour on the environment
-;; wolves eat deer
-;;     (fn [cell world]
-;;      (cond
-;;       (>= (get-int cell :wolves) 1)
-;;       (merge cell {:deer (max 0 (- (get-int cell :deer) (get-int cell :wolves)))})))
 
 if deer are more than wolves then deer should be deer - wolves
 
-;;      ;; not more than eight wolves in a pack, for now (hack because wolves are not dying)
-;;      (fn [cell world]
-;;        (cond (> (get-int cell :wolves) 8) (merge cell {:wolves 8})))
-
 ;; if there are not enough deer to sustain the population of wolves,
-;; some wolves die or move on. (doesn't seem to be working?)
-;;    (fn [cell world]
-;;       (cond (> (get-int cell :wolves) (get-int cell :deer))
-;;         (merge cell {:wolves 0})))
+;; some wolves die or move on.
 
 if wolves are more than deer then deer should be 0 and wolves should be deer
 
 ;; wolves arrive occasionally at the edge of the map.
-;;    (fn [cell world]
-;;      (cond (and (< (count (get-neighbours world cell)) 8)
-;;                 (< (rand 50) 1)
-;;                 (not (= (:state cell) :water))
-;;                 (= (get-int cell :wolves) 0))
-;;        (merge cell {:wolves 2})))
 
-if x is 0 or y is 0 and wolves are 0 then 1 chance in 5 wolves should be 2 
+if x is 0 or y is 0 and wolves are 0 then 1 chance in 50 wolves should be 2 
 
 ;; wolves gradually spread through the world by breeding or migrating.
-;;    (fn [cell world]
-;;      (let [n (apply + (map #(get-int % :wolves) (get-neighbours world cell)))]
-;;        (cond (and
-;;                (not (= (:state cell) :water))
-;;                (= (get-int cell :wolves) 0)
-;;                (>= n 2))
-;;          (merge cell {:wolves 2}))))
 
 if state is not water and wolves is 0 and some neighbours have wolves more than 2 then 1 chance in 5 wolves should be 2
 
 ;; wolves breed.
-;;    (fn [cell world]
-;;      (cond
-;;        (>= (get-int cell :wolves) 2)
-;;        (merge cell {:wolves (int (* (:wolves cell) 2))})))
-;;    ))
 
 if wolves are more than 1 then wolves should be wolves * 2
 
 ## Initialisation rules
+
 ;; Rules which deal with state 'new' will waste less time if they're near the
 ;; end of the file
+
+;; below the waterline we have water.
+
 if state is new and altitude is less than 10 then state should be water
+
+;; above the snowline we have snow.
 if state is new and altitude is more than 200 then state should be snow
-;; another comment
+
+;; otherwise, we have grassland.
 if state is new then state should be grassland

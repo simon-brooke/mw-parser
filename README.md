@@ -13,8 +13,8 @@ is returned and there's no helpful error message.
 
 The generated function is a function of two arguments
 
-_ __cell__ a cell in a world as defined in mw-engine.world, q.v.;
-_ __world__ the world of which that cell forms part.
++ __cell__ a cell in a world as defined in mw-engine.world, q.v.;
++ __world__ the world of which that cell forms part.
 
 It returns a new cell, based on the cell passed.
 
@@ -25,13 +25,22 @@ modified.
 
 ### <a name="grammar"></a>Grammar
 
+#### Comments
+
++ Any line which starts with the hash character (#) is ignored;
++ Any line which starts with a semi-colon (;) is ignored.
+
+#### Rules
+
 A rule comprises:
 
 + if _conditions_ then _actions_
 
+Each rule must be on a single line. There should be nothing else on that line.
+
 #### Conditions
 
-where _conditions_ is:
+In rules, _conditions_ is one of:
 
 + _condition_
 + _condition_ and _conditions_
@@ -54,12 +63,21 @@ A _condition_ is one of:
 + _property_ is more than _numeric-value_
 + _property_ is less than _numeric-value_
 + _number_ neighbours have _property_ equal to _value_
++ _number_ neighbours have _property_ more than _numeric-value_
++ _number_ neighbours have _property_ less than _numeric-value_
 + more than _number_ neighbours have _property_ equal to _value_
 + fewer than _number_ neighbours have _property_ equal to _value_
++ some neighbours have _property_ equal to _value_
++ more than _number_ neighbours have _property_ more than _numeric-value_
++ fewer than _number_ neighbours have _property_ more than _numeric-value_
++ some neighbours have _property_ more than _numeric-value_
++ more than _number_ neighbours have _property_ less than _numeric-value_
++ fewer than _number_ neighbours have _property_ less than _numeric-value_
++ some neighbours have _property_ less than _numeric-value_
 
 #### Actions
 
-Where _actions_ is:
+In these rules, _actions_ is one of:
 
 + _action_ 
 + _action_ and _actions_
@@ -67,17 +85,18 @@ Where _actions_ is:
 and _action_ is:
 
 + _property_ should be _value_
++ _number_ chance in _number_ _property_ should be _value_
 
 #### Properties
 
 In the above, _property_ is the name of any property of a cell. Any alpha-numeric
-string of characters can form the name of a property. Actions should NOT refer
+string of characters can form the name of a property. Actions should __NOT__ refer
 to the reserved properties __x__ and __y__.
 
 #### Values in Conditions
 
 Values in conditions and actions are considered slightly differently. In a 
-condition, a value is one of
+condition, a value is one of:
 
 + _symbolic-value_
 + _numeric-value_
@@ -116,14 +135,11 @@ and _operator_ is one of the simple arithmetic operators '+', '-', '*' and '/'.
 
 ### Shorthand
 
-Note that '...members are...' is equivalent to '...members have state equal to...', 
+Note that '...neighbours are...' is equivalent to '...neighbours have state equal to...', 
 and 'some neighbours...' is equivalent to 'more than 0 neighbours...'
 
 ## License
 
 Copyright © 2014 Simon Brooke
 
-Distributed under the terms of the [GNU General Public License v2][1]
-
-
-[1]: http://www.gnu.org/licenses/gpl-2.0.html
+Distributed under the terms of the [GNU General Public License v2](http://www.gnu.org/licenses/gpl-2.0.html)
