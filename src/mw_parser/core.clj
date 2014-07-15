@@ -162,13 +162,15 @@
           [(list 'not condition) remainder])))))
 
 (defn- gen-neighbours-condition
-  [comparator quantity property value remainder comp2] 
-  [(list comparator  
+  ([comp1 quantity property value remainder comp2 distance] 
+    [(list comp1  
          (list 'count
-               (list 'get-neighbours-with-property-value 'world '(cell :x) '(cell :y) 
+               (list 'get-neighbours-with-property-value 'world '(cell :x) '(cell :y) 1
                      (keyword property) (keyword-or-numeric value) comp2))
          quantity)
            remainder])
+  ([comp1 quantity property value remainder comp2]
+    (gen-neighbours-condition comp1 quantity property value remainder comp2 1)))
 
 (defn parse-comparator-neighbours-condition
   "Parse conditions of the form '...more than 6 neighbours are [condition]'"
@@ -188,11 +190,11 @@
         (= have-or-are "have")
         (let [[property comp1 comp2 value & remainder] rest]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition comparator quantity property value remainder '=)
+            (gen-neighbours-condition comparator quantity property value remainder =)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition comparator quantity property value remainder '>)
+            (gen-neighbours-condition comparator quantity property value remainder >)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition comparator quantity property value remainder '<)
+            (gen-neighbours-condition comparator quantity property value remainder <)
             ))))))
   
 (defn parse-some-neighbours-condition
@@ -210,15 +212,15 @@
       (cond
         (= have-or-are "are") 
         (let [[value & remainder] rest]
-          (gen-neighbours-condition '= quantity :state value remainder))
+          (gen-neighbours-condition '= quantity :state value remainder =))
         (= have-or-are "have")
         (let [[property comp1 comp2 value & remainder] rest]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition '= quantity property value remainder)
+            (gen-neighbours-condition '= quantity property value remainder =)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition '> quantity property value remainder '>)
+            (gen-neighbours-condition '> quantity property value remainder >)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition '< quantity property value remainder '<)
+            (gen-neighbours-condition '< quantity property value remainder <)
             ))))))
   
 (defn parse-neighbours-condition
