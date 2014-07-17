@@ -109,12 +109,12 @@
   ([tokens]
     (parse-value tokens false)))
 
-(defn- parse-member-condition
+(defn parse-member-condition
   "Parses a condition of the form '[property] in [value] or [value]...'"
   [[property IS IN & rest]]
   (if (and (member? IS '("is" "are")) (= IN "in"))
     (let [[l remainder] (parse-disjunct-value (cons "in" rest) false)]
-      [(list 'member? (keyword property) l) remainder])))
+      [(list 'member? (list (keyword property) 'cell) (list 'quote l)) remainder])))
 
 (defn- parse-less-condition
   "Parse '[property] less than [value]'."
@@ -218,9 +218,9 @@
           (cond (and (= comp1 "equal") (= comp2 "to"))
             (gen-neighbours-condition '= quantity property value remainder =)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition '> quantity property value remainder >)
+            (gen-neighbours-condition '= quantity property value remainder >)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition '< quantity property value remainder <)
+            (gen-neighbours-condition '= quantity property value remainder <)
             ))))))
   
 (defn parse-neighbours-condition
