@@ -34,6 +34,12 @@
 ;; a regular expression which matches string representation of numbers
 (def re-number #"^[0-9.]*$")
 
+;; error thrown when an attempt is made to set a reserved property
+(def reserved-properties-error 
+  "The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions")
+;; error thrown when a rule cannot be parsed
+(def bad-parse-error "I did not understand '%s'")
+
 (defn- keyword-or-numeric
   "If this token appears to represent an explicit number, return that number;
    otherwise, make a keyword of it and return that."
@@ -52,6 +58,7 @@
 ;;
 ;; In every case if the function cannot parse the desired construct from the
 ;; front of the sequence of tokens it returns nil.
+
 
 (defn parse-numeric-value
   "Parse a number."
@@ -85,6 +92,12 @@
           true (parse-token-value tokens))))
   ([tokens]
     (parse-simple-value tokens false)))
+
+(defn gen-token-value
+  "Parse a single value from this single token and return just the generated
+   code, not a pair."
+  [token expect-int]
+  (first (parse-simple-value (list token) expect-int)))
 
 (defn parse-disjunct-value
   "Parse a list of values from among these `tokens`. If `expect-int` is true, return
@@ -165,7 +178,8 @@
   ([comp1 quantity property value remainder comp2 distance] 
     [(list comp1  
          (list 'count
-               (list 'get-neighbours-with-property-value 'world '(cell :x) '(cell :y) 1
+               (list 'get-neighbours-with-property-value 'world 
+                     '(cell :x) '(cell :y) distance 
                      (keyword property) (keyword-or-numeric value) comp2))
          quantity)
            remainder])
@@ -174,27 +188,39 @@
 
 (defn parse-comparator-neighbours-condition
   "Parse conditions of the form '...more than 6 neighbours are [condition]'"
-  [[MORE THAN n NEIGHBOURS have-or-are & rest]]
+  [[MORE THAN n NEIGHBOURS WITHIN distance have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))
         comparator (cond (= MORE "more") '>
                      (member? MORE '("fewer" "less")) '<)]       
     (cond
+      (not (= WITHIN "within"))
+      (parse-comparator-neighbours-condition 
+        (flatten 
+          ;; two tokens were mis-parsed as 'within distance' that weren't
+          ;; actually 'within' and a distance. Splice in 'within 1' and try
+          ;; again.
+          (list MORE THAN n NEIGHBOURS "within" "1" WITHIN distance have-or-are rest)))
       (and quantity 
            comparator
            (= THAN "than")
            (= NEIGHBOURS "neighbours"))
       (cond
         (= have-or-are "are") 
-        (let [[value & remainder] rest]
-          (gen-neighbours-condition comparator quantity :state value remainder =))
+        (let [[value & remainder] rest
+              dist (gen-token-value distance true)]
+          (gen-neighbours-condition comparator quantity :state value remainder = dist))
         (= have-or-are "have")
-        (let [[property comp1 comp2 value & remainder] rest]
+        (let [[property comp1 comp2 value & remainder] rest
+              dist (gen-token-value distance true)]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition comparator quantity property value remainder =)
+            (gen-neighbours-condition comparator quantity property 
+                                      value remainder = dist)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition comparator quantity property value remainder >)
+            (gen-neighbours-condition comparator quantity property 
+                                      value remainder > dist)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition comparator quantity property value remainder <)
+            (gen-neighbours-condition comparator quantity property 
+                                      value remainder < dist)
             ))))))
   
 (defn parse-some-neighbours-condition
@@ -205,22 +231,34 @@
 
 (defn parse-simple-neighbours-condition
   "Parse conditions of the form '...6 neighbours are [condition]'"
-  [[n NEIGHBOURS have-or-are & rest]]
+  [[n NEIGHBOURS WITHIN distance have-or-are & rest]]
   (let [quantity (first (parse-numeric-value (list n)))]       
     (cond
       (and quantity (= NEIGHBOURS "neighbours"))
       (cond
+        (not (= WITHIN "within"))
+        (parse-simple-neighbours-condition
+          (flatten 
+            ;; two tokens were mis-parsed as 'within distance' that weren't
+            ;; actually 'within' and a distance. Splice in 'within 1' and try
+            ;; again.
+            (list n NEIGHBOURS "within" "1" WITHIN distance have-or-are rest)))
         (= have-or-are "are") 
-        (let [[value & remainder] rest]
-          (gen-neighbours-condition '= quantity :state value remainder =))
+        (let [[value & remainder] rest
+              dist (gen-token-value distance true)]
+          (gen-neighbours-condition '= quantity :state value remainder = dist))
         (= have-or-are "have")
-        (let [[property comp1 comp2 value & remainder] rest]
+        (let [[property comp1 comp2 value & remainder] rest
+              dist (gen-token-value distance true)]
           (cond (and (= comp1 "equal") (= comp2 "to"))
-            (gen-neighbours-condition '= quantity property value remainder =)
+            (gen-neighbours-condition '= quantity property value remainder = 
+                                      dist)
             (and (= comp1 "more") (= comp2 "than"))
-            (gen-neighbours-condition '= quantity property value remainder >)
+            (gen-neighbours-condition '= quantity property value remainder > 
+                                      dist)
             (and (= comp1 "less") (= comp2 "than"))
-            (gen-neighbours-condition '= quantity property value remainder <)
+            (gen-neighbours-condition '= quantity property value remainder < 
+                                      dist)
             ))))))
   
 (defn parse-neighbours-condition
@@ -281,9 +319,13 @@
 (defn- parse-arithmetic-action 
   "Parse actions of the form '[property] should be [property] [arithmetic-operator] [value]',
    e.g. 'fertility should be fertility + 1', or 'deer should be deer - wolves'."
-  [previous [prop1 should be prop2 operator value & rest]]
-  (if (and (= should "should")
-           (= be "be")
+  [previous [prop1 SHOULD BE prop2 operator value & rest]]
+  (cond
+    (member? prop2 '("x" "y"))
+    (throw 
+      (Exception. reserved-properties-error))
+    (and (= SHOULD "should")
+           (= BE "be")
            (member? operator '("+" "-" "*" "/")))
     [(list 'merge (or previous 'cell)
            {(keyword prop1) (list 'int 
@@ -294,8 +336,12 @@
 
 (defn- parse-set-action 
   "Parse actions of the form '[property] should be [value].'"
-  [previous [property should be value & rest]]
-  (if (and (= should "should") (= be "be"))
+  [previous [property SHOULD BE value & rest]]
+  (cond 
+    (member? property '("x" "y"))
+    (throw 
+      (Exception. reserved-properties-error))
+    (and (= SHOULD "should") (= BE "be"))
     [(list 'merge (or previous 'cell)
            {(keyword property) (cond (re-matches re-number value) (read-string value) true (keyword value))}) rest]))
 
@@ -344,7 +390,7 @@
    (string? line) 
    (let [rule (parse-rule (split (triml line) #"\s+"))]
      (cond rule rule
-       true (throw (Exception. (str "I did not understand '" line "'")))))
+       true (throw (Exception. (format bad-parse-error line)))))
    true 
    (let [[left remainder] (parse-left-hand-side line)
               [right junk] (parse-right-hand-side remainder)]

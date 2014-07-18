@@ -6,8 +6,11 @@ A rule parser for MicroWorld
 
 Main entry point is (parse-rule _string_), where string takes a form detailed
 in __[grammar](#grammar)__, below. If the rule is interpretted correctly the result will
-be a Clojure anonymous function; if the rule is not interpretted, currently nil
-is returned and there's no helpful error message.
+be the source code of a Clojure anonymous function; if the rule cannot be interpretted,
+an error 'I did not understand...' will be shown.
+
+The function (compile-rule _string_) is like parse-rule, except that it returns
+a compiled Clojure anonymous function.
 
 ### Generated function and evaluation environment
 
@@ -20,8 +23,25 @@ It returns a new cell, based on the cell passed.
 
 Actions of the rule will (can only) modify properties of the cell; there are two
 properties which are special and SHOULD NOT be modified, namely the properties
-__x__ and __y__. Currently there is no policing that these properties are not
-modified.
+__x__ and __y__. 
+
+### Execution
+
+Each time the world is transformed, exactly the same set of rules is applied to every
+cell. The rules are applied to the cell in turn, in the order in which they are
+written in the rule text, until the conditions of one of them match the cell.
+The actions of that rule are then used to transform the cell, and the rest of
+the rules are not applied.
+
+So, for example, if your first rule is
+
+    if x is more than -1 then state should be new
+
+then no matter what your other rules are, your world will never change, because
+all cells have x more than -1.
+
+If you are having problems because one of your rules isn't working, look to
+see whether there is another rule above it which is 'blocking' it.
 
 ### <a name="grammar"></a>Grammar
 
@@ -75,6 +95,37 @@ A _condition_ is one of:
 + fewer than _number_ neighbours have _property_ less than _numeric-value_
 + some neighbours have _property_ less than _numeric-value_
 
+#### About neighbours
+
+Note that everywhere above I've used 'neighbours', you can use
+
+    neighbours within _distance_
+
+A cell has eight immediate neighbours - cells which actually touch it (except 
+for cells on the edge of the map, which have fewer). If the cell we're 
+interested in is the cell marked 'X' in the table below, its immediate neighbours
+are the ones marked '1'. But outside the ones marked '1', it has more distant 
+neighbours - those marked '2' and '3' in the table, and still more outside those.
+
+<table>
+<tr><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>1</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>X</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>1</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+</table>
+
+If a rule just says 'neighbours', and not 'neighbours within', it means 
+'neighbours within 1'; so
+
+    if some neighbours are scrub then state should be scrub
+
+has exactly the same meaning as
+
+    if some neighbours within 1 are scrub then state should be scrub
+
 #### Actions
 
 In these rules, _actions_ is one of:
@@ -90,8 +141,8 @@ and _action_ is:
 #### Properties
 
 In the above, _property_ is the name of any property of a cell. Any alpha-numeric
-string of characters can form the name of a property. Actions should __NOT__ refer
-to the reserved properties __x__ and __y__.
+string of characters can form the name of a property. Actions should __NOT__ 
+try to change the reserved properties __x__ and __y__.
 
 #### Values in Conditions
 
@@ -140,6 +191,7 @@ and 'some neighbours...' is equivalent to 'more than 0 neighbours...'
 
 ## License
 
-Copyright © 2014 Simon Brooke
+Copyright © 2014 [Simon Brooke](mailto:simon@journeyman.cc)
 
-Distributed under the terms of the [GNU General Public License v2](http://www.gnu.org/licenses/gpl-2.0.html)
+Distributed under the terms of the [GNU General Public License v2]
+(http://www.gnu.org/licenses/gpl-2.0.html)

@@ -21,6 +21,20 @@
            (is (parse-rule "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"))
            ))
 
+(deftest exception-tests
+  (testing "Constructions which should cause exceptions to be thrown"
+           (is (thrown-with-msg? Exception #"^I did not understand.*"
+                        (parse-rule "the quick brown fox jumped over the lazy dog"))
+               "Exception thrown if rule text does not match grammar")
+           (is (thrown-with-msg? 
+                 Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
+                 (parse-rule "if state is new then x should be 0"))
+               "Exception thrown on attempt to set 'x'")
+           (is (thrown-with-msg? 
+                 Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions" 
+                 (parse-rule "if state is new then y should be 0"))
+               "Exception thrown on attempt to set 'y'")))
+
 (deftest correctness-tests
   (testing "Simplest possible rule"
            (let [afn (compile-rule "if state is new then state should be grassland")]
@@ -355,4 +369,34 @@
                                  (list {:deer 2 :wolves 2} nil))) 
                         1)
                      "Action is executed")))
+  
+;; simple within distance
+  (testing "Number neighbours within distance have property equal to value"
+           (let [afn (compile-rule "if 8 neighbours within 2 have state equal to new then state should be water")
+                 world (make-world 5 5)]
+              (is (= (apply afn (list {:x 0 :y 0} world))
+                    {:state :water :x 0 :y 0})
+                 "Rule fires when condition is met (in a new world all cells are new, corner cell has eight neighbours within two)")
+             (is (nil? (apply afn (list {:x 1 :y 1} world)))
+                 "Middle cell has twenty-four neighbours within two, so rule does not fire.")))
+
+;; comparator within distance
+  (testing "More than number neighbours within distance have property equal to symbolic-value"
+           (let [afn (compile-rule "if more than 7 neighbours within 2 have state equal to grassland and more than 7 neighbours within 2 have state equal to water then state should be beach")
+                 ;; 5x5 world, strip of high ground two cells wide down left hand side
+                 ;; xxooo
+                 ;; xxooo
+                 ;; xxooo
+                 ;; xxooo
+                 ;; xxooo
+                 world (transform-world 
+                         (make-world 5 5)
+                         (list (compile-rule "if x is less than 2 then altitude should be 11 and state should be grassland")
+                               (compile-rule "if x is more than 1 then altitude should be 0 and state should be water")))]
+             (is (= (:state (apply afn (list {:x 2 :y 2} world))) :beach)
+                 "Rule fires when condition is met (strip of altitude 11 down right hand side)")
+             (is (nil? (apply afn (list {:x 0 :y 1} world)))
+                 "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
+
+ 
   )
