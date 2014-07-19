@@ -394,19 +394,27 @@
    true 
    (let [[left remainder] (parse-left-hand-side line)
               [right junk] (parse-right-hand-side remainder)]
-          ;; TODO: there shouldn't be any junk (should be null)
      (cond 
-       (and left right (nil? junk))
+       ;; there should be a valide left hand side and a valid right hand side
+       ;; there shouldn't be anything left over (junk should be empty)
+       (and left right (empty? junk))
        (list 'fn ['cell 'world] (list 'if left right))))))
 
 (defn compile-rule 
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
    function object, getting round the problem of binding mw-engine.utils in
-   the compiling environment.
+   the compiling environment. If `return-tuple?` is present and true, return
+   a list comprising the anonymous function compiled, and the function from
+   which it was compiled.
 
    Throws an exception if parsing fails."
-  [rule-text]
-  (do
-    (use 'mw-engine.utils)
-    (eval (parse-rule rule-text))))  
+  ([rule-text return-tuple?]
+    (do
+      (use 'mw-engine.utils)
+      (let [afn (eval (parse-rule rule-text))]
+        (cond 
+          (and afn return-tuple?)(list afn rule-text)
+          true afn))))
+  ([rule-text]
+    (compile-rule rule-text false)))
