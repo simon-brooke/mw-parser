@@ -107,12 +107,28 @@
              (is (nil? (apply afn (list {:altitude 200} nil)))
                  "Rule does not fire when condition is not met")))
 
+  (testing "Property is more than property"
+           (let [afn (compile-rule "if wolves are more than deer then deer should be 0")]
+             (is (= (apply afn (list {:deer 2 :wolves 3} nil))
+                    {:deer 0 :wolves 3})
+                 "Rule fires when condition is met")
+             (is (nil? (apply afn (list {:deer 3 :wolves 2} nil)))
+                 "Rule does not fire when condition is not met")))
+
   (testing "Property is less than numeric-value"
            (let [afn (compile-rule "if altitude is less than 10 then state should be water")]
              (is (= (apply afn (list {:altitude 9} nil))
                     {:state :water :altitude 9})
                  "Rule fires when condition is met")
              (is (nil? (apply afn (list {:altitude 10} nil)))
+                 "Rule does not fire when condition is not met")))
+
+  (testing "Property is less than property"
+           (let [afn (compile-rule "if wolves are less than deer then deer should be deer - wolves")]
+             (is (= (apply afn (list {:deer 3 :wolves 2} nil))
+                    {:deer 1 :wolves 2})
+                 "Rule fires when condition is met")
+             (is (nil? (apply afn (list {:deer 2 :wolves 3} nil)))
                  "Rule does not fire when condition is not met")))
   
   (testing "Number neighbours have property equal to value"
@@ -396,7 +412,4 @@
              (is (= (:state (apply afn (list {:x 2 :y 2} world))) :beach)
                  "Rule fires when condition is met (strip of altitude 11 down right hand side)")
              (is (nil? (apply afn (list {:x 0 :y 1} world)))
-                 "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
-
- 
-  )
+                 "Middle cell of the strip has only two high neighbours, so rule should not fire."))))

@@ -118,7 +118,7 @@
   ([tokens expect-int]
     (or 
       (parse-disjunct-value tokens expect-int)
-      (parse-simple-value tokens)))
+      (parse-simple-value tokens expect-int)))
   ([tokens]
     (parse-value tokens false)))
 

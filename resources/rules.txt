@@ -19,8 +19,6 @@ if state is forest and fertility is more than 5 then state should be climax
 if state is climax then 1 chance in 500 state should be fire
 
 ;; Climax forest neighbouring fires is likely to catch fire
-;; TODO: this rule, and specifically the 'some neighbours' clause, seems to give
-;; rise to the 'Keyword cannot be cast to Number' bug.
 if state is climax and some neighbours are fire then 1 chance in 3 state should be fire
 
 ;; After fire we get waste
@@ -35,24 +33,19 @@ if state is waste and some neighbours are forest then state should be heath
 if state is waste and some neighbours are climax then state should be heath
 if state is waste then state should be grassland
 
-;; Forest increases soil fertility. TODO: this rule compiles to what looks like
-;; the right code but it never fires.
-if state is in forest or climax then fertility should be fertility + 1
-
 ## Herbivore rules
 
 ;; rules describing the impact of herbivores on the environment
     
 ;; if there are too many deer for the fertility of the area to sustain,
 ;; some die or move on.
-if deer are more than fertility then deer should be fertility / 2
+;; if deer are more than fertility then deer should be fertility / 2
 
 ;; deer arrive occasionally at the edge of the map.
 
 if x is 0 or y is 0 and deer are 0 then 1 chance in 50 deer should be 2 
         
 ;; deer gradually spread through the world by breeding or migrating.
-
 if fertility is more than 10 and deer is 0 and some neighbours have deer more than 2 then deer should be 2
 
 ;; deer breed.
@@ -68,7 +61,7 @@ if deer are more than wolves then deer should be deer - wolves
 ;; if there are not enough deer to sustain the population of wolves,
 ;; some wolves die or move on.
 
-if wolves are more than deer then deer should be 0 and wolves should be deer
+if wolves are more than deer then deer should be 0 and wolves should be deer + 0
 
 ;; wolves arrive occasionally at the edge of the map.
 
@@ -81,6 +74,12 @@ if state is not water and wolves is 0 and some neighbours have wolves more than 
 ;; wolves breed.
 
 if wolves are more than 1 then wolves should be wolves * 2
+
+## Potential blockers
+
+;; Forest increases soil fertility. 
+if state is in forest or climax then fertility should be fertility + 1
+
 
 ## Initialisation rules
 
