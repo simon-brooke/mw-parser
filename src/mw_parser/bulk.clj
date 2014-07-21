@@ -30,7 +30,7 @@
   "Compile each non-comment line of this `string` into an executable anonymous 
    function, and return the sequence of such functions."
   [string]
-  (map #(compile-rule % true) (remove comment? (trim (split string #"\n")))))
+  (map #(compile-rule % true) (remove comment? (split string #"\n"))))
 
 (defn compile-file 
   "Compile each non-comment line of the file indicated by this `filename` into 

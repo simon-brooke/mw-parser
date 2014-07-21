@@ -414,7 +414,7 @@
       (use 'mw-engine.utils)
       (let [afn (eval (parse-rule rule-text))]
         (cond 
-          (and afn return-tuple?)(list afn rule-text)
+          (and afn return-tuple?)(list afn (trim rule-text))
           true afn))))
   ([rule-text]
     (compile-rule rule-text false)))
