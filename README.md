@@ -97,9 +97,8 @@ A _condition_ is one of:
 
 #### About neighbours
 
-Note that everywhere above I've used 'neighbours', you can use
-
-    neighbours within _distance_
+Note that everywhere above I've used 'neighbours', you can use 'neighbours 
+within _distance_'.
 
 A cell has eight immediate neighbours - cells which actually touch it (except 
 for cells on the edge of the map, which have fewer). If the cell we're 
@@ -107,14 +106,14 @@ interested in is the cell marked 'X' in the table below, its immediate neighbour
 are the ones marked '1'. But outside the ones marked '1', it has more distant 
 neighbours - those marked '2' and '3' in the table, and still more outside those.
 
-<table>
-<tr><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
-<tr><td>3</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td></tr>
-<tr><td>3</td><td>2</td><td>1</td><td>1</td><td>1</td><td>2</td><td>3</td></tr>
-<tr><td>3</td><td>2</td><td>1</td><td>X</td><td>1</td><td>2</td><td>3</td></tr>
-<tr><td>3</td><td>2</td><td>1</td><td>1</td><td>1</td><td>2</td><td>3</td></tr>
-<tr><td>3</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td></tr>
-<tr><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<table style="padding-left: 20%;">
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: green;">1</td><td style="color:white; width: 1.5em; background-color: red;">X</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: green;">1</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: lime;">2</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
+<tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
 </table>
 
 If a rule just says 'neighbours', and not 'neighbours within', it means 
@@ -193,5 +192,5 @@ and 'some neighbours...' is equivalent to 'more than 0 neighbours...'
 
 Copyright © 2014 [Simon Brooke](mailto:simon@journeyman.cc)
 
-Distributed under the terms of the [GNU General Public License v2]
-(http://www.gnu.org/licenses/gpl-2.0.html)
+Distributed under the terms of the 
+[GNU General Public License v2](http://www.gnu.org/licenses/gpl-2.0.html)
