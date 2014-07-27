@@ -1,5 +1,8 @@
 ## Basic ruleset which just grows trees
 
+;; This ruleset is not very interesting in itself, but is useful as a starting
+;; point from which to build more interesting rulesets.
+
 ## Vegetation rules
 ;; rules which populate the world with plants
 
