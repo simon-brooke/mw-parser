@@ -25,7 +25,9 @@
 
 (ns mw-parser.core
   (:use mw-engine.utils
-        [clojure.string :only [split trim triml]]))
+        [clojure.string :only [split trim triml]])
+  (:gen-class)
+)
 
 (declare parse-conditions)
 (declare parse-not-condition)
