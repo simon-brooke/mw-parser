@@ -23,7 +23,7 @@ It returns a new cell, based on the cell passed.
 
 Actions of the rule will (can only) modify properties of the cell; there are two
 properties which are special and SHOULD NOT be modified, namely the properties
-__x__ and __y__. 
+__x__ and __y__.
 
 ### Execution
 
@@ -97,13 +97,13 @@ A _condition_ is one of:
 
 #### About neighbours
 
-Note that everywhere above I've used 'neighbours', you can use 'neighbours 
-within _distance_'.
+Note that everywhere above I've used 'neighbours', you can use 'neighbours
+within _distance_', where _distance_ is a (small) positive integer.
 
-A cell has eight immediate neighbours - cells which actually touch it (except 
-for cells on the edge of the map, which have fewer). If the cell we're 
+A cell has eight immediate neighbours - cells which actually touch it (except
+for cells on the edge of the map, which have fewer). If the cell we're
 interested in is the cell marked 'X' in the table below, its immediate neighbours
-are the ones marked '1'. But outside the ones marked '1', it has more distant 
+are the ones marked '1'. But outside the ones marked '1', it has more distant
 neighbours - those marked '2' and '3' in the table, and still more outside those.
 
 <table style="padding-left: 20%;">
@@ -116,7 +116,7 @@ neighbours - those marked '2' and '3' in the table, and still more outside those
 <tr><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td><td style="width: 1.5em; background-color: chartreuse;">3</td></tr>
 </table>
 
-If a rule just says 'neighbours', and not 'neighbours within', it means 
+If a rule just says 'neighbours', and not 'neighbours within', it means
 'neighbours within 1'; so
 
     if some neighbours are scrub then state should be scrub
@@ -129,7 +129,7 @@ has exactly the same meaning as
 
 In these rules, _actions_ is one of:
 
-+ _action_ 
++ _action_
 + _action_ and _actions_
 
 and _action_ is:
@@ -140,33 +140,33 @@ and _action_ is:
 #### Properties
 
 In the above, _property_ is the name of any property of a cell. Any alpha-numeric
-string of characters can form the name of a property. Actions should __NOT__ 
+string of characters can form the name of a property. Actions should __NOT__
 try to change the reserved properties __x__ and __y__.
 
 #### Values in Conditions
 
-Values in conditions and actions are considered slightly differently. In a 
+Values in conditions and actions are considered slightly differently. In a
 condition, a value is one of:
 
 + _symbolic-value_
 + _numeric-value_
 
 The '...more than...' and '...less than...' conditions imply a _numeric-value_.
-Thus "if altitude is more than fertility..." is interpreted as meaning "if the value 
+Thus "if altitude is more than fertility..." is interpreted as meaning "if the value
 of the property of the current cell called 'altitude' is greater than the value
 of the property of the current cell called 'fertility'", whereas the apparently
 similar condition 'if altitude is fertility...' is interpreted as meaning
 "if the value of the property of the current cell called 'altitude' is the symbol
 'fertility'".
 
-Thus _symbolic-value_ is any sequence of alphanumeric characters, whereas 
+Thus _symbolic-value_ is any sequence of alphanumeric characters, whereas
 _numeric-value_ is one of:
 
 + _number_
 + _property_
 
-and _number_ is any sequence of the decimal digits 0...9, the minus character 
-'-' and the period character '.', provided that the minus character can only be 
+and _number_ is any sequence of the decimal digits 0...9, the minus character
+'-' and the period character '.', provided that the minus character can only be
 in the first position, and  the period character can only appear once.
 
 #### Values in Actions
@@ -185,12 +185,12 @@ and _operator_ is one of the simple arithmetic operators '+', '-', '*' and '/'.
 
 ### Shorthand
 
-Note that '...neighbours are...' is equivalent to '...neighbours have state equal to...', 
+Note that '...neighbours are...' is equivalent to '...neighbours have state equal to...',
 and 'some neighbours...' is equivalent to 'more than 0 neighbours...'
 
 ## License
 
 Copyright © 2014 [Simon Brooke](mailto:simon@journeyman.cc)
 
-Distributed under the terms of the 
+Distributed under the terms of the
 [GNU General Public License v2](http://www.gnu.org/licenses/gpl-2.0.html)
