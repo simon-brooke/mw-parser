@@ -65,7 +65,7 @@
 (defn parse-numeric-value
   "Parse a number."
   [[value & remainder]]
-  (if (re-matches re-number value) [(read-string value) remainder]))
+  (if (and value (re-matches re-number value)) [(read-string value) remainder]))
 
 (defn parse-property-int
   "Parse a token assumed to be the name of a property of the current cell, 

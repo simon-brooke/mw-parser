@@ -6,6 +6,20 @@
   (:require [clojure.test :refer :all]
             [mw-parser.core :refer :all]))
 
+(deftest primitives-tests
+  (testing "Simple functions supporting the parser"
+           (is (= (parse-value '()) nil)
+               "if there's nothing to parse, return nil")
+           (is (= (first (parse-value '("1234" "and" "that"))) 1234)
+               "a simple value is expected to be just a number.")
+           (is (= (first (parse-value '("this" "and" "that"))) :this) 
+               "or else just a keyword")
+           (is (= (first (parse-value '("this" "and" "that") true)) 
+                  '(get-int cell :this))
+               "...unless an integer is explicitly sought, in which case it should be something which gets an integer from the current cell")
+           ))
+           
+
 (deftest rules-tests
   (testing "Rule parser - does not test whether generated functions actually work, just that something is generated!"
            (is (parse-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3"))
@@ -138,6 +152,14 @@
                     {:state :water :x 0 :y 0})
                  "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")
              (is (nil? (apply afn (list {:x 1 :y 1} world)))
+                 "Middle cell has eight neighbours, so rule does not fire."))
+           (let [afn (compile-rule "if 3 neighbours are new then state should be water")
+                 world (make-world 3 3)]
+             ;; 'are new' should be the same as 'have state equal to new'
+             (is (= (apply afn (list {:x 0 :y 0} world))
+                    {:state :water :x 0 :y 0})
+                 "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")
+             (is (nil? (apply afn (list {:x 1 :y 1} world)))
                  "Middle cell has eight neighbours, so rule does not fire.")))
 
   (testing "Number neighbours have property more than numeric-value"
@@ -182,7 +204,18 @@
              (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
                  "Rule fires when condition is met (strip of altitude 11 down right hand side)")
              (is (nil? (apply afn (list {:x 2 :y 1} world)))
-                 "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
+                 "Middle cell of the strip has only two high neighbours, so rule should not fire."))
+           (let [afn (compile-rule "if more than 2 neighbours are grassland then state should be beach")
+                 ;; 'are grassland' should mean the same as 'have state equal to grassland'.
+                 world (transform-world 
+                         (make-world 3 3)
+                         (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
+                               (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+             (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
+                 "Rule fires when condition is met (strip of altitude 11 down right hand side)")
+             (is (nil? (apply afn (list {:x 2 :y 1} world)))
+                 "Middle cell of the strip has only two high neighbours, so rule should not fire."))
+           )
 
   (testing "Fewer than number neighbours have property equal to numeric-value"
            (let [afn (compile-rule "if fewer than 3 neighbours have altitude equal to 11 then state should be beach")
