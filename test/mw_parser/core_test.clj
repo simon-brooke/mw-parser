@@ -1,13 +1,21 @@
 (ns mw-parser.core-test
   (:use clojure.pprint
         mw-engine.core 
-        mw-engine.utils
         mw-engine.world)
   (:require [clojure.test :refer :all]
             [mw-parser.core :refer :all]))
 
 (deftest primitives-tests
   (testing "Simple functions supporting the parser"
+           (is (= (parse-simple-value '()) nil)
+               "if there's nothing to parse, return nil")
+           (is (= (first (parse-simple-value '("1234" "and" "that"))) 1234)
+               "a simple value is expected to be just a number.")
+           (is (= (first (parse-simple-value '("this" "and" "that"))) :this) 
+               "or else just a keyword")
+           (is (= (first (parse-simple-value '("this" "and" "that") true)) 
+                  '(get-int cell :this))
+               "...unless an integer is explicitly sought, in which case it should be something which gets an integer from the current cell")
            (is (= (parse-value '()) nil)
                "if there's nothing to parse, return nil")
            (is (= (first (parse-value '("1234" "and" "that"))) 1234)
@@ -17,6 +25,10 @@
            (is (= (first (parse-value '("this" "and" "that") true)) 
                   '(get-int cell :this))
                "...unless an integer is explicitly sought, in which case it should be something which gets an integer from the current cell")
+           (is (= (parse-property-value '()) nil)
+               "if there's nothing to parse, return nil")
+           (is (= (first (parse-property-value '("this" "and" "that"))) '(:this cell))
+               "Parsing a property value returns a code function to pull its value off the current cell")
            ))
            
 
@@ -47,7 +59,16 @@
            (is (thrown-with-msg? 
                  Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions" 
                  (parse-rule "if state is new then y should be 0"))
-               "Exception thrown on attempt to set 'y'")))
+               "Exception thrown on attempt to set 'y'")
+           (is (thrown? Exception (compile-rule "if state is new then x should be 0"))
+                 "Can't set x property to number, as this would break the world")
+           (is (thrown? Exception (compile-rule "if state is new then y should be 0"))
+                 "Can't set y property to number, as this would break the world")
+           (is (thrown? Exception (compile-rule "if state is new then x should be heath"))
+                 "Can't set x property to symbol, as this would break the world")
+           (is (thrown? Exception (compile-rule "if state is new then y should be heath"))
+                 "Can't set y property to symbol, as this would break the world")
+           ))
 
 (deftest correctness-tests
   (testing "Simplest possible rule"
@@ -86,6 +107,8 @@
                  (is (= (apply afn (list {:state :forest} nil))
                             {:state :grassland})
                      "Rule fires when condition is met")))
+  
+  (testing "Can't set x or y properties")
   
   (testing "Simple list membership rule"
            (let [afn (compile-rule "if state is in heath or scrub or forest then state should be climax")]

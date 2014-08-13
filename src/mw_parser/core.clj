@@ -195,7 +195,7 @@
         comparator (cond (= MORE "more") '>
                      (member? MORE '("fewer" "less")) '<)]       
     (cond
-      (not (= WITHIN "within"))
+      (not= WITHIN "within")
       (parse-comparator-neighbours-condition 
         (flatten 
           ;; two tokens were mis-parsed as 'within distance' that weren't
@@ -238,7 +238,7 @@
     (cond
       (and quantity (= NEIGHBOURS "neighbours"))
       (cond
-        (not (= WITHIN "within"))
+        (not= WITHIN "within")
         (parse-simple-neighbours-condition
           (flatten 
             ;; two tokens were mis-parsed as 'within distance' that weren't
@@ -323,7 +323,7 @@
    e.g. 'fertility should be fertility + 1', or 'deer should be deer - wolves'."
   [previous [prop1 SHOULD BE prop2 operator value & rest]]
   (cond
-    (member? prop2 '("x" "y"))
+    (member? prop1 '("x" "y"))
     (throw 
       (Exception. reserved-properties-error))
     (and (= SHOULD "should")
