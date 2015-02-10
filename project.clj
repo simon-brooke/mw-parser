@@ -13,5 +13,6 @@
   :plugins [[lein-marginalia "0.7.1"]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.trace "0.7.8"]
+                 [instaparse "1.3.5"]
                  [mw-engine "0.1.5-SNAPSHOT"]
                  ])
