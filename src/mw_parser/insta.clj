@@ -3,6 +3,8 @@
         [clojure.string :only [split trim triml]])
   (:require [instaparse.core :as insta]))
 
+;; This is the 'next generation' parser - it is a much better parser than
+;; mw-parser.core, but it doesn't completely work yet.
 
 (def grammar
   ;; in order to simplify translation into other natural languages, all 
