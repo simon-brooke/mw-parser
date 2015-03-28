@@ -5,8 +5,8 @@ A rule parser for MicroWorld
 ## Part of the overall Microworld system 
 
 While this code works and is interesting on its own, you also need at least
-[https://github.com/simon-brooke/mw-engine](*mw-engine*) and 
-[https://github.com/simon-brooke/mw-ui](*mw-ui*). There will be other 
+[mw-engine](https://github.com/simon-brooke/mw-engine) and 
+[mw-ui](https://github.com/simon-brooke/mw-ui). There will be other 
 modules in due course.
 
 
