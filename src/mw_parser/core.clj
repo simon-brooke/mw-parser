@@ -20,8 +20,10 @@
 ;; semantics - but that is buggy behaviour, which I'll try to fix over the next few weeks, not a
 ;; design fault.
 ;;
-;; More significantly it does not generate useful error messages on failure. This is, I think, a much
-;; more complex issue which I don't yet know how to address.
+;; More significantly it does not generate useful error messages on failure.
+;;
+;; This is the parser that is actually used currently; but see also insta.clj, 
+;; which is potentially a much better parser but does not quite work yet.
 
 (ns mw-parser.core
   (:use mw-engine.utils

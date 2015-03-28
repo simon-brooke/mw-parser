@@ -188,6 +188,15 @@ and _operator_ is one of the simple arithmetic operators '+', '-', '*' and '/'.
 Note that '...neighbours are...' is equivalent to '...neighbours have state equal to...',
 and 'some neighbours...' is equivalent to 'more than 0 neighbours...'
 
+### Roadmap
+
+The existing parser, *mw-parser.core*, works but is not well written. A much
+better parser which does not yet completely work, *mw-parser.insta*, is also
+included for the adventurous.
+
+I intend to replace *mw-parser.core* with *mw-parser.insta* as soon as 
+*mw-parser.insta* correctly parses all the test rules.
+
 ## License
 
 Copyright © 2014 [Simon Brooke](mailto:simon@journeyman.cc)
