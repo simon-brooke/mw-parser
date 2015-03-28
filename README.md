@@ -2,6 +2,14 @@
 
 A rule parser for MicroWorld
 
+## Part of the overall Microworld system 
+
+While this code works and is interesting on its own, you also need at least
+[https://github.com/simon-brooke/mw-engine](*mw-engine*) and 
+[https://github.com/simon-brooke/mw-ui](*mw-ui*). There will be other 
+modules in due course.
+
+
 ## Usage
 
 Main entry point is (parse-rule _string_), where string takes a form detailed
