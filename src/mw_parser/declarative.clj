@@ -1,11 +1,21 @@
-(ns mw-parser.insta
+(ns mw-parser.declarative
   (:use mw-engine.utils
         [clojure.string :only [split trim triml]])
   (:require [instaparse.core :as insta]))
 
 
+;; error thrown when an attempt is made to set a reserved property
+(def reserved-properties-error
+  "The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions")
+;; error thrown when a rule cannot be parsed. Slots are for
+;; (1) rule text
+;; (2) cursor showing where in the rule text the error occurred
+;; (3) the reason for the error
+(def bad-parse-error "I did not understand:\n'%s'\n%s\n%s")
+
+
 (def grammar
-  ;; in order to simplify translation into other natural languages, all 
+  ;; in order to simplify translation into other natural languages, all
   ;; TOKENS within the parser should be unambiguous
   "RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;
    CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | PROPERTY-CONDITION | NEIGHBOURS-CONDITION ;
@@ -47,7 +57,8 @@
    ACTIONS := ACTION | ACTION SPACE 'and' SPACE ACTIONS
    ACTION := SIMPLE-ACTION | PROBABLE-ACTION;
    PROBABLE-ACTION := VALUE SPACE 'chance in' SPACE VALUE SPACE SIMPLE-ACTION;
-   SIMPLE-ACTION := SYMBOL SPACE 'should be' SPACE EXPRESSION
+   SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION
+   BECOMES := 'should be'
    SPACE := #' *'"
   )
 
@@ -58,6 +69,17 @@
 
 
 (declare generate simplify)
+
+(defn suitable-fragment?
+  "Return `true` if `tree-fragment` appears to be a tree fragment of the expected `type`."
+  [tree-fragment type]
+  (and (coll? tree-fragment)(= (first tree-fragment) type)))
+
+(defn assert-type
+  "If `tree-fragment` is not a tree fragment of the expected `type`, throw an exception."
+  [tree-fragment type]
+  (assert (suitable-fragment? tree-fragment type)
+          (throw (Exception. (format "Expected a %s fragment" type)))))
 
 (defn generate-rule
   "From this `tree`, assumed to be a syntactically correct rule specification,
@@ -79,15 +101,18 @@
 
 (defn generate-conjunct-condition
   [tree]
+  (assert-type tree :CONJUNCT-CONDITION)
   (list 'and (generate (nth tree 1))(generate (nth tree 3))))
 
 (defn generate-disjunct-condition
   [tree]
+  (assert-type tree :DISJUNCT-CONDITION)
   (list 'or (generate (nth tree 1))(generate (nth tree 3))))
 
 
 (defn generate-property-condition
   [tree]
+  (assert-type tree :PROPERTY-CONDITION)
   (let [property (generate (nth tree 1))
         qualifier (generate (nth tree 2))
         expression (generate (nth tree 3))]
@@ -95,9 +120,16 @@
 
 (defn generate-simple-action
   [tree]
+  (assert-type tree :SIMPLE-ACTION)
   (let [property (generate (nth tree 1))
         expression (generate (nth tree 3))]
     (list 'merge 'cell {property expression})))
+
+(defn generate-multiple-actions
+   [tree]
+  nil)
+;;   (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
+;;   (conj 'do (map
 
 (defn generate
   "Generate code for this (fragment of a) parse tree"
@@ -113,11 +145,13 @@
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
       :PROPERTY-CONDITION (generate-property-condition tree)
       :SIMPLE-ACTION (generate-simple-action tree)
+      :ACTIONS (generate-multiple-actions tree)
       :SYMBOL (keyword (second tree))
       :NUMBER (read-string (second tree))
       :EQUIVALENCE '=
       :MORE '>
       :LESS '<
+      :COMPARATIVE (generate (second tree))
       ;;    :EXPRESSION (generate-expression tree)
       ;;    :SIMPLE-EXPRESSION
       (map generate tree))
@@ -125,12 +159,12 @@
 
 
 (defn simplify-qualifier
-  "Given that this `tree` fragment represents a qualifier, what 
+  "Given that this `tree` fragment represents a qualifier, what
    qualifier is that?"
   [tree]
-  (cond 
+  (cond
     (empty? tree) nil
-    (and (coll? tree) 
+    (and (coll? tree)
          (member? (first tree) '(:EQUIVALENCE :COMPARATIVE))) tree
     (coll? (first tree)) (or (simplify-qualifier (first tree))
                              (simplify-qualifier (rest tree)))
@@ -142,16 +176,22 @@
    only two elements, the second is semantically sufficient."
   [tree]
   (if (= (count tree) 2) (simplify (nth tree 1)) tree))
-  
+
+
+(defn rule?
+  "Return true if the argument appears to be a parsed rule tree, else false."
+  [maybe-rule]
+  (and (coll? maybe-rule) (= (first maybe-rule) :RULE)))
 
 (defn simplify
   "Simplify/canonicalise this `tree`. Opportunistically replace complex fragments with
   semantically identical simpler fragments"
   [tree]
-  (if 
+  (if
     (coll? tree)
     (case (first tree)
       :SPACE nil
+      :THEN nil
       :QUALIFIER (simplify-qualifier tree)
       :CONDITIONS (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
@@ -168,31 +208,38 @@
 (def parse-rule
   (insta/parser grammar))
 
-(defn compile-rule 
+(defn explain-parse-error-reason
+  "The parse error `reason` is a complex structure of which I have as yet seen
+   few examples. This function is a place-holder so that I can later produce
+   friendlier reason messages."
+  [reason]
+  reason)
+
+(defn throw-parse-exception
+  "Construct a helpful error message from this `parser-error`, and throw an exception with that message."
+  [parser-error]
+  (assert (coll? parser-error) "Expected a paser error structure?")
+  (let
+    [
+      ;; the error structure is a list, such that each element is a list of two items, and
+      ;; the first element in each sublist is a keyword. Easier to work with it as a map
+     error-map (reduce (fn [map item](merge map {(first item)(rest item)})) {} parser-error)
+     text (first (:text error-map))
+     reason (explain-parse-error-reason (:reason error-map))
+      ;; rules have only one line, by definition; we're interested in the column
+     column (if (:column error-map)(first (:column error-map)) 0)
+      ;; create a cursor to point to that column
+     cursor (apply str (reverse (conj (repeat column " ") "^")))
+     ]
+  (throw (Exception. (format bad-parse-error text cursor reason)))))
+
+(defn compile-rule
+  "Compile this `rule`, assumed to be a string with appropriate syntax, into a function of two arguments,
+  a `cell` and a `world`, having the same semantics."
   [rule]
-  nil)
-;;  (generate (prune-tree (parse-rule rule))))
+  (assert (string? rule))
+  (let [tree (parse-rule rule)]
+    (if (rule? rule) (generate (simplify tree))
+      (throw-parse-exception tree))))
 
 
-
-
-(compile-rule "if state is climax and some neighbours have state equal to fire then 3 chance in 5 state should be fire")
-
-
-(compile-rule "if state is in grassland or pasture or heath and 4 neighbours have state equal to water then state should be village")
-
-(compile-rule "if 6 neighbours have state equal to water then state should be village")
-
-(compile-rule "if fertility is between 55 and 75 then state should be climax")
-
-(compile-rule "if state is forest then state should be climax")
-
-
-(compile-rule "if state is in grassland or pasture or heath and 4 neighbours have state equal to water then state should be village")
-(compile-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3")
-(compile-rule "if altitude is 100 or fertility is 25 then state should be heath and fertility should be 24.3")
-(compile-rule "if altitude is 100 or fertility is 25 then state should be heath")
-
-(compile-rule "if deer is more than 2 and wolves is 0 and fertility is more than 20 then deer should be deer + 2")
-(compile-rule "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves")
-(compile-rule "if state is grassland and 4 neighbours have state equal to water then state should be village")
