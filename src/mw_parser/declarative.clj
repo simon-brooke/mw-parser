@@ -85,18 +85,19 @@
   "From this `tree`, assumed to be a syntactically correct rule specification,
   generate and return the appropriate rule as a function of two arguments."
   [tree]
-  (let [left (generate (nth tree 2))
-        right (generate (nth tree 4))]
-    (list 'fn ['cell 'world] (list 'if left right))))
+  (assert-type tree :RULE)
+  (list 'fn ['cell 'world] (list 'if (generate (nth tree 2)) (generate (nth tree 3)))))
 
 (defn generate-conditions
   "From this `tree`, assumed to be a syntactically correct conditions clause,
   generate and return the appropriate clojure fragment."
   [tree]
+  (assert-type tree :CONDITIONS)
   (generate (nth tree 1)))
 
 (defn generate-condition
   [tree]
+  (assert-type tree :CONDITION)
   (generate (nth tree 1)))
 
 (defn generate-conjunct-condition
@@ -109,27 +110,62 @@
   (assert-type tree :DISJUNCT-CONDITION)
   (list 'or (generate (nth tree 1))(generate (nth tree 3))))
 
+(defn generate-ranged-property-condition
+  "Generate a property condition where the expression is a numeric range"
+  [tree property expression]
+  (assert-type tree :PROPERTY-CONDITION)
+  (assert-type (nth tree 3) :RANGE-EXPRESSION)
+  (let [l1 (generate (nth expression 2))
+        l2 (generate (nth expression 4))
+        pv (list property 'cell)]
+    (list 'let ['lower (list 'min l1 l2)
+                'upper (list 'max l1 l2)]
+          (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
 
 (defn generate-property-condition
-  [tree]
-  (assert-type tree :PROPERTY-CONDITION)
-  (let [property (generate (nth tree 1))
-        qualifier (generate (nth tree 2))
-        expression (generate (nth tree 3))]
-    (list qualifier (list property 'cell) expression)))
+  ([tree]
+   (assert-type tree :PROPERTY-CONDITION)
+   (generate-property-condition tree (first (nth tree 3))))
+  ([tree expression-type]
+   (assert-type tree :PROPERTY-CONDITION)
+   (let [property (generate (nth tree 1))
+         qualifier (generate (nth tree 2))
+         expression (generate (nth tree 3))]
+     (case expression-type
+       :DISJUNCT-EXPRESSION (list 'let ['value (list property 'cell)] (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression)))
+       :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
+       (list qualifier (list property 'cell) expression)))))
 
 (defn generate-simple-action
   [tree]
   (assert-type tree :SIMPLE-ACTION)
   (let [property (generate (nth tree 1))
         expression (generate (nth tree 3))]
-    (list 'merge 'cell {property expression})))
+    (if (or (= property :x) (= property :y))
+      (throw (Exception. reserved-properties-error))
+      (list 'merge 'cell {property expression}))))
 
 (defn generate-multiple-actions
    [tree]
   nil)
 ;;   (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
 ;;   (conj 'do (map
+
+(defn generate-disjunct-value
+  "Generate a disjunct value. Essentially what we need here is to generate a
+  flat list of values, since the `member` has already been taken care of."
+  [tree]
+  (assert-type tree :DISJUNCT-VALUE)
+  (if (= (count tree) 4)
+    (cons (generate (second tree)) (generate (nth tree 3)))
+    (list (generate (second tree)))))
+
+(defn generate-numeric-expression
+  [tree]
+  (assert-type tree :NUMERIC-EXPRESSION)
+  (case (first (second tree))
+    :SYMBOL (list (keyword (second (second tree))) 'cell)
+    (generate (second tree))))
 
 (defn generate
   "Generate code for this (fragment of a) parse tree"
@@ -144,6 +180,9 @@
       :DISJUNCT-CONDITION (generate-disjunct-condition tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
       :PROPERTY-CONDITION (generate-property-condition tree)
+      :DISJUNCT-EXPRESSION (generate (nth tree 2))
+      :NUMERIC-EXPRESSION (generate-numeric-expression tree)
+      :DISJUNCT-VALUE (generate-disjunct-value tree)
       :SIMPLE-ACTION (generate-simple-action tree)
       :ACTIONS (generate-multiple-actions tree)
       :SYMBOL (keyword (second tree))
@@ -209,11 +248,9 @@
   (insta/parser grammar))
 
 (defn explain-parse-error-reason
-  "The parse error `reason` is a complex structure of which I have as yet seen
-   few examples. This function is a place-holder so that I can later produce
-   friendlier reason messages."
+  "Attempt to explain the reason for the parse error."
   [reason]
-  reason)
+  (str "Expecting one of (" (apply str (map #(str (:expecting %) " ") (first reason))) ")"))
 
 (defn throw-parse-exception
   "Construct a helpful error message from this `parser-error`, and throw an exception with that message."
@@ -230,16 +267,17 @@
      column (if (:column error-map)(first (:column error-map)) 0)
       ;; create a cursor to point to that column
      cursor (apply str (reverse (conj (repeat column " ") "^")))
+     message (format bad-parse-error text cursor reason)
      ]
-  (throw (Exception. (format bad-parse-error text cursor reason)))))
+  (throw (Exception. message))))
 
 (defn compile-rule
   "Compile this `rule`, assumed to be a string with appropriate syntax, into a function of two arguments,
   a `cell` and a `world`, having the same semantics."
   [rule]
   (assert (string? rule))
-  (let [tree (parse-rule rule)]
-    (if (rule? rule) (generate (simplify tree))
+  (let [tree (simplify (parse-rule rule))]
+    (if (rule? rule) (generate tree)
       (throw-parse-exception tree))))
 
 
