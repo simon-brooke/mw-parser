@@ -29,7 +29,8 @@
    DISJUNCT-EXPRESSION := IN SPACE DISJUNCT-VALUE;
    RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;
    NUMERIC-EXPRESSION := VALUE | VALUE SPACE OPERATOR SPACE NUMERIC-EXPRESSION;
-   QUALIFIER := COMPARATIVE SPACE THAN | EQUIVALENCE | IS SPACE QUALIFIER;
+   NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;
+   QUALIFIER := NEGATED-QUALIFIER | IS COMPARATIVE SPACE THAN | EQUIVALENCE | IS SPACE QUALIFIER;
    QUANTIFIER := NUMBER | SOME | NONE | ALL;
    EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;
    COMPARATIVE := MORE | LESS;
@@ -38,6 +39,7 @@
    THEN := 'then';
    THAN := 'than';
    OR := 'or';
+   NOT := 'not';
    AND := 'and';
    SOME := 'some';
    NONE := 'no';
@@ -132,7 +134,10 @@
          qualifier (generate (nth tree 2))
          expression (generate (nth tree 3))]
      (case expression-type
-       :DISJUNCT-EXPRESSION (list 'let ['value (list property 'cell)] (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression)))
+       :DISJUNCT-EXPRESSION (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
+                              (list 'let ['value (list property 'cell)]
+                                  (if (= qualifier '=) e
+                                    (list 'not e))))
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
        (list qualifier (list property 'cell) expression)))))
 
@@ -173,26 +178,32 @@
   (if
     (coll? tree)
     (case (first tree)
-      :RULE (generate-rule tree)
-      :CONDITIONS (generate-conditions tree)
+      :ACTIONS (generate-multiple-actions tree)
+      :COMPARATIVE (generate (second tree))
       :CONDITION (generate-condition tree)
-      ;;    :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
-      :DISJUNCT-CONDITION (generate-disjunct-condition tree)
+      :CONDITIONS (generate-conditions tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
+      :DISJUNCT-CONDITION (generate-disjunct-condition tree)
       :PROPERTY-CONDITION (generate-property-condition tree)
       :DISJUNCT-EXPRESSION (generate (nth tree 2))
-      :NUMERIC-EXPRESSION (generate-numeric-expression tree)
       :DISJUNCT-VALUE (generate-disjunct-value tree)
-      :SIMPLE-ACTION (generate-simple-action tree)
-      :ACTIONS (generate-multiple-actions tree)
-      :SYMBOL (keyword (second tree))
-      :NUMBER (read-string (second tree))
       :EQUIVALENCE '=
-      :MORE '>
+      :EXPRESSION (generate (second tree))
       :LESS '<
-      :COMPARATIVE (generate (second tree))
-      ;;    :EXPRESSION (generate-expression tree)
-      ;;    :SIMPLE-EXPRESSION
+      :MORE '>
+      :NEGATED-QUALIFIER (case (generate (second tree))
+                                 = 'not=
+                                 > '<
+                                 < '>)
+      ;;    :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
+      :NUMERIC-EXPRESSION (generate-numeric-expression tree)
+      :NUMBER (read-string (second tree))
+      :PROPERTY (list (generate (second tree)) 'cell) ;; dubious - may not be right
+      :QUALIFIER (generate (second tree))
+      :RULE (generate-rule tree)
+      :SIMPLE-ACTION (generate-simple-action tree)
+      :SYMBOL (keyword (second tree))
+      :VALUE (generate (second tree))
       (map generate tree))
     tree))
 
@@ -229,22 +240,24 @@
   (if
     (coll? tree)
     (case (first tree)
+      :ACTION (simplify-second-of-two tree)
+      :ACTIONS (simplify-second-of-two tree)
+      :COMPARATIVE (simplify-second-of-two tree)
+      :CONDITION (simplify-second-of-two tree)
+      :CONDITIONS (simplify-second-of-two tree)
+      :EXPRESSION (simplify-second-of-two tree)
+      :QUANTIFIER (simplify-second-of-two tree)
+      :NOT nil
+      :PROPERTY (simplify-second-of-two tree)
       :SPACE nil
       :THEN nil
-      :QUALIFIER (simplify-qualifier tree)
-      :CONDITIONS (simplify-second-of-two tree)
-      :CONDITION (simplify-second-of-two tree)
-      :EXPRESSION (simplify-second-of-two tree)
-      :COMPARATIVE (simplify-second-of-two tree)
-      :QUANTIFIER (simplify-second-of-two tree)
+      ;; :QUALIFIER (simplify-qualifier tree)
       :VALUE (simplify-second-of-two tree)
-      :PROPERTY (simplify-second-of-two tree)
-      :ACTIONS (simplify-second-of-two tree)
-      :ACTION (simplify-second-of-two tree)
       (remove nil? (map simplify tree)))
     tree))
 
 (def parse-rule
+  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
   (insta/parser grammar))
 
 (defn explain-parse-error-reason
@@ -277,7 +290,7 @@
   [rule]
   (assert (string? rule))
   (let [tree (simplify (parse-rule rule))]
-    (if (rule? rule) (generate tree)
+    (if (rule? tree) (eval (generate tree))
       (throw-parse-exception tree))))
 
 
