@@ -32,7 +32,7 @@
    NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;
    COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN;
    QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS SPACE QUALIFIER;
-   QUANTIFIER := NUMBER | SOME | NONE | ALL;
+   QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;
    EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;
    COMPARATIVE := MORE | LESS;
    DISJUNCT-VALUE := VALUE | VALUE SPACE OR SPACE DISJUNCT-VALUE;
@@ -125,6 +125,14 @@
                 'upper (list 'max l1 l2)]
           (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
 
+(defn generate-disjunct-condition
+  "Generate a property condition where the expression is a disjunct expression"
+  [tree property qualifier expression]
+  (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
+    (list 'let ['value (list property 'cell)]
+          (if (= qualifier '=) e
+            (list 'not e)))))
+
 (defn generate-property-condition
   ([tree]
    (assert-type tree :PROPERTY-CONDITION)
@@ -135,10 +143,7 @@
          qualifier (generate (nth tree 2))
          expression (generate (nth tree 3))]
      (case expression-type
-       :DISJUNCT-EXPRESSION (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
-                              (list 'let ['value (list property 'cell)]
-                                  (if (= qualifier '=) e
-                                    (list 'not e))))
+       :DISJUNCT-EXPRESSION (generate-disjunct-condition tree property qualifier expression)
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
        (list qualifier (list property 'cell) expression)))))
 
@@ -173,6 +178,24 @@
     :SYMBOL (list (keyword (second (second tree))) 'cell)
     (generate (second tree))))
 
+;; (defn generate-neighbours-condition
+;;   "Generate code for a condition which refers to neighbours."
+;;   ([tree]
+;;    (let [q (second tree)]
+;;      (if (number? q)
+;;        (generate-neighbours-condition '= q
+;;   ([comp1 quantity property value remainder comp2 distance]
+;;     [(list comp1
+;;          (list 'count
+;;                (list 'get-neighbours-with-property-value 'world
+;;                      '(cell :x) '(cell :y) distance
+;;                      (keyword property) (keyword-or-numeric value) comp2))
+;;          quantity)
+;;            remainder])
+;;   ([comp1 quantity property value remainder comp2]
+;;     (gen-neighbours-condition comp1 quantity property value remainder comp2 1)))
+
+
 (defn generate
   "Generate code for this (fragment of a) parse tree"
   [tree]
@@ -197,7 +220,7 @@
                                  = 'not=
                                  > '<
                                  < '>)
-      ;;    :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
+;;       :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
       :NUMERIC-EXPRESSION (generate-numeric-expression tree)
       :NUMBER (read-string (second tree))
       :PROPERTY (list (generate (second tree)) 'cell) ;; dubious - may not be right
