@@ -22,7 +22,8 @@
    DISJUNCT-CONDITION := CONDITION SPACE OR SPACE CONDITIONS;
    CONJUNCT-CONDITION := CONDITION SPACE AND SPACE CONDITIONS;
    CONDITION := NEIGHBOURS-CONDITION | PROPERTY-CONDITION;
-   NEIGHBOURS-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUANTIFIER SPACE NEIGHBOURS IS EXPRESSION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
+   WITHIN-CONDITION := NEIGHBOURS-CONDITION SPACE WITHIN SPACE NUMERIC-EXPRESSION;
+   NEIGHBOURS-CONDITION := WITHIN-CONDITION | QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUANTIFIER SPACE NEIGHBOURS IS EXPRESSION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
    PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION;
    EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;
    SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;
@@ -46,6 +47,7 @@
    NONE := 'no';
    ALL := 'all'
    BETWEEN := 'between';
+   WITHIN := 'within';
    IN := 'in';
    MORE := 'more';
    LESS := 'less' | 'fewer';
@@ -178,22 +180,57 @@
     :SYMBOL (list (keyword (second (second tree))) 'cell)
     (generate (second tree))))
 
-;; (defn generate-neighbours-condition
-;;   "Generate code for a condition which refers to neighbours."
-;;   ([tree]
-;;    (let [q (second tree)]
-;;      (if (number? q)
-;;        (generate-neighbours-condition '= q
-;;   ([comp1 quantity property value remainder comp2 distance]
-;;     [(list comp1
-;;          (list 'count
-;;                (list 'get-neighbours-with-property-value 'world
-;;                      '(cell :x) '(cell :y) distance
-;;                      (keyword property) (keyword-or-numeric value) comp2))
-;;          quantity)
-;;            remainder])
-;;   ([comp1 quantity property value remainder comp2]
-;;     (gen-neighbours-condition comp1 quantity property value remainder comp2 1)))
+(defn generate-neighbours-condition
+  "Generate code for a condition which refers to neighbours."
+  ([tree]
+   (generate-neighbours-condition tree (first (second tree))))
+  ([tree quantifier-type]
+   (let [quantifier (second (second tree))
+         pc (generate (nth tree 4))]
+     (case quantifier-type
+       :NUMBER (generate-neighbours-condition '= (read-string quantifier) pc 1)
+       :SOME (generate-neighbours-condition '> 0 pc 1)
+       :QUANTIFIER
+       (let [comparative (generate (simplify (second quantifier)))
+             value (simplify (nth quantifier 5))]
+         (generate-neighbours-condition comparative value pc 1)))))
+  ([comp1 quantity property-condition distance]
+   (list comp1
+         (list 'count (list 'remove false (list 'map (list 'fn ['cell] property-condition) '(get-neighbours cell world distance)))) quantity))
+  ([comp1 quantity property-condition]
+   (generate-neighbours-condition comp1 quantity property-condition 1)))
+
+;; (def s1 "if 3 neighbours have state equal to forest then state should be forest")
+;; (def s2 "if some neighbours have state equal to forest then state should be forest")
+;; (def s3 "if more than 3 neighbours have state equal to forest then state should be forest")
+;; (def s4 "if fewer than 3 neighbours have state equal to forest then state should be forest")
+;; (def s5 "if all neighbours have state equal to forest then state should be forest")
+;; (def s6 "if more than 3 neighbours within 2 have state equal to forest then state should be forest")
+
+;; (nth (simplify (parse-rule s1)) 2)
+;; (second (nth (simplify (parse-rule s1)) 2))
+;; (nth (simplify (parse-rule s2)) 2)
+;; (map simplify (nth (simplify (parse-rule s2)) 2))
+;; ;; (second (nth (simplify (parse-rule s2)) 2))
+;; ;; (nth (simplify (parse-rule s3)) 2)
+;; (second (nth (simplify (parse-rule s3)) 2))
+;; (map simplify (second (nth (simplify (parse-rule s3)) 2)))
+;; ;; (nth (simplify (parse-rule s4)) 2)
+;; ;; (second (nth (simplify (parse-rule s4)) 2))
+;; ;; (nth (simplify (parse-rule s5)) 2)
+;; ;; (second (nth (simplify (parse-rule s5)) 2))
+;; ;; (nth (simplify (parse-rule s6)) 2)
+;; ;; (second (nth (simplify (parse-rule s6)) 2))
+
+;; ;; (generate (nth (nth (simplify (parse-rule s5)) 2) 4))
+;; ;; (generate (nth (simplify (parse-rule s2)) 2))
+;; ;; (generate (nth (simplify (parse-rule s1)) 2))
+
+
+;; (generate-neighbours-condition '= 3 '(= (:state cell) :forest) 1)
+;; (generate-neighbours-condition (nth (simplify (parse-rule s3)) 2))
+;; (generate-neighbours-condition (nth (simplify (parse-rule s2)) 2))
+;; (generate-neighbours-condition (nth (simplify (parse-rule s1)) 2))
 
 
 (defn generate
@@ -209,7 +246,6 @@
       :CONDITIONS (generate-conditions tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
       :DISJUNCT-CONDITION (generate-disjunct-condition tree)
-      :PROPERTY-CONDITION (generate-property-condition tree)
       :DISJUNCT-EXPRESSION (generate (nth tree 2))
       :DISJUNCT-VALUE (generate-disjunct-value tree)
       :EQUIVALENCE '=
@@ -220,10 +256,11 @@
                                  = 'not=
                                  > '<
                                  < '>)
-;;       :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
+      :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
       :NUMERIC-EXPRESSION (generate-numeric-expression tree)
       :NUMBER (read-string (second tree))
       :PROPERTY (list (generate (second tree)) 'cell) ;; dubious - may not be right
+      :PROPERTY-CONDITION (generate-property-condition tree)
       :QUALIFIER (generate (second tree))
       :RULE (generate-rule tree)
       :SIMPLE-ACTION (generate-simple-action tree)
@@ -271,7 +308,7 @@
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
       :EXPRESSION (simplify-second-of-two tree)
-      :QUANTIFIER (simplify-second-of-two tree)
+;;      :QUANTIFIER (simplify-second-of-two tree)
       :NOT nil
       :PROPERTY (simplify-second-of-two tree)
       :SPACE nil

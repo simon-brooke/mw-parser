@@ -12,7 +12,7 @@
             :url "http://www.gnu.org/licenses/gpl-2.0.html"}
   :plugins [[lein-marginalia "0.7.1"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/tools.trace "0.7.8"]
-                 [instaparse "1.3.5"]
+                 [org.clojure/tools.trace "0.7.9"]
+                 [instaparse "1.4.1"]
                  [mw-engine "0.1.5-SNAPSHOT"]
                  ])
