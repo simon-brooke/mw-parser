@@ -118,22 +118,28 @@
 (defn generate-ranged-property-condition
   "Generate a property condition where the expression is a numeric range"
   [tree property expression]
-  (assert-type tree :PROPERTY-CONDITION)
-  (assert-type (nth tree 3) :RANGE-EXPRESSION)
-  (let [l1 (generate (nth expression 2))
-        l2 (generate (nth expression 4))
-        pv (list property 'cell)]
-    (list 'let ['lower (list 'min l1 l2)
-                'upper (list 'max l1 l2)]
-          (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
+   (assert-type tree :PROPERTY-CONDITION)
+   (assert-type (nth tree 3) :RANGE-EXPRESSION)
+   (let [l1 (generate (nth expression 2))
+         l2 (generate (nth expression 4))
+         pv (list property 'cell)]
+     (list 'let ['lower (list 'min l1 l2)
+                 'upper (list 'max l1 l2)]
+           (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
 
-(defn generate-disjunct-condition
-  "Generate a property condition where the expression is a disjunct expression"
-  [tree property qualifier expression]
-  (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
-    (list 'let ['value (list property 'cell)]
-          (if (= qualifier '=) e
-            (list 'not e)))))
+(defn generate-disjunct-property-condition
+  "Generate a property condition where the expression is a disjunct expression.
+  TODO: this is definitely still wrong!"
+  ([tree]
+   (let [property (generate (nth tree 1))
+         qualifier (generate (nth tree 2))
+         expression (generate (nth tree 3))]
+     (generate-disjunct-property-condition tree property qualifier expression)))
+  ([tree property qualifier expression]
+   (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
+     (list 'let ['value (list property 'cell)]
+           (if (= qualifier '=) e
+             (list 'not e))))))
 
 (defn generate-property-condition
   ([tree]
@@ -145,7 +151,7 @@
          qualifier (generate (nth tree 2))
          expression (generate (nth tree 3))]
      (case expression-type
-       :DISJUNCT-EXPRESSION (generate-disjunct-condition tree property qualifier expression)
+       :DISJUNCT-EXPRESSION (generate-disjunct-property-condition tree property qualifier expression)
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
        (list qualifier (list property 'cell) expression)))))
 
@@ -159,10 +165,9 @@
       (list 'merge 'cell {property expression}))))
 
 (defn generate-multiple-actions
-   [tree]
-  nil)
-;;   (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
-;;   (conj 'do (map
+  [tree]
+  (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
+  (conj 'do (map generate-simple-action (rest tree))))
 
 (defn generate-disjunct-value
   "Generate a disjunct value. Essentially what we need here is to generate a
@@ -268,6 +273,8 @@
       :VALUE (generate (second tree))
       (map generate tree))
     tree))
+
+(generate '(:PROPERTY-CONDITION (:SYMBOL "wolves") (:QUALIFIER (:COMPARATIVE-QUALIFIER (:IS "are") (:MORE "more") (:THAN "than"))) (:SYMBOL "deer")))
 
 
 (defn simplify-qualifier
