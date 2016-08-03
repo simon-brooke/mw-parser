@@ -1,7 +1,8 @@
 (ns mw-parser.declarative-test
   (:use clojure.pprint
         mw-engine.core
-        mw-engine.world)
+        mw-engine.world
+        mw-engine.utils)
   (:require [clojure.test :refer :all]
             [mw-parser.declarative :refer :all]))
 
@@ -103,8 +104,8 @@
                  (is (= (apply afn (list {:state :new} nil))
                             {:state :grassland})
                      "Rule fires when condition is met")
-                 (is (nil? (apply afn (list {:state :forest} nil))))
-                     "Rule doesn't fire when condition isn't met"))
+                 (is (nil? (apply afn (list {:state :forest} nil)))
+                     "Rule doesn't fire when condition isn't met")))
 
   (testing "Condition conjunction rule"
            (let [afn (compile-rule "if state is new and altitude is 0 then state should be water")]
@@ -196,13 +197,13 @@
              (is (nil? (apply afn (list {:altitude 10} nil)))
                  "Rule does not fire when condition is not met")))
 
-;;   (testing "Property is less than property"
-;;            (let [afn (compile-rule "if wolves are less than deer then deer should be deer - wolves")]
-;;              (is (= (apply afn (list {:deer 3 :wolves 2} nil))
-;;                     {:deer 1 :wolves 2})
-;;                  "Rule fires when condition is met")
-;;              (is (nil? (apply afn (list {:deer 2 :wolves 3} nil)))
-;;                  "Rule does not fire when condition is not met")))
+  (testing "Property is less than property"
+           (let [afn (compile-rule "if wolves are less than deer then deer should be deer - wolves")]
+             (is (= (apply afn (list {:deer 3 :wolves 2} nil))
+                    {:deer 1 :wolves 2})
+                 "Rule fires when condition is met")
+             (is (nil? (apply afn (list {:deer 2 :wolves 3} nil)))
+                 "Rule does not fire when condition is not met")))
 
   (testing "Number neighbours have property equal to value"
            (let [afn (compile-rule "if 3 neighbours have state equal to new then state should be water")
@@ -214,7 +215,15 @@
                  "Middle cell has eight neighbours, so rule does not fire."))
            (let [afn (compile-rule "if 3 neighbours are new then state should be water")
                  world (make-world 3 3)]
-             ;; 'are new' should be the same as 'have state equal to new'
+             ;; 'are new' and 'is new' should be the same as 'have state equal to new'
+             (is (= (apply afn (list {:x 0 :y 0} world))
+                    {:state :water :x 0 :y 0})
+                 "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")
+             (is (nil? (apply afn (list {:x 1 :y 1} world)))
+                 "Middle cell has eight neighbours, so rule does not fire."))
+           (let [afn (compile-rule "if 3 neighbours is new then state should be water")
+                 world (make-world 3 3)]
+             ;; 'are new' and 'is new' should be the same as 'have state equal to new'
              (is (= (apply afn (list {:x 0 :y 0} world))
                     {:state :water :x 0 :y 0})
                  "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")

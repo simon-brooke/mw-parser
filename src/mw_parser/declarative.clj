@@ -24,7 +24,7 @@
    CONDITION := NEIGHBOURS-CONDITION | PROPERTY-CONDITION;
    WITHIN-CONDITION := NEIGHBOURS-CONDITION SPACE WITHIN SPACE NUMERIC-EXPRESSION;
    NEIGHBOURS-CONDITION := WITHIN-CONDITION | QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUANTIFIER SPACE NEIGHBOURS IS EXPRESSION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
-   PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION;
+   PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION | VALUE;
    EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;
    SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;
    DISJUNCT-EXPRESSION := IN SPACE DISJUNCT-VALUE;
@@ -49,7 +49,7 @@
    BETWEEN := 'between';
    WITHIN := 'within';
    IN := 'in';
-   MORE := 'more';
+   MORE := 'more' | 'greater';
    LESS := 'less' | 'fewer';
    OPERATOR := '+' | '-' | '*' | '/';
    NEIGHBOURS := 'neighbour' | 'neighbor' | 'neighbours' | 'neighbors';
@@ -75,16 +75,20 @@
 
 (declare generate simplify)
 
+
 (defn suitable-fragment?
   "Return `true` if `tree-fragment` appears to be a tree fragment of the expected `type`."
   [tree-fragment type]
-  (and (coll? tree-fragment)(= (first tree-fragment) type)))
+  (and (coll? tree-fragment)
+       (= (first tree-fragment) type)))
+
 
 (defn assert-type
   "If `tree-fragment` is not a tree fragment of the expected `type`, throw an exception."
   [tree-fragment type]
   (assert (suitable-fragment? tree-fragment type)
           (throw (Exception. (format "Expected a %s fragment" type)))))
+
 
 (defn generate-rule
   "From this `tree`, assumed to be a syntactically correct rule specification,
@@ -93,6 +97,7 @@
   (assert-type tree :RULE)
   (list 'fn ['cell 'world] (list 'if (generate (nth tree 2)) (generate (nth tree 3)))))
 
+
 (defn generate-conditions
   "From this `tree`, assumed to be a syntactically correct conditions clause,
   generate and return the appropriate clojure fragment."
@@ -100,20 +105,24 @@
   (assert-type tree :CONDITIONS)
   (generate (nth tree 1)))
 
+
 (defn generate-condition
   [tree]
   (assert-type tree :CONDITION)
   (generate (nth tree 1)))
+
 
 (defn generate-conjunct-condition
   [tree]
   (assert-type tree :CONJUNCT-CONDITION)
   (list 'and (generate (nth tree 1))(generate (nth tree 3))))
 
+
 (defn generate-disjunct-condition
   [tree]
   (assert-type tree :DISJUNCT-CONDITION)
   (list 'or (generate (nth tree 1))(generate (nth tree 3))))
+
 
 (defn generate-ranged-property-condition
   "Generate a property condition where the expression is a numeric range"
@@ -126,6 +135,7 @@
      (list 'let ['lower (list 'min l1 l2)
                  'upper (list 'max l1 l2)]
            (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
+
 
 (defn generate-disjunct-property-condition
   "Generate a property condition where the expression is a disjunct expression.
@@ -141,10 +151,22 @@
            (if (= qualifier '=) e
              (list 'not e))))))
 
+
 (defn generate-property-condition
   ([tree]
    (assert-type tree :PROPERTY-CONDITION)
-   (generate-property-condition tree (first (nth tree 3))))
+   (if
+     (and (= (count tree) 2) (= (first (second tree)) :SYMBOL))
+     ;; it's a shorthand for 'state equal to symbol'. This should probably have
+     ;; been handled in simplify...
+     (generate-property-condition
+       (list
+         :PROPERTY-CONDITION
+         '(:SYMBOL "state")
+         '(:QUALIFIER (:EQUIVALENCE (:EQUAL "equal to")))
+         (second tree)))
+     ;; otherwise...
+     (generate-property-condition tree (first (nth tree 3)))))
   ([tree expression-type]
    (assert-type tree :PROPERTY-CONDITION)
    (let [property (generate (nth tree 1))
@@ -155,6 +177,7 @@
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
        (list qualifier (list property 'cell) expression)))))
 
+
 (defn generate-simple-action
   [tree]
   (assert-type tree :SIMPLE-ACTION)
@@ -164,10 +187,12 @@
       (throw (Exception. reserved-properties-error))
       (list 'merge 'cell {property expression}))))
 
+
 (defn generate-multiple-actions
   [tree]
   (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
   (conj 'do (map generate-simple-action (rest tree))))
+
 
 (defn generate-disjunct-value
   "Generate a disjunct value. Essentially what we need here is to generate a
@@ -178,6 +203,7 @@
     (cons (generate (second tree)) (generate (nth tree 3)))
     (list (generate (second tree)))))
 
+
 (defn generate-numeric-expression
   [tree]
   (assert-type tree :NUMERIC-EXPRESSION)
@@ -185,57 +211,30 @@
     :SYMBOL (list (keyword (second (second tree))) 'cell)
     (generate (second tree))))
 
+
 (defn generate-neighbours-condition
   "Generate code for a condition which refers to neighbours."
   ([tree]
-   (generate-neighbours-condition tree (first (second tree))))
+   (assert-type tree :NEIGHBOURS-CONDITION)
+   (generate-neighbours-condition tree (first (second (second tree)))))
   ([tree quantifier-type]
-   (let [quantifier (second (second tree))
+   (let [quantifier (second tree)
          pc (generate (nth tree 4))]
      (case quantifier-type
-       :NUMBER (generate-neighbours-condition '= (read-string quantifier) pc 1)
+       :NUMBER (generate-neighbours-condition '= (read-string (second (second quantifier))) pc 1)
        :SOME (generate-neighbours-condition '> 0 pc 1)
-       :QUANTIFIER
-       (let [comparative (generate (simplify (second quantifier)))
-             value (simplify (nth quantifier 5))]
-         (generate-neighbours-condition comparative value pc 1)))))
+       :MORE (let [value (generate (nth quantifier 3))]
+               (generate-neighbours-condition '> value pc 1))
+       :LESS (let [value (generate (nth quantifier 3))]
+               (generate-neighbours-condition '< value pc 1)))))
   ([comp1 quantity property-condition distance]
    (list comp1
-         (list 'count (list 'remove false (list 'map (list 'fn ['cell] property-condition) '(get-neighbours cell world distance)))) quantity))
+         (list 'count
+               (list 'remove 'false?
+                     (list 'map (list 'fn ['cell] property-condition)
+                           (list 'mw-engine.utils/get-neighbours 'world 'cell distance)))) quantity))
   ([comp1 quantity property-condition]
    (generate-neighbours-condition comp1 quantity property-condition 1)))
-
-;; (def s1 "if 3 neighbours have state equal to forest then state should be forest")
-;; (def s2 "if some neighbours have state equal to forest then state should be forest")
-;; (def s3 "if more than 3 neighbours have state equal to forest then state should be forest")
-;; (def s4 "if fewer than 3 neighbours have state equal to forest then state should be forest")
-;; (def s5 "if all neighbours have state equal to forest then state should be forest")
-;; (def s6 "if more than 3 neighbours within 2 have state equal to forest then state should be forest")
-
-;; (nth (simplify (parse-rule s1)) 2)
-;; (second (nth (simplify (parse-rule s1)) 2))
-;; (nth (simplify (parse-rule s2)) 2)
-;; (map simplify (nth (simplify (parse-rule s2)) 2))
-;; ;; (second (nth (simplify (parse-rule s2)) 2))
-;; ;; (nth (simplify (parse-rule s3)) 2)
-;; (second (nth (simplify (parse-rule s3)) 2))
-;; (map simplify (second (nth (simplify (parse-rule s3)) 2)))
-;; ;; (nth (simplify (parse-rule s4)) 2)
-;; ;; (second (nth (simplify (parse-rule s4)) 2))
-;; ;; (nth (simplify (parse-rule s5)) 2)
-;; ;; (second (nth (simplify (parse-rule s5)) 2))
-;; ;; (nth (simplify (parse-rule s6)) 2)
-;; ;; (second (nth (simplify (parse-rule s6)) 2))
-
-;; ;; (generate (nth (nth (simplify (parse-rule s5)) 2) 4))
-;; ;; (generate (nth (simplify (parse-rule s2)) 2))
-;; ;; (generate (nth (simplify (parse-rule s1)) 2))
-
-
-;; (generate-neighbours-condition '= 3 '(= (:state cell) :forest) 1)
-;; (generate-neighbours-condition (nth (simplify (parse-rule s3)) 2))
-;; (generate-neighbours-condition (nth (simplify (parse-rule s2)) 2))
-;; (generate-neighbours-condition (nth (simplify (parse-rule s1)) 2))
 
 
 (defn generate
@@ -273,8 +272,6 @@
       :VALUE (generate (second tree))
       (map generate tree))
     tree))
-
-(generate '(:PROPERTY-CONDITION (:SYMBOL "wolves") (:QUALIFIER (:COMPARATIVE-QUALIFIER (:IS "are") (:MORE "more") (:THAN "than"))) (:SYMBOL "deer")))
 
 
 (defn simplify-qualifier
@@ -315,12 +312,10 @@
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
       :EXPRESSION (simplify-second-of-two tree)
-;;      :QUANTIFIER (simplify-second-of-two tree)
-      :NOT nil
+      :NOT nil ;; TODO is this right?!? It looks wrong
       :PROPERTY (simplify-second-of-two tree)
       :SPACE nil
       :THEN nil
-      ;; :QUALIFIER (simplify-qualifier tree)
       :VALUE (simplify-second-of-two tree)
       (remove nil? (map simplify tree)))
     tree))
@@ -332,7 +327,15 @@
 (defn explain-parse-error-reason
   "Attempt to explain the reason for the parse error."
   [reason]
-  (str "Expecting one of (" (apply str (map #(str (:expecting %) " ") (first reason))) ")"))
+  (str "Expecting one of (" (apply str (map #(str (:expecting %) " ") reason)) ")"))
+
+(defn parser-error-to-map
+  [parser-error]
+  (let [m (reduce (fn [map item](merge map {(first item)(second item)})) {} parser-error)
+        reason (map
+                 #(reduce (fn [map item] (merge {(first item) (second item)} map)) {} %)
+                 (:reason m))]
+    (merge m {:reason reason})))
 
 (defn throw-parse-exception
   "Construct a helpful error message from this `parser-error`, and throw an exception with that message."
@@ -342,11 +345,11 @@
     [
       ;; the error structure is a list, such that each element is a list of two items, and
       ;; the first element in each sublist is a keyword. Easier to work with it as a map
-     error-map (reduce (fn [map item](merge map {(first item)(rest item)})) {} parser-error)
-     text (first (:text error-map))
+     error-map (parser-error-to-map parser-error)
+     text (:text error-map)
      reason (explain-parse-error-reason (:reason error-map))
       ;; rules have only one line, by definition; we're interested in the column
-     column (if (:column error-map)(first (:column error-map)) 0)
+     column (if (:column error-map)(:column error-map) 0)
       ;; create a cursor to point to that column
      cursor (apply str (reverse (conj (repeat column " ") "^")))
      message (format bad-parse-error text cursor reason)
