@@ -436,12 +436,12 @@
           "Addition is executed")))
 
   (testing "Arithmetic action: addition of property value"
-    (let [afn (compile-rule "if state is climax then fertility should be fertility + leaf-fall")]
+    (let [afn (compile-rule "if state is climax then fertility should be fertility + leaffall")]
       (is (= (:fertility
                (apply afn
                       (list {:state :climax
                              :fertility 0
-                             :leaf-fall 1} nil)))
+                             :leaffall 1} nil)))
              1)
           "Addition is executed")))
 

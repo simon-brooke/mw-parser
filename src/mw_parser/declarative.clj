@@ -18,12 +18,13 @@
   ;; in order to simplify translation into other natural languages, all
   ;; TOKENS within the parser should be unambiguous
   "RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;
-   CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | PROPERTY-CONDITION | NEIGHBOURS-CONDITION ;
+   CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | CONDITION ;
    DISJUNCT-CONDITION := CONDITION SPACE OR SPACE CONDITIONS;
    CONJUNCT-CONDITION := CONDITION SPACE AND SPACE CONDITIONS;
-   CONDITION := NEIGHBOURS-CONDITION | PROPERTY-CONDITION;
-   WITHIN-CONDITION := NEIGHBOURS-CONDITION SPACE WITHIN SPACE NUMERIC-EXPRESSION;
-   NEIGHBOURS-CONDITION := WITHIN-CONDITION | QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUANTIFIER SPACE NEIGHBOURS IS EXPRESSION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
+   CONDITION := WITHIN-CONDITION | NEIGHBOURS-CONDITION | PROPERTY-CONDITION;
+   WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;
+   NEIGHBOURS-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
+   PROPERTY-CONDITION-OR-EXPRESSION := PROPERTY-CONDITION | EXPRESSION;
    PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION | VALUE;
    EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;
    SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;
@@ -31,7 +32,7 @@
    RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;
    NUMERIC-EXPRESSION := VALUE | VALUE SPACE OPERATOR SPACE NUMERIC-EXPRESSION;
    NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;
-   COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN;
+   COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN | COMPARATIVE SPACE THAN;
    QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS SPACE QUALIFIER;
    QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;
    EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;
@@ -59,12 +60,13 @@
    IS := 'is' | 'are' | 'have' | 'has';
    NUMBER := #'[0-9]+' | #'[0-9]+.[0-9]+';
    SYMBOL := #'[a-z]+';
-   ACTIONS := ACTION | ACTION SPACE 'and' SPACE ACTIONS
+   ACTIONS := ACTION | ACTION SPACE AND SPACE ACTIONS
    ACTION := SIMPLE-ACTION | PROBABLE-ACTION;
-   PROBABLE-ACTION := VALUE SPACE 'chance in' SPACE VALUE SPACE SIMPLE-ACTION;
-   SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION
-   BECOMES := 'should be'
-   SPACE := #' *'"
+   PROBABLE-ACTION := VALUE SPACE CHANCE-IN SPACE VALUE SPACE SIMPLE-ACTION;
+   SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION;
+   CHANCE-IN := 'chance in';
+   BECOMES := 'should be' | 'becomes';
+   SPACE := #' *'";
   )
 
 (defn TODO
@@ -73,7 +75,7 @@
   message)
 
 
-(declare generate simplify)
+(declare generate generate-action simplify)
 
 
 (defn suitable-fragment?
@@ -90,6 +92,18 @@
           (throw (Exception. (format "Expected a %s fragment" type)))))
 
 
+(defn search-tree
+  "Return the first element of this tree which has this tag in a depth-first, left-to-right search"
+  [tree tag]
+  (cond
+    (= (first tree) tag) tree
+    :else (first
+            (remove nil?
+                    (map
+                      #(search-tree % tag)
+                      (rest tree))))))
+
+
 (defn generate-rule
   "From this `tree`, assumed to be a syntactically correct rule specification,
   generate and return the appropriate rule as a function of two arguments."
@@ -103,25 +117,25 @@
   generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :CONDITIONS)
-  (generate (nth tree 1)))
+  (generate (second tree)))
 
 
 (defn generate-condition
   [tree]
   (assert-type tree :CONDITION)
-  (generate (nth tree 1)))
+  (generate (second tree)))
 
 
 (defn generate-conjunct-condition
   [tree]
   (assert-type tree :CONJUNCT-CONDITION)
-  (list 'and (generate (nth tree 1))(generate (nth tree 3))))
+  (cons 'and (map generate (rest tree))))
 
 
 (defn generate-disjunct-condition
   [tree]
   (assert-type tree :DISJUNCT-CONDITION)
-  (list 'or (generate (nth tree 1))(generate (nth tree 3))))
+  (cons 'or (map generate (rest tree))))
 
 
 (defn generate-ranged-property-condition
@@ -141,7 +155,7 @@
   "Generate a property condition where the expression is a disjunct expression.
   TODO: this is definitely still wrong!"
   ([tree]
-   (let [property (generate (nth tree 1))
+   (let [property (generate (second tree))
          qualifier (generate (nth tree 2))
          expression (generate (nth tree 3))]
      (generate-disjunct-property-condition tree property qualifier expression)))
@@ -169,7 +183,7 @@
      (generate-property-condition tree (first (nth tree 3)))))
   ([tree expression-type]
    (assert-type tree :PROPERTY-CONDITION)
-   (let [property (generate (nth tree 1))
+   (let [property (generate (second tree))
          qualifier (generate (nth tree 2))
          e (generate (nth tree 3))
          expression (cond
@@ -182,21 +196,61 @@
        (list qualifier (list property 'cell) expression)))))
 
 
-(defn generate-simple-action
+(defn generate-qualifier
   [tree]
-  (assert-type tree :SIMPLE-ACTION)
-  (let [property (generate (nth tree 1))
-        expression (generate (nth tree 3))]
-    (if (or (= property :x) (= property :y))
-      (throw (Exception. reserved-properties-error))
-      (list 'merge 'cell {property expression}))))
+  (if
+    (= (count tree) 2)
+    (generate (second tree))
+    ;; else
+    (generate (nth tree 2))))
+
+
+(defn generate-simple-action
+  ([tree]
+   (assert-type tree :SIMPLE-ACTION)
+   (generate-simple-action tree []))
+  ([tree others]
+   (assert-type tree :SIMPLE-ACTION)
+   (let [property (generate (second tree))
+         expression (generate (nth tree 3))]
+     (if (or (= property :x) (= property :y))
+       (throw (Exception. reserved-properties-error))
+       (list 'merge
+             (if (empty? others) 'cell
+               ;; else
+               (generate others))
+             {property expression})))))
+
+
+(defn generate-probable-action
+  ([tree]
+   (assert-type tree :PROBABLE-ACTION)
+   (generate-probable-action tree []))
+  ([tree others]
+   (assert-type tree :PROBABLE-ACTION)
+  (let
+    [chances (generate (nth tree 1))
+     total (generate (nth tree 2))
+     action (generate-action (nth tree 3) others)]
+    ;; TODO: could almost certainly be done better with macro syntax
+    (list 'if
+          (list '< (list 'rand total) chances)
+          action))))
+
+
+(defn generate-action
+  [tree others]
+  (case (first tree)
+    :ACTIONS (generate-action (first tree) others)
+    :SIMPLE-ACTION (generate-simple-action tree others)
+    :PROBABLE-ACTION (generate-probable-action tree others)
+    (throw (Exception. (str "Not a known action type: " (first tree))))))
 
 
 (defn generate-multiple-actions
   [tree]
-  (assert (and (coll? tree)(= (first tree) :ACTIONS)) "Expected an ACTIONS fragment")
-  (conj 'do (map generate-simple-action (rest tree))))
-
+  (assert-type tree :ACTIONS)
+  (generate-action (first (rest tree)) (second (rest tree))))
 
 (defn generate-disjunct-value
   "Generate a disjunct value. Essentially what we need here is to generate a
@@ -224,7 +278,9 @@
   "Generate code for a condition which refers to neighbours."
   ([tree]
    (assert-type tree :NEIGHBOURS-CONDITION)
-   (generate-neighbours-condition tree (first (second (second tree)))))
+   (case (first (second tree))
+     :QUANTIFIER (generate-neighbours-condition tree (first (second (second tree))))
+     :QUALIFIER (cons (generate (second tree)) (rest (generate (nth tree 2))))))
   ([tree quantifier-type]
    (let [quantifier (second tree)
          pc (generate (nth tree 4))]
@@ -234,7 +290,8 @@
        :MORE (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '> value pc 1))
        :LESS (let [value (generate (nth quantifier 3))]
-               (generate-neighbours-condition '< value pc 1)))))
+               (generate-neighbours-condition '< value pc 1))
+       )))
   ([comp1 quantity property-condition distance]
    (list comp1
          (list 'count
@@ -245,6 +302,31 @@
    (generate-neighbours-condition comp1 quantity property-condition 1)))
 
 
+(defn generate-within-condition
+  "Generate code for a condition which refers to neighbours within a specified distance.
+  NOTE THAT there's clearly masses of commonality between this and
+  `generate-neighbours-condition`, and that some refactoring is almost certainly
+  desirable. It may be that it's better to simplify a `NEIGHBOURS-CONDITION`
+  into a `WITHIN-CONDITION` in the simplification stage."
+  ([tree]
+  (assert-type tree :WITHIN-CONDITION)
+    (case (first (second tree))
+      :QUANTIFIER (generate-within-condition tree (first (second (second tree))))
+      :QUALIFIER (TODO "qualified within... help!")))
+  ([tree quantifier-type]
+   (let [quantifier (second tree)
+         distance (generate (nth tree 4))
+         pc (generate (nth tree 6))]
+     (case quantifier-type
+       :NUMBER (generate-neighbours-condition '= (read-string (second (second quantifier))) pc distance)
+       :SOME (generate-neighbours-condition '> 0 pc distance)
+       :MORE (let [value (generate (nth quantifier 3))]
+               (generate-neighbours-condition '> value pc distance))
+       :LESS (let [value (generate (nth quantifier 3))]
+               (generate-neighbours-condition '< value pc distance))
+       ))))
+
+
 (defn generate
   "Generate code for this (fragment of a) parse tree"
   [tree]
@@ -253,7 +335,7 @@
     (case (first tree)
       :ACTIONS (generate-multiple-actions tree)
       :COMPARATIVE (generate (second tree))
-      :COMPARATIVE-QUALIFIER (generate (nth tree 2))
+      :COMPARATIVE-QUALIFIER (generate (second tree))
       :CONDITION (generate-condition tree)
       :CONDITIONS (generate-conditions tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
@@ -271,14 +353,16 @@
       :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
       :NUMERIC-EXPRESSION (generate-numeric-expression tree)
       :NUMBER (read-string (second tree))
+      :OPERATOR (symbol (second tree))
+      :PROBABLE-ACTION (generate-probable-action tree)
       :PROPERTY (list (generate (second tree)) 'cell) ;; dubious - may not be right
       :PROPERTY-CONDITION (generate-property-condition tree)
-      :QUALIFIER (generate (second tree))
+      :QUALIFIER (generate-qualifier tree)
       :RULE (generate-rule tree)
       :SIMPLE-ACTION (generate-simple-action tree)
       :SYMBOL (keyword (second tree))
       :VALUE (generate (second tree))
-      :OPERATOR (symbol (second tree))
+      :WITHIN-CONDITION (generate-within-condition tree)
       (map generate tree))
     tree))
 
@@ -300,7 +384,7 @@
   "There are a number of possible simplifications such that if the `tree` has
    only two elements, the second is semantically sufficient."
   [tree]
-  (if (= (count tree) 2) (simplify (nth tree 1)) tree))
+  (if (= (count tree) 2) (simplify (second tree)) tree))
 
 
 (defn rule?
@@ -316,15 +400,17 @@
     (coll? tree)
     (case (first tree)
       :ACTION (simplify-second-of-two tree)
-      :ACTIONS (simplify-second-of-two tree)
+      :ACTIONS (cons (first tree) (simplify (rest tree)))
+      :CHANCE-IN nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
       :EXPRESSION (simplify-second-of-two tree)
-      :NOT nil ;; TODO is this right?!? It looks wrong
       :PROPERTY (simplify-second-of-two tree)
+      :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
       :SPACE nil
       :THEN nil
+      :AND nil
       :VALUE (simplify-second-of-two tree)
       (remove nil? (map simplify tree)))
     tree))
