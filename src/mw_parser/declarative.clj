@@ -11,7 +11,7 @@
 ;; (1) rule text
 ;; (2) cursor showing where in the rule text the error occurred
 ;; (3) the reason for the error
-(def bad-parse-error "I did not understand:\n'%s'\n%s\n%s")
+(def bad-parse-error "I did not understand:\n  '%s'\n  %s\n  %s")
 
 
 (def grammar
@@ -171,7 +171,11 @@
    (assert-type tree :PROPERTY-CONDITION)
    (let [property (generate (nth tree 1))
          qualifier (generate (nth tree 2))
-         expression (generate (nth tree 3))]
+         e (generate (nth tree 3))
+         expression (cond
+                      (and (not (= qualifier '=)) (keyword? e)) (list 'or (list e 'cell) e)
+                      (and (not (= qualifier 'not=)) (keyword? e)) (list 'or (list e 'cell) e)
+                      :else e)]
      (case expression-type
        :DISJUNCT-EXPRESSION (generate-disjunct-property-condition tree property qualifier expression)
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
@@ -207,9 +211,13 @@
 (defn generate-numeric-expression
   [tree]
   (assert-type tree :NUMERIC-EXPRESSION)
-  (case (first (second tree))
-    :SYMBOL (list (keyword (second (second tree))) 'cell)
-    (generate (second tree))))
+  (case (count tree)
+    4 (let [[p operator expression] (rest tree)
+            property (if (number? p) p (list p 'cell))]
+        (list (generate operator) (generate property) (generate expression)))
+    (case (first (second tree))
+      :SYMBOL (list (keyword (second (second tree))) 'cell)
+      (generate (second tree)))))
 
 
 (defn generate-neighbours-condition
@@ -270,6 +278,7 @@
       :SIMPLE-ACTION (generate-simple-action tree)
       :SYMBOL (keyword (second tree))
       :VALUE (generate (second tree))
+      :OPERATOR (symbol (second tree))
       (map generate tree))
     tree))
 
