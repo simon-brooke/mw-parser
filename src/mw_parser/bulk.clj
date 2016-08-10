@@ -2,7 +2,7 @@
 ;; objective is to parse rules out of a block of text from a textarea
 
 (ns mw-parser.bulk
-  (:use mw-parser.core
+  (:use mw-parser.declarative
         mw-engine.utils
         clojure.java.io
         [clojure.string :only [split trim]])
