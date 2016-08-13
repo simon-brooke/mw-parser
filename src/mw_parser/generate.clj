@@ -1,7 +1,28 @@
-(ns mw-parser.generate
-  (:use mw-engine.utils
-        mw-parser.utils
+(ns ^{:doc "Generate Clojure source from simplified parse trees."
+      :author "Simon Brooke"}
+  mw-parser.generate
+  (:require [mw-engine.utils :refer []]
+        [mw-parser.utils :refer [assert-type TODO]]
         [mw-parser.errors :as pe]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 2
+;; of the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+;; USA.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (declare generate generate-action)
@@ -24,6 +45,8 @@
 
 
 (defn generate-condition
+  "From this `tree`, assumed to be a syntactically correct condition clause,
+  generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :CONDITION)
   (generate (second tree)))
@@ -31,18 +54,24 @@
 
 (defn generate-conjunct-condition
   [tree]
+  "From this `tree`, assumed to be a syntactically conjunct correct condition clause,
+  generate and return the appropriate clojure fragment."
   (assert-type tree :CONJUNCT-CONDITION)
   (cons 'and (map generate (rest tree))))
 
 
 (defn generate-disjunct-condition
+  "From this `tree`, assumed to be a syntactically correct disjunct condition clause,
+  generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :DISJUNCT-CONDITION)
   (cons 'or (map generate (rest tree))))
 
 
 (defn generate-ranged-property-condition
-  "Generate a property condition where the expression is a numeric range"
+  "From this `tree`, assumed to be a syntactically property condition clause for
+  this `property` where the `expression` is a numeric range, generate and return
+  the appropriate clojure fragment."
   [tree property expression]
    (assert-type tree :PROPERTY-CONDITION)
    (assert-type (nth tree 3) :RANGE-EXPRESSION)
@@ -55,7 +84,9 @@
 
 
 (defn generate-disjunct-property-condition
-  "Generate a property condition where the expression is a disjunct expression.
+  "From this `tree`, assumed to be a syntactically property condition clause
+  where the expression is a a disjunction, generate and return
+  the appropriate clojure fragment.
   TODO: this is definitely still wrong!"
   ([tree]
    (let [property (generate (second tree))
@@ -70,6 +101,8 @@
 
 
 (defn generate-property-condition
+  "From this `tree`, assumed to be a syntactically property condition clause,
+  generate and return the appropriate clojure fragment."
   ([tree]
    (assert-type tree :PROPERTY-CONDITION)
    (if
@@ -100,6 +133,8 @@
 
 
 (defn generate-qualifier
+  "From this `tree`, assumed to be a syntactically correct qualifier,
+  generate and return the appropriate clojure fragment."
   [tree]
   (if
     (= (count tree) 2)
@@ -109,6 +144,8 @@
 
 
 (defn generate-simple-action
+  "From this `tree`, assumed to be a syntactically correct simple action,
+  generate and return the appropriate clojure fragment."
   ([tree]
    (assert-type tree :SIMPLE-ACTION)
    (generate-simple-action tree []))
@@ -126,6 +163,8 @@
 
 
 (defn generate-probable-action
+  "From this `tree`, assumed to be a syntactically correct probable action,
+  generate and return the appropriate clojure fragment."
   ([tree]
    (assert-type tree :PROBABLE-ACTION)
    (generate-probable-action tree []))
@@ -142,6 +181,8 @@
 
 
 (defn generate-action
+  "From this `tree`, assumed to be a syntactically correct action,
+  generate and return the appropriate clojure fragment."
   [tree others]
   (case (first tree)
     :ACTIONS (generate-action (first tree) others)
@@ -151,6 +192,8 @@
 
 
 (defn generate-multiple-actions
+  "From this `tree`, assumed to be one or more syntactically correct actions,
+  generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :ACTIONS)
   (generate-action (first (rest tree)) (second (rest tree))))
@@ -166,6 +209,8 @@
 
 
 (defn generate-numeric-expression
+  "From this `tree`, assumed to be a syntactically correct numeric expression,
+  generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :NUMERIC-EXPRESSION)
   (case (count tree)
@@ -182,6 +227,7 @@
   ([tree]
    (assert-type tree :NEIGHBOURS-CONDITION)
    (case (first (second tree))
+     :NUMBER (read-string (second (second tree)))
      :QUANTIFIER (generate-neighbours-condition tree (first (second (second tree))))
      :QUALIFIER (cons (generate (second tree)) (rest (generate (nth tree 2))))))
   ([tree quantifier-type]
