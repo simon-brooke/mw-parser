@@ -59,23 +59,18 @@
   (if
     (coll? tree)
     (case (first tree)
-      ;; 'all' isn't actually the same as 'eight', because cells at the edges of the world have
-      ;; fewer than eight neighbours; but it's a simplifying (ha!) assumption for now."
-      ;; TODO: fix this so it actually works.
-      :ALL [:COMPARATIVE '= 8]
       :ACTION (simplify-second-of-two tree)
-      :ACTIONS (simplify-second-of-two tree)
+      :ACTIONS (cons (first tree) (simplify (rest tree)))
+      :CHANCE-IN nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
       :EXPRESSION (simplify-second-of-two tree)
-      :NONE [:COMPARATIVE '= 0]
-      :NUMBER tree
       :PROPERTY (simplify-second-of-two tree)
-      :QUALIFIER (simplify-qualifier tree)
-      :QUANTIFIER (simplify-quantifier tree)
-      :SOME [:COMPARATIVE '> 0]
+      :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
       :SPACE nil
+      :THEN nil
+      :AND nil
       :VALUE (simplify-second-of-two tree)
       (remove nil? (map simplify tree)))
     tree))

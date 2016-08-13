@@ -112,13 +112,3 @@
   ([rule-text]
    (compile-rule rule-text false)))
 
-
-(ps/simplify
-  (parse-rule
-    "if more than 2 neighbours have altitude equal to 11 then state should be beach"))
-
-(pg/generate
-  (ps/simplify
-    (parse-rule
-      "if more than 2 neighbours have altitude equal to 11 then state should be beach")))
-
