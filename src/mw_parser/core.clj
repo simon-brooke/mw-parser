@@ -7,51 +7,55 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License
-;; as published by the Free Software Foundation; either version 2
-;; of the License, or (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; if not, write to the Free Software
-;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
-;; USA.
-;;
+;;;;
+;;;; mw-parser: a rule parser for MicroWorld.
+;;;;
+;;;; This program is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU General Public License
+;;;; as published by the Free Software Foundation; either version 2
+;;;; of the License, or (at your option) any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this program; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+;;;; USA.
+;;;;
+;;;; Copyright (C) 2014 Simon Brooke
+;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; A very simple parser which parses production rules of the following forms:
-;;
-;; * "if altitude is less than 100 and state is forest then state should be climax and deer should be 3"
-;; * "if altitude is 100 or fertility is 25 then state should be heath and fertility should be 24.3"
-;; * "if altitude is 100 or fertility is 25 then state should be heath"
-;; * "if deer is more than 2 and wolves is 0 and fertility is more than 20 then deer should be deer + 2"
-;; * "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves"
-;; * "if state is grassland and 4 neighbours have state equal to water then state should be village"
-;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
-;; * "if 6 neighbours have state equal to water then state should be village"
-;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
-;; * "if state is forest or state is climax and some neighbours have state equal to fire then 3 in 5 chance that state should be fire"
-;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
-;; *
-;;
-;; it generates rules in the form expected by `mw-engine.core`, q.v.
-;;
-;; It is, as I say, very simple; it generates a complete rule, or it fails completely, returning nil.
-;; Very occasionally it generates a wrong rule - one which is not a correct translation of the rule
-;; semantics - but that is buggy behaviour, which I'll try to fix over the next few weeks, not a
-;; design fault.
-;;
-;; More significantly it does not generate useful error messages on failure.
-;;
-;; This is the parser that is actually used currently; but see also insta.clj,
-;; which is potentially a much better parser but does not quite work yet.
-;;
+;;;;
+;;;; A very simple parser which parses production rules of the following forms:
+;;;;
+;;;; * "if altitude is less than 100 and state is forest then state should be climax and deer should be 3"
+;;;; * "if altitude is 100 or fertility is 25 then state should be heath and fertility should be 24.3"
+;;;; * "if altitude is 100 or fertility is 25 then state should be heath"
+;;;; * "if deer is more than 2 and wolves is 0 and fertility is more than 20 then deer should be deer + 2"
+;;;; * "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves"
+;;;; * "if state is grassland and 4 neighbours have state equal to water then state should be village"
+;;;; * "if state is forest and fertility is between 55 and 75 then state should be climax"
+;;;; * "if 6 neighbours have state equal to water then state should be village"
+;;;; * "if state is in grassland or pasture or heath and 4 neighbours are water then state should be village"
+;;;; * "if state is forest or state is climax and some neighbours have state equal to fire then 3 in 5 chance that state should be fire"
+;;;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
+;;;; *
+;;;;
+;;;; it generates rules in the form expected by `mw-engine.core`, q.v.
+;;;;
+;;;; It is, as I say, very simple; it generates a complete rule, or it fails completely, returning nil.
+;;;; Very occasionally it generates a wrong rule - one which is not a correct translation of the rule
+;;;; semantics - but that is buggy behaviour, which I'll try to fix over the next few weeks, not a
+;;;; design fault.
+;;;;
+;;;; More significantly it does not generate useful error messages on failure.
+;;;;
+;;;; This parser is now obsolete, but is retained in the codebase for now in
+;;;; case it is of use to anyone. Prefer the declarative.clj parser.
+;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare parse-conditions)
