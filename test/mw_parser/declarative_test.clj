@@ -475,12 +475,13 @@
 
 (deftest regression-tests
   (testing "Rule in default set which failed on switchover to declarative rules"
-    (let [afn (compile-rule "if state is scrub then 1 chance in 5 state should be forest")
+    (let [afn (compile-rule "if state is scrub then 1 chance in 1 state should be forest")
           world (transform-world
                   (make-world 3 3)
                   (list (compile-rule "if x is 2 then altitude should be 11")
                         (compile-rule "if x is less than 2 then state should be scrub")))]
-      (is (= (:state (apply afn (list {:x 1 :y 1} world))) :forest)
+      (is (= (:state (apply afn (list (get-cell world 1 1) world))) :forest)
           "Centre cell is scrub, so rule should fire")
-      (is (= (:state (apply afn (list {:x 2 :y 1} world))) :beach)
+      (is (= (apply afn (list (get-cell world 2 1) world)) nil)
           "Middle cell of the strip is not scrub, so rule should not fire."))))
+

@@ -6,19 +6,19 @@
 ## Vegetation rules
 ;; rules which populate the world with plants
 
-;; Occasionally, passing birds plant tree seeds into grassland 
+;; Occasionally, passing birds plant tree seeds into grassland
 
 if state is grassland then 1 chance in 10 state should be heath
 
 ;; heath below the treeline grows gradually into forest
 
-if state is heath and altitude is less than 120 then state should be scrub 
+if state is heath and altitude is less than 120 then state should be scrub
 if state is scrub then 1 chance in 5 state should be forest
 
 ;; Forest on fertile land grows to climax
 
-if state is forest and fertility is more than 5 and altitude is less than 70 then state should be climax   
-    
+if state is forest and fertility is more than 5 and altitude is less than 70 then state should be climax
+
 ;; Climax forest occasionally catches fire (e.g. lightning strikes)
 
 if state is climax then 1 chance in 500 state should be fire
@@ -40,7 +40,7 @@ if state is waste then state should be grassland
 
 ## Potential blockers
 
-;; Forest increases soil fertility. 
+;; Forest increases soil fertility.
 if state is in forest or climax then fertility should be fertility + 1
 
 

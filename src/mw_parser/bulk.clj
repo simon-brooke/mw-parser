@@ -41,7 +41,7 @@
    lines delimited by the new-line character. Return a list of S-expressions."
   [string]
         ;; TODO: tried to do this using with-open, but couldn't make it work.
-  (map parse-rule (remove comment? (split string #"\n"))))
+  (map #(parse-rule (trim %)) (remove comment? (split string #"\n"))))
 
 (defn parse-file
   "Parse rules from successive lines in the file loaded from this `filename`.
