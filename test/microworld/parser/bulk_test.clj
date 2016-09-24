@@ -1,7 +1,7 @@
-(ns mw-parser.bulk-test
+(ns microworld.parser.bulk-test
   (:use clojure.java.io)
   (:require [clojure.test :refer :all]
-            [mw-parser.bulk :refer :all]))
+            [microworld.parser.bulk :refer :all]))
 
 (deftest bulk-parsing-test
          (testing "Bulk (file) parsing and compilation"

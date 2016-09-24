@@ -1,16 +1,16 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
-  mw-parser.declarative
+  microworld.parser.declarative
   (:require [instaparse.core :as insta]
             [clojure.string :refer [split trim triml]]
-            [mw-parser.errors :as pe]
-            [mw-parser.generate :as pg]
-            [mw-parser.simplify :as ps]
-            [mw-parser.utils :refer [rule?]]))
+            [microworld.parser.errors :as pe]
+            [microworld.parser.generate :as pg]
+            [microworld.parser.simplify :as ps]
+            [microworld.parser.utils :refer [rule?]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
-;;;; mw-parser: a rule parser for MicroWorld.
+;;;; microworld.parser: a rule parser for MicroWorld.
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU General Public License
@@ -96,7 +96,7 @@
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
   into Clojure source, and then compile it into an anonymous
-  function object, getting round the problem of binding mw-engine.utils in
+  function object, getting round the problem of binding microworld.engine.utils in
   the compiling environment. If `return-tuple?` is present and true, return
   a list comprising the anonymous function compiled, and the function from
   which it was compiled.
@@ -106,11 +106,12 @@
    (assert (string? rule-text))
    (let [rule (trim rule-text)
          tree (ps/simplify (parse-rule rule))
-         afn (if (rule? tree) (eval (pg/generate tree))
+         clj (pg/generate tree)
+         afn (if (rule? tree) (eval clj)
                ;; else
                (pe/throw-parse-exception tree))]
      (if return-tuple?
-       (list afn rule)
+       (list afn {:rule rule :clojure (print-str clj)})
        ;; else
        afn)))
   ([rule-text]

@@ -1,11 +1,11 @@
-(ns mw-parser.generate-test
+(ns microworld.parser.generate-test
   (:use clojure.pprint
-        mw-engine.core
-        mw-engine.world
-        mw-engine.utils
-        mw-parser.utils)
+        microworld.engine.core
+        microworld.engine.world
+        microworld.engine.utils
+        microworld.parser.utils)
   (:require [clojure.test :refer :all]
-            [mw-parser.generate :refer :all]))
+            [microworld.parser.generate :refer :all]))
 
 
 (deftest expressions-tests

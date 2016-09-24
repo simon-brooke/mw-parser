@@ -1,11 +1,11 @@
-(ns mw-parser.declarative-test
+(ns microworld.parser.declarative-test
   (:use clojure.pprint
-        mw-engine.core
-        mw-engine.world
-        mw-engine.utils
-        mw-parser.utils)
+        microworld.engine.core
+        microworld.engine.world
+        microworld.engine.utils
+        microworld.parser.utils)
   (:require [clojure.test :refer :all]
-            [mw-parser.declarative :refer :all]))
+            [microworld.parser.declarative :refer :all]))
 
 (deftest rules-tests
   (testing "Rule parser - does not test whether generated functions actually work, just that something is generated!"
@@ -484,4 +484,14 @@
           "Centre cell is scrub, so rule should fire")
       (is (= (apply afn (list (get-cell world 2 1) world)) nil)
           "Middle cell of the strip is not scrub, so rule should not fire."))))
+
+(deftest regression-2-tests
+  (testing "Still getting fails althought tests for these fails fail."
+    (is
+      (=
+        (:state
+          (apply
+            (compile-rule "if state is scrub then 1 chance in 1 state should be forest")
+            (list {:state :scrub} {})))
+        :forest))))
 

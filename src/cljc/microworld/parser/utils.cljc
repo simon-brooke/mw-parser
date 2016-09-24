@@ -1,10 +1,10 @@
 (ns ^{:doc "Utilities used in more than one namespace within the parser."
       :author "Simon Brooke"}
-  mw-parser.utils)
+  microworld.parser.utils)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
-;;;; mw-parser: a rule parser for MicroWorld.
+;;;; microworld.parser: a rule parser for MicroWorld.
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU General Public License

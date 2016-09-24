@@ -1,11 +1,11 @@
 (ns ^{:doc "Simplify a parse tree."
       :author "Simon Brooke"}
-  mw-parser.simplify
-  (:require [mw-engine.utils :refer [member?]]))
+  microworld.parser.simplify
+  (:require [microworld.engine.utils :refer [member?]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
-;;;; mw-parser: a rule parser for MicroWorld.
+;;;; microworld.parser: a rule parser for MicroWorld.
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU General Public License

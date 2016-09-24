@@ -1,14 +1,14 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
-  mw-parser.core
-  (:use mw-engine.utils
+  microworld.parser.core
+  (:use microworld.engine.utils
         [clojure.string :only [split trim triml]])
   (:gen-class)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
-;;;; mw-parser: a rule parser for MicroWorld.
+;;;; microworld.parser: a rule parser for MicroWorld.
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@
 ;;;; * "if state is pasture and more than 3 neighbours have state equal to scrub then state should be scrub"
 ;;;; *
 ;;;;
-;;;; it generates rules in the form expected by `mw-engine.core`, q.v.
+;;;; it generates rules in the form expected by `microworld.engine.core`, q.v.
 ;;;;
 ;;;; It is, as I say, very simple; it generates a complete rule, or it fails completely, returning nil.
 ;;;; Very occasionally it generates a wrong rule - one which is not a correct translation of the rule
@@ -434,7 +434,7 @@
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
-   function object, getting round the problem of binding mw-engine.utils in
+   function object, getting round the problem of binding microworld.engine.utils in
    the compiling environment. If `return-tuple?` is present and true, return
    a list comprising the anonymous function compiled, and the function from
    which it was compiled.
@@ -442,7 +442,7 @@
    Throws an exception if parsing fails."
   ([rule-text return-tuple?]
     (do
-      (use 'mw-engine.utils)
+      (use 'microworld.engine.utils)
       (let [afn (eval (parse-rule rule-text))]
         (cond
           (and afn return-tuple?)(list afn (trim rule-text))

@@ -1,7 +1,7 @@
 (ns ^{:doc "Display parse errors in a format which makes it easy for the user
       to see where the error occurred."
       :author "Simon Brooke"}
-  mw-parser.errors)
+  microworld.parser.errors)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

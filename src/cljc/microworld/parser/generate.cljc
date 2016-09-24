@@ -1,9 +1,9 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
-  mw-parser.generate
-  (:require [mw-engine.utils :refer []]
-        [mw-parser.utils :refer [assert-type TODO]]
-        [mw-parser.errors :as pe]))
+  microworld.parser.generate
+  (:require [microworld.engine.utils :refer []]
+        [microworld.parser.utils :refer [assert-type TODO]]
+        [microworld.parser.errors :as pe]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -246,7 +246,7 @@
          (list 'count
                (list 'remove 'false?
                      (list 'map (list 'fn ['cell] property-condition)
-                           (list 'mw-engine.utils/get-neighbours 'world 'cell distance)))) quantity))
+                           (list 'microworld.engine.utils/get-neighbours 'world 'cell distance)))) quantity))
   ([comp1 quantity property-condition]
    (generate-neighbours-condition comp1 quantity property-condition 1)))
 

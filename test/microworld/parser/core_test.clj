@@ -1,9 +1,9 @@
-(ns mw-parser.core-test
+(ns microworld.parser.core-test
   (:use clojure.pprint
-        mw-engine.core 
-        mw-engine.world)
+        microworld.engine.core 
+        microworld.engine.world)
   (:require [clojure.test :refer :all]
-            [mw-parser.core :refer :all]))
+            [microworld.parser.core :refer :all]))
 
 (deftest primitives-tests
   (testing "Simple functions supporting the parser"

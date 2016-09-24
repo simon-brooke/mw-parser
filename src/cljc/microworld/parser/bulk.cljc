@@ -1,15 +1,15 @@
 (ns ^{:doc "parse multiple rules from a stream, possibly a file."
       :author "Simon Brooke"}
-  mw-parser.bulk
-  (:use mw-parser.declarative
-        mw-engine.utils
+  microworld.parser.bulk
+  (:use microworld.parser.declarative
+        microworld.engine.utils
         clojure.java.io
         [clojure.string :only [split trim]])
   (:import (java.io BufferedReader StringReader)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
-;;;; mw-parser: a rule parser for MicroWorld.
+;;;; microworld.parser: a rule parser for MicroWorld.
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU General Public License
