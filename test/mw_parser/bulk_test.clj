@@ -8,7 +8,7 @@
                   (is (= (count (parse-file (as-file "resources/rules.txt"))) 15)
                       "Should parse all rules and throw no exceptions")
                   (is (empty?
-                        (remove #(= % ':RULE)
+                        (remove #(= % 'fn)
                                 (map first
                                      (parse-file
                                        (as-file "resources/rules.txt")))))

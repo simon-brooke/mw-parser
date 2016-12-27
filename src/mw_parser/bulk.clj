@@ -1,7 +1,7 @@
 (ns ^{:doc "parse multiple rules from a stream, possibly a file."
       :author "Simon Brooke"}
   mw-parser.bulk
-  (:use mw-parser.declarative
+  (:use mw-parser.core
         mw-engine.utils
         clojure.java.io
         [clojure.string :only [split trim]])
