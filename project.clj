@@ -1,4 +1,4 @@
-(defproject mw-parser "0.1.6-SNAPSHOT"
+(defproject mw-parser "0.1.6"
   :description "Parser for production rules for MicroWorld engine"
   :url "http://www.journeyman.cc/microworld"
   :manifest {
@@ -14,5 +14,5 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.trace "0.7.9"]
                  [instaparse "1.4.8"]
-                 [mw-engine "0.1.6-SNAPSHOT"]
+                 [mw-engine "0.1.6"]
                  ])
