@@ -11,8 +11,8 @@
   :license {:name "GNU General Public License v2"
             :url "http://www.gnu.org/licenses/gpl-2.0.html"}
   :plugins [[lein-marginalia "0.7.1"]]
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/tools.trace "0.7.9"]
-                 [instaparse "1.4.1"]
+  :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.clojure/tools.trace "0.7.11"]
+                 [instaparse "1.4.10"]
                  [mw-engine "0.1.6-SNAPSHOT"]
                  ])
