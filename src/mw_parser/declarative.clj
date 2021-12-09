@@ -1,3 +1,6 @@
+(ns mw-parser.declarative
+  (:require [mw-engine.utils :refer [member?]])
+  (:require [instaparse.core :as insta]))
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
   mw-parser.declarative
