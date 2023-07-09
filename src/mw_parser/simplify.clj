@@ -26,8 +26,7 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(declare simplify)
+(declare simplify-rule)
 
 (defn simplify-qualifier
   "Given that this `tree` fragment represents a qualifier, what
@@ -40,23 +39,21 @@
     (coll? (first tree)) (or (simplify-qualifier (first tree))
                              (simplify-qualifier (rest tree)))
     (coll? tree) (simplify-qualifier (rest tree))
-    true tree))
+    :else tree))
 
 (defn simplify-second-of-two
   "There are a number of possible simplifications such that if the `tree` has
   only two elements, the second is semantically sufficient."
   [tree]
-  (if (= (count tree) 2) (simplify (nth tree 1)) tree))
-
+  (if (= (count tree) 2) (simplify-rule (nth tree 1)) tree))
 
 (defn simplify-quantifier
   "If this quantifier is a number, 'simplifiy' it into a comparative whose operator is '='
   and whose quantity is that number. This is actually more complicated but makes generation easier."
   [tree]
-  (if (number? (second tree)) [:COMPARATIVE '= (second tree)] (simplify (second tree))))
+  (if (number? (second tree)) [:COMPARATIVE '= (second tree)] (simplify-rule (second tree))))
 
-
-(defn simplify
+(defn simplify-rule
   "Simplify/canonicalise this `tree`. Opportunistically replace complex fragments with
   semantically identical simpler fragments"
   [tree]
@@ -64,7 +61,7 @@
     (coll? tree)
     (case (first tree)
       :ACTION (simplify-second-of-two tree)
-      :ACTIONS (cons (first tree) (simplify (rest tree)))
+      :ACTIONS (cons (first tree) (simplify-rule (rest tree)))
       :CHANCE-IN nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
@@ -76,6 +73,22 @@
       :THEN nil
       :AND nil
       :VALUE (simplify-second-of-two tree)
-      (remove nil? (map simplify tree)))
+      (remove nil? (map simplify-rule tree)))
     tree))
 
+(defn simplify-flow
+  [tree]
+  (if (coll? tree)
+    (case (first tree)
+      :DETERMINER (simplify-second-of-two tree)
+      :SPACE nil
+      :STATE [:PROPERTY-CONDITION
+              [:SYMBOL "state"]
+              [:QUALIFIER 
+               [:EQUIVALENCE 
+                [:IS "is"]]]
+              [:EXPRESSION
+               [:VALUE
+                (second tree)]]]
+      (remove nil? (map simplify-flow tree)))
+    tree))

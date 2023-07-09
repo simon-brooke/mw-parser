@@ -3,6 +3,6 @@ buildall.tmp.*
 .lein-repl-history
 target/
 pom.xml
-
+.calva/
 
 .nrepl-port
