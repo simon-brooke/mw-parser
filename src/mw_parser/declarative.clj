@@ -1,15 +1,14 @@
-(ns mw-parser.declarative
-  (:require [mw-engine.utils :refer [member?]])
-  (:require [instaparse.core :as insta]))
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
-  mw-parser.declarative
+ mw-parser.declarative
   (:require [instaparse.core :as insta]
-            [clojure.string :refer [split trim triml]]
-            [mw-parser.errors :as pe]
-            [mw-parser.generate :as pg]
-            [mw-parser.simplify :as ps]
-            [mw-parser.utils :refer [rule?]]))
+            [clojure.string :refer [join trim]]
+            [mw-parser.errors :refer [throw-parse-exception]]
+            [mw-parser.generate :refer [generate]]
+            [mw-parser.simplify :refer [simplify]]
+            [mw-parser.utils :refer [rule?]]
+            [trptr.java-wrapper.locale :refer [get-default]])
+  (:import [java.util Locale]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -34,67 +33,85 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (def grammar
-  ;; in order to simplify translation into other natural languages, all
-  ;; TOKENS within the parser should be unambiguous
-  "RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;
-   CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | CONDITION ;
-   DISJUNCT-CONDITION := CONDITION SPACE OR SPACE CONDITIONS;
-   CONJUNCT-CONDITION := CONDITION SPACE AND SPACE CONDITIONS;
-   CONDITION := WITHIN-CONDITION | NEIGHBOURS-CONDITION | PROPERTY-CONDITION;
-   WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;
-   NEIGHBOURS-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUALIFIER SPACE NEIGHBOURS-CONDITION;
-   PROPERTY-CONDITION-OR-EXPRESSION := PROPERTY-CONDITION | EXPRESSION;
-   PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION | VALUE;
-   EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;
-   SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;
-   DISJUNCT-EXPRESSION := IN SPACE DISJUNCT-VALUE;
-   RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;
-   NUMERIC-EXPRESSION := VALUE | VALUE SPACE OPERATOR SPACE NUMERIC-EXPRESSION;
-   NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;
-   COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN | COMPARATIVE SPACE THAN;
-   QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS SPACE QUALIFIER;
-   QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;
-   EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;
-   COMPARATIVE := MORE | LESS;
-   DISJUNCT-VALUE := VALUE | VALUE SPACE OR SPACE DISJUNCT-VALUE;
-   IF := 'if';
-   THEN := 'then';
-   THAN := 'than';
-   OR := 'or';
-   NOT := 'not';
-   AND := 'and';
-   SOME := 'some';
-   NONE := 'no';
-   ALL := 'all'
-   BETWEEN := 'between';
-   WITHIN := 'within';
-   IN := 'in';
-   MORE := 'more' | 'greater';
-   LESS := 'less' | 'fewer';
-   OPERATOR := '+' | '-' | '*' | '/';
-   NEIGHBOURS := 'neighbour' | 'neighbor' | 'neighbours' | 'neighbors';
-   PROPERTY := SYMBOL;
-   VALUE := SYMBOL | NUMBER;
-   EQUAL := 'equal to';
-   IS := 'is' | 'are' | 'have' | 'has';
-   NUMBER := #'[0-9]+' | #'[0-9]+.[0-9]+';
-   SYMBOL := #'[a-z]+';
-   ACTIONS := ACTION | ACTION SPACE AND SPACE ACTIONS
-   ACTION := SIMPLE-ACTION | PROBABLE-ACTION;
-   PROBABLE-ACTION := VALUE SPACE CHANCE-IN SPACE VALUE SPACE SIMPLE-ACTION;
-   SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION;
-   CHANCE-IN := 'chance in';
-   BECOMES := 'should be' | 'becomes';
-   SPACE := #' *'";
-  )
+  "Basic rule language grammar.
+   
+  in order to simplify translation into other natural languages, all
+  TOKENS within the parser should be unambiguou."
+  (join "\n" ["RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;"
+              "CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | CONDITION ;"
+              "DISJUNCT-CONDITION := CONDITION SPACE OR SPACE CONDITIONS;"
+              "CONJUNCT-CONDITION := CONDITION SPACE AND SPACE CONDITIONS;"
+              "CONDITION := WITHIN-CONDITION | NEIGHBOURS-CONDITION | PROPERTY-CONDITION;"
+              "WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;"
+              "NEIGHBOURS-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUALIFIER SPACE NEIGHBOURS-CONDITION;"
+              "PROPERTY-CONDITION-OR-EXPRESSION := PROPERTY-CONDITION | EXPRESSION;"
+              "PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION | VALUE;"
+              "EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;"
+              "SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;"
+              "DISJUNCT-EXPRESSION := IN SPACE DISJUNCT-VALUE;"
+              "RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;"
+              "NUMERIC-EXPRESSION := VALUE | VALUE SPACE OPERATOR SPACE NUMERIC-EXPRESSION;"
+              "NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;"
+              "COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN | COMPARATIVE SPACE THAN;"
+              "QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS SPACE QUALIFIER;"
+              "QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;"
+              "EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;"
+              "COMPARATIVE := MORE | LESS;"
+              "DISJUNCT-VALUE := VALUE | VALUE SPACE OR SPACE DISJUNCT-VALUE;"
+              "PROPERTY := SYMBOL;"
+              "VALUE := SYMBOL | NUMBER;"
+              "OPERATOR := '+' | '-' | '*' | '/';"
+              "NUMBER := #'[0-9]+' | #'[0-9]+.[0-9]+';"
+              "ACTIONS := ACTION | ACTION SPACE AND SPACE ACTIONS"
+              "ACTION := SIMPLE-ACTION | PROBABLE-ACTION;"
+              "PROBABLE-ACTION := VALUE SPACE CHANCE-IN SPACE VALUE SPACE SIMPLE-ACTION;"
+              "SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION;"
+              "SPACE := #'\\s+';"]))
 
+(def keywords-en
+  "English language keyword literals used in rules.
+      
+      It's a long term aim that the rule language should be easy to 
+      internationalise; this isn't a full solution but it's a step towards
+      a solution."
+  (join "\n" ["IF := 'if';"
+              "THEN := 'then';"
+              "THAN := 'than';"
+              "OR := 'or';"
+              "NOT := 'not';"
+              "AND := 'and';"
+              "SOME := 'some';"
+              "NONE := 'no';"
+              "ALL := 'all'"
+              "BETWEEN := 'between';"
+              "WITHIN := 'within';"
+              "IN := 'in';"
+              "MORE := 'more' | 'greater';"
+              "LESS := 'less' | 'fewer';"
+              "NEIGHBOURS := 'neighbour' | 'neighbor' | 'neighbours' | 'neighbors';"
+              "EQUAL := 'equal to';"
+              "IS := 'is' | 'are' | 'have' | 'has';"
+              "CHANCE-IN := 'chance in';"
+              "BECOMES := 'should be' | 'becomes';"
+              ;; SYMBOL is in the per-language file so that languages that use
+              ;; (e.g.) Cyrillic characters can change the definition.
+              "SYMBOL := #'[a-z]+';"
+              ]))
+
+(defn select-keywords-for-locale
+  "For now, just return `keywords-en`; plan is to have resource files of 
+   keywords for different languages in a resource directory, but that isn't
+   done yet. It's probably not going to work easily for languages that use
+   non-latin alphabets, anyway."
+  ([]
+   (select-keywords-for-locale (get-default)))
+  ([^Locale locale]
+   keywords-en))
 
 (def parse-rule
   "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
-  (insta/parser grammar))
-
+  (insta/parser (join "\n" [grammar (select-keywords-for-locale)])))
 
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
@@ -108,10 +125,10 @@
   ([rule-text return-tuple?]
    (assert (string? rule-text))
    (let [rule (trim rule-text)
-         tree (ps/simplify (parse-rule rule))
-         afn (if (rule? tree) (eval (pg/generate tree))
+         tree (simplify (parse-rule rule))
+         afn (if (rule? tree) (eval (generate tree))
                ;; else
-               (pe/throw-parse-exception tree))]
+                 (throw-parse-exception tree))]
      (if return-tuple?
        (list afn rule)
        ;; else

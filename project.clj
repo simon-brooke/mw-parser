@@ -15,4 +15,4 @@
                  [org.clojure/tools.trace "0.7.11"]
                  [instaparse "1.4.12"]
                  [mw-engine "0.1.6-SNAPSHOT"]
-                 ])
+                 [trptr/java-wrapper "0.2.3"]])
