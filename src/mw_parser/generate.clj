@@ -53,9 +53,9 @@
 
 
 (defn generate-conjunct-condition
-  [tree]
   "From this `tree`, assumed to be a syntactically conjunct correct condition clause,
   generate and return the appropriate clojure fragment."
+  [tree]
   (assert-type tree :CONJUNCT-CONDITION)
   (cons 'and (map generate (rest tree))))
 
@@ -93,7 +93,7 @@
          qualifier (generate (nth tree 2))
          expression (generate (nth tree 3))]
      (generate-disjunct-property-condition tree property qualifier expression)))
-  ([tree property qualifier expression]
+  ([_tree property qualifier expression]
    (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
      (list 'let ['value (list property 'cell)]
            (if (= qualifier '=) e
@@ -314,3 +314,11 @@
       :WITHIN-CONDITION (generate-within-condition tree)
       (map generate tree))
     tree))
+
+;;; Flow rules. A flow rule DOES NOT return a modified world; instead, it 
+;;; returns a PLAN to modify the world, in the form of a sequence of `flows`.
+;;; It is only when the plan is executed that the world is modified.
+;;;
+;;; so we're looking at something like
+;;; (fn [cell world])
+;;;    (if (= (:state cell) (or (:house cell) :house))

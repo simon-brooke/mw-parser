@@ -9,7 +9,7 @@
   "Grammar for flow rules"
   (join "\n" ["FLOW-RULE := FLOW SPACE QUANTITY SPACE PROPERTY SPACE FROM SPACE SOURCE SPACE TO-HOW SPACE DESTINATION;"
               "PERCENTAGE := NUMBER #'%';"
-              "QUANTITY := PERCENTAGE | NUMBER;"
+              "QUANTITY := PERCENTAGE | NUMBER | SOME;"
               "SOURCE := STATE | STATE SPACE WITH SPACE CONDITIONS;"
               "DESTINATION := STATE | STATE SPACE WITH SPACE FLOW-CONDITIONS;"
               "DETERMINER := MOST | LEAST;"
@@ -18,7 +18,7 @@
               "STATE := SYMBOL;"
               "TO-HOW := TO | TO-EACH | TO-FIRST;"
               "TO-EACH := TO SPACE EACH | TO SPACE ALL;"
-              "TO-FIRST := TO SPACE EACH"
+              "TO-FIRST := TO SPACE FIRST"
               ]))
 
 (def parse-flow

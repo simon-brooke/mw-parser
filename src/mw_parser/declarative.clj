@@ -88,6 +88,7 @@
               "CHANCE-IN := 'chance in';" 
               "EACH := 'each' | 'every' | 'all';"
               "EQUAL := 'equal to';" 
+              "FIRST := 'first';"
               "FLOW := 'flow' | 'move';" 
               "FROM := 'from';"
               "IF := 'if';" 
