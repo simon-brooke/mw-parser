@@ -1,0 +1,260 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../coverage.css"/>  <title> mw_parser/simplify.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;^{:doc&nbsp;&quot;Simplify&nbsp;a&nbsp;parse&nbsp;tree.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:author&nbsp;&quot;Simon&nbsp;Brooke&quot;}
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;mw-parser.simplify)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;;;;;&nbsp;mw-parser:&nbsp;a&nbsp;rule&nbsp;parser&nbsp;for&nbsp;MicroWorld.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;;;;;&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2014&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                028&nbsp;&nbsp;(declare&nbsp;simplify-flow&nbsp;simplify-rule)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;;;&nbsp;(defn&nbsp;simplify-qualifier
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;Given&nbsp;that&nbsp;this&nbsp;`tree`&nbsp;fragment&nbsp;represents&nbsp;a&nbsp;qualifier,&nbsp;what
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;qualifier&nbsp;is&nbsp;that?&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(empty?&nbsp;tree)&nbsp;nil
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(coll?&nbsp;tree)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(#{:EQUIVALENCE&nbsp;:COMPARATIVE}&nbsp;(first&nbsp;tree)))&nbsp;tree
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;(first&nbsp;tree))&nbsp;(or&nbsp;(simplify-qualifier&nbsp;(first&nbsp;tree))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(simplify-qualifier&nbsp;(rest&nbsp;tree)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;tree)&nbsp;(simplify-qualifier&nbsp;(rest&nbsp;tree))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;tree))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                043&nbsp;&nbsp;(defn&nbsp;simplify-second-of-two
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;&quot;There&nbsp;are&nbsp;a&nbsp;number&nbsp;of&nbsp;possible&nbsp;simplifications&nbsp;such&nbsp;that&nbsp;if&nbsp;the&nbsp;`tree`&nbsp;has
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;&nbsp;&nbsp;only&nbsp;two&nbsp;elements,&nbsp;the&nbsp;second&nbsp;is&nbsp;semantically&nbsp;sufficient.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="partial" title="10 out of 11 forms covered">
+                047&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;2)&nbsp;(simplify-rule&nbsp;(nth&nbsp;tree&nbsp;1))&nbsp;tree))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                049&nbsp;&nbsp;;;&nbsp;(defn&nbsp;simplify-quantifier
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;this&nbsp;quantifier&nbsp;is&nbsp;a&nbsp;number,&nbsp;&#x27;simplifiy&#x27;&nbsp;it&nbsp;into&nbsp;a&nbsp;comparative&nbsp;whose&nbsp;operator&nbsp;is&nbsp;&#x27;=&#x27;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                051&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;and&nbsp;whose&nbsp;quantity&nbsp;is&nbsp;that&nbsp;number.&nbsp;This&nbsp;is&nbsp;actually&nbsp;more&nbsp;complicated&nbsp;but&nbsp;makes&nbsp;generation&nbsp;easier.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                053&nbsp;&nbsp;;;&nbsp;&nbsp;&nbsp;(if&nbsp;(number?&nbsp;(second&nbsp;tree))&nbsp;[:COMPARATIVE&nbsp;&#x27;=&nbsp;(second&nbsp;tree)]&nbsp;(simplify-rule&nbsp;(second&nbsp;tree))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                055&nbsp;&nbsp;(defn&nbsp;simplify-rule
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;&nbsp;&nbsp;&quot;Simplify&#x2F;canonicalise&nbsp;this&nbsp;`tree`.&nbsp;Opportunistically&nbsp;replace&nbsp;complex&nbsp;fragments&nbsp;with
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                057&nbsp;&nbsp;&nbsp;&nbsp;semantically&nbsp;identical&nbsp;simpler&nbsp;fragments&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                058&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                059&nbsp;&nbsp;&nbsp;&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                060&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;tree)
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                061&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                062&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTION&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                063&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTIONS&nbsp;(cons&nbsp;(first&nbsp;tree)&nbsp;(simplify-rule&nbsp;(rest&nbsp;tree)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CHANCE-IN&nbsp;nil
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                065&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:COMPARATIVE&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITION&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                067&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITIONS&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                068&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:EXPRESSION&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                069&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY-CONDITION-OR-EXPRESSION&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SPACE&nbsp;nil
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                072&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:THEN&nbsp;nil
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:AND&nbsp;nil
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                074&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:VALUE&nbsp;(simplify-second-of-two&nbsp;tree)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                075&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(remove&nbsp;nil?&nbsp;(map&nbsp;simplify-rule&nbsp;tree)))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                077&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                078&nbsp;&nbsp;(defn&nbsp;simplify-determiner-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                079&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                080&nbsp;&nbsp;&nbsp;&nbsp;(apply&nbsp;vector
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;:DETERMINER-CONDITION
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                083&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(simplify-second-of-two&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                084&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(rest&nbsp;(rest&nbsp;tree))))))
+                </span><br/>
+ </body>
+</html>

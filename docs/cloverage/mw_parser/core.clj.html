@@ -1,0 +1,1361 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../coverage.css"/>  <title> mw_parser/core.clj </title>
+ </head>
+ <body>
+<span class="covered" title="1 out of 1 forms covered">
+                001&nbsp;&nbsp;(ns&nbsp;^{:doc&nbsp;&quot;A&nbsp;very&nbsp;simple&nbsp;parser&nbsp;which&nbsp;parses&nbsp;production&nbsp;rules.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                002&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:author&nbsp;&quot;Simon&nbsp;Brooke&quot;}
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                003&nbsp;&nbsp;&nbsp;&nbsp;mw-parser.core
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                004&nbsp;&nbsp;&nbsp;&nbsp;(:use&nbsp;mw-engine.utils
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.string&nbsp;:only&nbsp;[split&nbsp;trim&nbsp;triml]])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;(:gen-class)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                008&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                009&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                010&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                011&nbsp;&nbsp;;;;;&nbsp;mw-parser:&nbsp;a&nbsp;rule&nbsp;parser&nbsp;for&nbsp;MicroWorld.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                012&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                013&nbsp;&nbsp;;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                014&nbsp;&nbsp;;;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                015&nbsp;&nbsp;;;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                016&nbsp;&nbsp;;;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                017&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                018&nbsp;&nbsp;;;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                019&nbsp;&nbsp;;;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                020&nbsp;&nbsp;;;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                021&nbsp;&nbsp;;;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                022&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                023&nbsp;&nbsp;;;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                024&nbsp;&nbsp;;;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                025&nbsp;&nbsp;;;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                026&nbsp;&nbsp;;;;;&nbsp;USA.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                027&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                028&nbsp;&nbsp;;;;;&nbsp;Copyright&nbsp;(C)&nbsp;2014&nbsp;Simon&nbsp;Brooke
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                029&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                030&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                031&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                032&nbsp;&nbsp;;;;;&nbsp;A&nbsp;very&nbsp;simple&nbsp;parser&nbsp;which&nbsp;parses&nbsp;production&nbsp;rules&nbsp;of&nbsp;the&nbsp;following&nbsp;forms:
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                033&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                034&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;altitude&nbsp;is&nbsp;less&nbsp;than&nbsp;100&nbsp;and&nbsp;state&nbsp;is&nbsp;forest&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;climax&nbsp;and&nbsp;deer&nbsp;should&nbsp;be&nbsp;3&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                035&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;altitude&nbsp;is&nbsp;100&nbsp;or&nbsp;fertility&nbsp;is&nbsp;25&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;heath&nbsp;and&nbsp;fertility&nbsp;should&nbsp;be&nbsp;24.3&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                036&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;altitude&nbsp;is&nbsp;100&nbsp;or&nbsp;fertility&nbsp;is&nbsp;25&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;heath&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                037&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;deer&nbsp;is&nbsp;more&nbsp;than&nbsp;2&nbsp;and&nbsp;wolves&nbsp;is&nbsp;0&nbsp;and&nbsp;fertility&nbsp;is&nbsp;more&nbsp;than&nbsp;20&nbsp;then&nbsp;deer&nbsp;should&nbsp;be&nbsp;deer&nbsp;+&nbsp;2&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                038&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;deer&nbsp;is&nbsp;more&nbsp;than&nbsp;1&nbsp;and&nbsp;wolves&nbsp;is&nbsp;more&nbsp;than&nbsp;1&nbsp;then&nbsp;deer&nbsp;should&nbsp;be&nbsp;deer&nbsp;-&nbsp;wolves&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                039&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;state&nbsp;is&nbsp;grassland&nbsp;and&nbsp;4&nbsp;neighbours&nbsp;have&nbsp;state&nbsp;equal&nbsp;to&nbsp;water&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;village&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;state&nbsp;is&nbsp;forest&nbsp;and&nbsp;fertility&nbsp;is&nbsp;between&nbsp;55&nbsp;and&nbsp;75&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;climax&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                041&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;6&nbsp;neighbours&nbsp;have&nbsp;state&nbsp;equal&nbsp;to&nbsp;water&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;village&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                042&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;state&nbsp;is&nbsp;in&nbsp;grassland&nbsp;or&nbsp;pasture&nbsp;or&nbsp;heath&nbsp;and&nbsp;4&nbsp;neighbours&nbsp;are&nbsp;water&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;village&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                043&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;state&nbsp;is&nbsp;forest&nbsp;or&nbsp;state&nbsp;is&nbsp;climax&nbsp;and&nbsp;some&nbsp;neighbours&nbsp;have&nbsp;state&nbsp;equal&nbsp;to&nbsp;fire&nbsp;then&nbsp;3&nbsp;in&nbsp;5&nbsp;chance&nbsp;that&nbsp;state&nbsp;should&nbsp;be&nbsp;fire&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;;;;;&nbsp;*&nbsp;&quot;if&nbsp;state&nbsp;is&nbsp;pasture&nbsp;and&nbsp;more&nbsp;than&nbsp;3&nbsp;neighbours&nbsp;have&nbsp;state&nbsp;equal&nbsp;to&nbsp;scrub&nbsp;then&nbsp;state&nbsp;should&nbsp;be&nbsp;scrub&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                045&nbsp;&nbsp;;;;;&nbsp;*
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                046&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                047&nbsp;&nbsp;;;;;&nbsp;it&nbsp;generates&nbsp;rules&nbsp;in&nbsp;the&nbsp;form&nbsp;expected&nbsp;by&nbsp;`mw-engine.core`,&nbsp;q.v.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                048&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                049&nbsp;&nbsp;;;;;&nbsp;It&nbsp;is,&nbsp;as&nbsp;I&nbsp;say,&nbsp;very&nbsp;simple;&nbsp;it&nbsp;generates&nbsp;a&nbsp;complete&nbsp;rule,&nbsp;or&nbsp;it&nbsp;fails&nbsp;completely,&nbsp;returning&nbsp;nil.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                050&nbsp;&nbsp;;;;;&nbsp;Very&nbsp;occasionally&nbsp;it&nbsp;generates&nbsp;a&nbsp;wrong&nbsp;rule&nbsp;-&nbsp;one&nbsp;which&nbsp;is&nbsp;not&nbsp;a&nbsp;correct&nbsp;translation&nbsp;of&nbsp;the&nbsp;rule
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                051&nbsp;&nbsp;;;;;&nbsp;semantics&nbsp;-&nbsp;but&nbsp;that&nbsp;is&nbsp;buggy&nbsp;behaviour,&nbsp;which&nbsp;I&#x27;ll&nbsp;try&nbsp;to&nbsp;fix&nbsp;over&nbsp;the&nbsp;next&nbsp;few&nbsp;weeks,&nbsp;not&nbsp;a
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                052&nbsp;&nbsp;;;;;&nbsp;design&nbsp;fault.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                053&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                054&nbsp;&nbsp;;;;;&nbsp;More&nbsp;significantly&nbsp;it&nbsp;does&nbsp;not&nbsp;generate&nbsp;useful&nbsp;error&nbsp;messages&nbsp;on&nbsp;failure.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                055&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                056&nbsp;&nbsp;;;;;&nbsp;This&nbsp;parser&nbsp;is&nbsp;now&nbsp;obsolete,&nbsp;but&nbsp;is&nbsp;retained&nbsp;in&nbsp;the&nbsp;codebase&nbsp;for&nbsp;now&nbsp;in
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                057&nbsp;&nbsp;;;;;&nbsp;case&nbsp;it&nbsp;is&nbsp;of&nbsp;use&nbsp;to&nbsp;anyone.&nbsp;Prefer&nbsp;the&nbsp;declarative.clj&nbsp;parser.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                058&nbsp;&nbsp;;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                059&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                060&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                061&nbsp;&nbsp;(declare&nbsp;parse-conditions)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                062&nbsp;&nbsp;(declare&nbsp;parse-not-condition)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                063&nbsp;&nbsp;(declare&nbsp;parse-simple-condition)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                064&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                065&nbsp;&nbsp;;;&nbsp;a&nbsp;regular&nbsp;expression&nbsp;which&nbsp;matches&nbsp;string&nbsp;representation&nbsp;of&nbsp;positive&nbsp;numbers
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                066&nbsp;&nbsp;(def&nbsp;re-number&nbsp;#&quot;^[0-9.]*$&quot;)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                067&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                068&nbsp;&nbsp;;;&nbsp;error&nbsp;thrown&nbsp;when&nbsp;an&nbsp;attempt&nbsp;is&nbsp;made&nbsp;to&nbsp;set&nbsp;a&nbsp;reserved&nbsp;property
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                069&nbsp;&nbsp;(def&nbsp;reserved-properties-error
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                070&nbsp;&nbsp;&nbsp;&nbsp;&quot;The&nbsp;properties&nbsp;&#x27;x&#x27;&nbsp;and&nbsp;&#x27;y&#x27;&nbsp;of&nbsp;a&nbsp;cell&nbsp;are&nbsp;reserved&nbsp;and&nbsp;should&nbsp;not&nbsp;be&nbsp;set&nbsp;in&nbsp;rule&nbsp;actions&quot;)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                071&nbsp;&nbsp;;;&nbsp;error&nbsp;thrown&nbsp;when&nbsp;a&nbsp;rule&nbsp;cannot&nbsp;be&nbsp;parsed
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                072&nbsp;&nbsp;(def&nbsp;bad-parse-error&nbsp;&quot;I&nbsp;did&nbsp;not&nbsp;understand&nbsp;&#x27;%s&#x27;&quot;)
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                073&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                074&nbsp;&nbsp;(defn-&nbsp;keyword-or-numeric
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                075&nbsp;&nbsp;&nbsp;&nbsp;&quot;If&nbsp;this&nbsp;token&nbsp;appears&nbsp;to&nbsp;represent&nbsp;an&nbsp;explicit&nbsp;number,&nbsp;return&nbsp;that&nbsp;number;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                076&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherwise,&nbsp;make&nbsp;a&nbsp;keyword&nbsp;of&nbsp;it&nbsp;and&nbsp;return&nbsp;that.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                077&nbsp;&nbsp;&nbsp;&nbsp;[token]
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                078&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(re-matches&nbsp;re-number&nbsp;token)&nbsp;(read-string&nbsp;token)
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(keyword?&nbsp;token)&nbsp;token
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;(keyword&nbsp;token)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                082&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                083&nbsp;&nbsp;;;&nbsp;Generally&nbsp;all&nbsp;functions&nbsp;in&nbsp;this&nbsp;file&nbsp;with&nbsp;names&nbsp;beginning&nbsp;&#x27;parse-&#x27;&nbsp;take&nbsp;a
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                084&nbsp;&nbsp;;;&nbsp;sequence&nbsp;of&nbsp;tokens&nbsp;(and&nbsp;in&nbsp;some&nbsp;cases&nbsp;other&nbsp;optional&nbsp;arguments)&nbsp;and&nbsp;return&nbsp;a
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                085&nbsp;&nbsp;;;&nbsp;vector&nbsp;comprising
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                086&nbsp;&nbsp;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                087&nbsp;&nbsp;;;&nbsp;1.&nbsp;A&nbsp;code&nbsp;fragment&nbsp;parsed&nbsp;from&nbsp;the&nbsp;front&nbsp;of&nbsp;the&nbsp;sequence&nbsp;of&nbsp;tokens,&nbsp;and
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                088&nbsp;&nbsp;;;&nbsp;2.&nbsp;the&nbsp;remaining&nbsp;tokens&nbsp;which&nbsp;were&nbsp;not&nbsp;consumed&nbsp;in&nbsp;constructing&nbsp;that&nbsp;fragment.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                089&nbsp;&nbsp;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                090&nbsp;&nbsp;;;&nbsp;In&nbsp;every&nbsp;case&nbsp;if&nbsp;the&nbsp;function&nbsp;cannot&nbsp;parse&nbsp;the&nbsp;desired&nbsp;construct&nbsp;from&nbsp;the
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                091&nbsp;&nbsp;;;&nbsp;front&nbsp;of&nbsp;the&nbsp;sequence&nbsp;of&nbsp;tokens&nbsp;it&nbsp;returns&nbsp;nil.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                092&nbsp;&nbsp;
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                093&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                094&nbsp;&nbsp;(defn&nbsp;parse-numeric-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                095&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;number.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                096&nbsp;&nbsp;&nbsp;&nbsp;[[value&nbsp;&amp;&nbsp;remainder]]
+                </span><br/>
+<span class="covered" title="15 out of 15 forms covered">
+                097&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;value&nbsp;(re-matches&nbsp;re-number&nbsp;value))&nbsp;[(read-string&nbsp;value)&nbsp;remainder]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                098&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                099&nbsp;&nbsp;(defn&nbsp;parse-property-int
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                100&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;token&nbsp;assumed&nbsp;to&nbsp;be&nbsp;the&nbsp;name&nbsp;of&nbsp;a&nbsp;property&nbsp;of&nbsp;the&nbsp;current&nbsp;cell,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                101&nbsp;&nbsp;&nbsp;&nbsp;whose&nbsp;value&nbsp;is&nbsp;assumed&nbsp;to&nbsp;be&nbsp;an&nbsp;integer.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                102&nbsp;&nbsp;&nbsp;&nbsp;[[value&nbsp;&amp;&nbsp;remainder]]
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                103&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;value&nbsp;[(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;value))&nbsp;remainder]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                104&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                105&nbsp;&nbsp;(defn&nbsp;parse-property-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                106&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;token&nbsp;assumed&nbsp;to&nbsp;be&nbsp;the&nbsp;name&nbsp;of&nbsp;a&nbsp;property&nbsp;of&nbsp;the&nbsp;current&nbsp;cell.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                107&nbsp;&nbsp;&nbsp;&nbsp;[[value&nbsp;&amp;&nbsp;remainder]]
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                108&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;value&nbsp;[(list&nbsp;(keyword&nbsp;value)&nbsp;&#x27;cell)&nbsp;remainder]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                109&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                110&nbsp;&nbsp;(defn&nbsp;parse-token-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                111&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;token&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;simple&nbsp;token&nbsp;value.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                112&nbsp;&nbsp;&nbsp;&nbsp;[[value&nbsp;&amp;&nbsp;remainder]]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                113&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;value&nbsp;[(keyword&nbsp;value)&nbsp;remainder]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                114&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                115&nbsp;&nbsp;(defn&nbsp;parse-simple-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                116&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;value&nbsp;from&nbsp;the&nbsp;first&nbsp;of&nbsp;these&nbsp;`tokens`.&nbsp;If&nbsp;`expect-int`&nbsp;is&nbsp;true,&nbsp;return
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;integer&nbsp;or&nbsp;something&nbsp;which&nbsp;will&nbsp;evaluate&nbsp;to&nbsp;an&nbsp;integer.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                118&nbsp;&nbsp;&nbsp;&nbsp;([tokens&nbsp;expect-int]
+                </span><br/>
+<span class="partial" title="7 out of 8 forms covered">
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-numeric-value&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;expect-int
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-property-int&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;(parse-token-value&nbsp;tokens))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                124&nbsp;&nbsp;&nbsp;&nbsp;([tokens]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                125&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-simple-value&nbsp;tokens&nbsp;false)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                126&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                127&nbsp;&nbsp;(defn&nbsp;gen-token-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                128&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;single&nbsp;value&nbsp;from&nbsp;this&nbsp;single&nbsp;token&nbsp;and&nbsp;return&nbsp;just&nbsp;the&nbsp;generated
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                129&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code,&nbsp;not&nbsp;a&nbsp;pair.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                130&nbsp;&nbsp;&nbsp;&nbsp;[token&nbsp;expect-int]
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                131&nbsp;&nbsp;&nbsp;&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;token)&nbsp;expect-int)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                132&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                133&nbsp;&nbsp;(defn&nbsp;parse-disjunct-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                134&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;list&nbsp;of&nbsp;values&nbsp;from&nbsp;among&nbsp;these&nbsp;`tokens`.&nbsp;If&nbsp;`expect-int`&nbsp;is&nbsp;true,&nbsp;return
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;integers&nbsp;or&nbsp;things&nbsp;which&nbsp;will&nbsp;evaluate&nbsp;to&nbsp;integers.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                136&nbsp;&nbsp;&nbsp;&nbsp;[[OR&nbsp;token&nbsp;&amp;&nbsp;tokens]&nbsp;expect-int]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                137&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(member?&nbsp;OR&nbsp;&#x27;(&quot;or&quot;&nbsp;&quot;in&quot;))
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[value&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;token)&nbsp;expect-int))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seek-others&nbsp;(=&nbsp;(first&nbsp;tokens)&nbsp;&quot;or&quot;)]
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                140&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;seek-others
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                141&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[others&nbsp;remainder]&nbsp;(parse-disjunct-value&nbsp;tokens&nbsp;expect-int)]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(cons&nbsp;value&nbsp;others)&nbsp;remainder])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;value)&nbsp;tokens]))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                145&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                146&nbsp;&nbsp;(defn&nbsp;parse-value
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                147&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;value&nbsp;from&nbsp;among&nbsp;these&nbsp;`tokens`.&nbsp;If&nbsp;`expect-int`&nbsp;is&nbsp;true,&nbsp;return
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;integer&nbsp;or&nbsp;something&nbsp;which&nbsp;will&nbsp;evaluate&nbsp;to&nbsp;an&nbsp;integer.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                149&nbsp;&nbsp;&nbsp;&nbsp;([tokens&nbsp;expect-int]
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-disjunct-value&nbsp;tokens&nbsp;expect-int)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-simple-value&nbsp;tokens&nbsp;expect-int)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                153&nbsp;&nbsp;&nbsp;&nbsp;([tokens]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-value&nbsp;tokens&nbsp;false)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                155&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                156&nbsp;&nbsp;(defn&nbsp;parse-member-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                157&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parses&nbsp;a&nbsp;condition&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;[property]&nbsp;in&nbsp;[value]&nbsp;or&nbsp;[value]...&#x27;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                158&nbsp;&nbsp;&nbsp;&nbsp;[[property&nbsp;IS&nbsp;IN&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="11 out of 12 forms covered">
+                159&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(and&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))&nbsp;(=&nbsp;IN&nbsp;&quot;in&quot;))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[l&nbsp;remainder]&nbsp;(parse-disjunct-value&nbsp;(cons&nbsp;&quot;in&quot;&nbsp;rest)&nbsp;false)]
+                </span><br/>
+<span class="covered" title="15 out of 15 forms covered">
+                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;member?&nbsp;(list&nbsp;(keyword&nbsp;property)&nbsp;&#x27;cell)&nbsp;(list&nbsp;&#x27;quote&nbsp;l))&nbsp;remainder])))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                162&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                163&nbsp;&nbsp;(defn-&nbsp;parse-less-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                164&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;&#x27;[property]&nbsp;less&nbsp;than&nbsp;[value]&#x27;.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                165&nbsp;&nbsp;&nbsp;&nbsp;[[property&nbsp;IS&nbsp;LESS&nbsp;THAN&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="20 out of 21 forms covered">
+                166&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))&nbsp;(member?&nbsp;LESS&nbsp;&#x27;(&quot;less&quot;&nbsp;&quot;fewer&quot;))&nbsp;(=&nbsp;THAN&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[value&nbsp;remainder]&nbsp;(parse-value&nbsp;rest&nbsp;true)]
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;&lt;&nbsp;(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;property))&nbsp;value)&nbsp;remainder])))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                169&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                170&nbsp;&nbsp;(defn-&nbsp;parse-more-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                171&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;&#x27;[property]&nbsp;more&nbsp;than&nbsp;[value]&#x27;.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                172&nbsp;&nbsp;&nbsp;&nbsp;[[property&nbsp;IS&nbsp;MORE&nbsp;THAN&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="20 out of 21 forms covered">
+                173&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))&nbsp;(member?&nbsp;MORE&nbsp;&#x27;(&quot;more&quot;&nbsp;&quot;greater&quot;))&nbsp;(=&nbsp;THAN&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                174&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[value&nbsp;remainder]&nbsp;(parse-value&nbsp;rest&nbsp;true)]
+                </span><br/>
+<span class="covered" title="13 out of 13 forms covered">
+                175&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;&gt;&nbsp;(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;property))&nbsp;value)&nbsp;remainder])))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                176&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                177&nbsp;&nbsp;(defn-&nbsp;parse-between-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                178&nbsp;&nbsp;&nbsp;&nbsp;[[p&nbsp;IS&nbsp;BETWEEN&nbsp;v1&nbsp;AND&nbsp;v2&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="27 out of 29 forms covered">
+                179&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))&nbsp;(=&nbsp;BETWEEN&nbsp;&quot;between&quot;)&nbsp;(=&nbsp;AND&nbsp;&quot;and&quot;)&nbsp;(not&nbsp;(nil?&nbsp;v2)))
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                180&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;p)&nbsp;true))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                181&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value1&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;v1)&nbsp;true))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                182&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value2&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;v2)&nbsp;true))]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                183&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;or
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                184&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;&lt;&nbsp;value1&nbsp;property&nbsp;value2)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                185&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;&gt;&nbsp;value1&nbsp;property&nbsp;value2))&nbsp;rest])))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                186&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                187&nbsp;&nbsp;(defn-&nbsp;parse-is-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                188&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;clauses&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;x&nbsp;is&nbsp;y&#x27;,&nbsp;&#x27;x&nbsp;is&nbsp;in&nbsp;y&nbsp;or&nbsp;z...&#x27;,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                189&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;x&nbsp;is&nbsp;between&nbsp;y&nbsp;and&nbsp;z&#x27;,&nbsp;&#x27;x&nbsp;is&nbsp;more&nbsp;than&nbsp;y&#x27;&nbsp;or&nbsp;&#x27;x&nbsp;is&nbsp;less&nbsp;than&nbsp;y&#x27;.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                190&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;necessary&nbsp;to&nbsp;disambiguate&nbsp;whether&nbsp;value&nbsp;is&nbsp;a&nbsp;numeric&nbsp;or&nbsp;keyword.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                191&nbsp;&nbsp;&nbsp;&nbsp;[[property&nbsp;IS&nbsp;value&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="1 out of 2 forms covered">
+                192&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                193&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                194&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[tokens&nbsp;(cons&nbsp;property&nbsp;(cons&nbsp;value&nbsp;rest))]
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                195&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="19 out of 19 forms covered">
+                196&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(re-matches&nbsp;re-number&nbsp;value)&nbsp;[(list&nbsp;&#x27;=&nbsp;(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;property))&nbsp;(read-string&nbsp;value))&nbsp;rest]
+                </span><br/>
+<span class="covered" title="15 out of 15 forms covered">
+                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;[(list&nbsp;&#x27;=&nbsp;(list&nbsp;(keyword&nbsp;property)&nbsp;&#x27;cell)&nbsp;(keyword&nbsp;value))&nbsp;rest]))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                198&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                199&nbsp;&nbsp;(defn-&nbsp;parse-not-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                200&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;the&nbsp;negation&nbsp;of&nbsp;a&nbsp;simple&nbsp;condition.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                201&nbsp;&nbsp;&nbsp;&nbsp;[[property&nbsp;IS&nbsp;NOT&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="12 out of 13 forms covered">
+                202&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(member?&nbsp;IS&nbsp;&#x27;(&quot;is&quot;&nbsp;&quot;are&quot;))&nbsp;(=&nbsp;NOT&nbsp;&quot;not&quot;))
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                203&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[partial&nbsp;(parse-simple-condition&nbsp;(cons&nbsp;property&nbsp;(cons&nbsp;&quot;is&quot;&nbsp;rest)))]
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                204&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;partial
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                205&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[condition&nbsp;remainder]&nbsp;partial]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;not&nbsp;condition)&nbsp;remainder])))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                207&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                208&nbsp;&nbsp;(defn-&nbsp;gen-neighbours-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                209&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;comp2&nbsp;distance]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;comp1
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;count
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                212&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;get-neighbours-with-property-value&nbsp;&#x27;world
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                213&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;(cell&nbsp;:x)&nbsp;&#x27;(cell&nbsp;:y)&nbsp;distance
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(keyword&nbsp;property)&nbsp;(keyword-or-numeric&nbsp;value)&nbsp;comp2))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quantity)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remainder])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                217&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;comp2]
+                </span><br/>
+<span class="not-covered" title="0 out of 9 forms covered">
+                218&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;comp1&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;comp2&nbsp;1)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                219&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                220&nbsp;&nbsp;(defn&nbsp;parse-comparator-neighbours-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                221&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;conditions&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;...more&nbsp;than&nbsp;6&nbsp;neighbours&nbsp;are&nbsp;[condition]&#x27;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                222&nbsp;&nbsp;&nbsp;&nbsp;[[MORE&nbsp;THAN&nbsp;n&nbsp;NEIGHBOURS&nbsp;WITHIN&nbsp;distance&nbsp;have-or-are&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                223&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantity&nbsp;(first&nbsp;(parse-numeric-value&nbsp;(list&nbsp;n)))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                224&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comparator&nbsp;(cond&nbsp;(=&nbsp;MORE&nbsp;&quot;more&quot;)&nbsp;&#x27;&gt;
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                225&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(member?&nbsp;MORE&nbsp;&#x27;(&quot;fewer&quot;&nbsp;&quot;less&quot;))&nbsp;&#x27;&lt;)]
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                226&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                227&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not=&nbsp;WITHIN&nbsp;&quot;within&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                228&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-comparator-neighbours-condition
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                229&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(flatten
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                230&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;two&nbsp;tokens&nbsp;were&nbsp;mis-parsed&nbsp;as&nbsp;&#x27;within&nbsp;distance&#x27;&nbsp;that&nbsp;weren&#x27;t
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                231&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;actually&nbsp;&#x27;within&#x27;&nbsp;and&nbsp;a&nbsp;distance.&nbsp;Splice&nbsp;in&nbsp;&#x27;within&nbsp;1&#x27;&nbsp;and&nbsp;try
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                232&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;again.
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;MORE&nbsp;THAN&nbsp;n&nbsp;NEIGHBOURS&nbsp;&quot;within&quot;&nbsp;&quot;1&quot;&nbsp;WITHIN&nbsp;distance&nbsp;have-or-are&nbsp;rest)))
+                </span><br/>
+<span class="partial" title="14 out of 15 forms covered">
+                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;quantity
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                235&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comparator
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                236&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;THAN&nbsp;&quot;than&quot;)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                237&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;NEIGHBOURS&nbsp;&quot;neighbours&quot;))
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                238&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                239&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;have-or-are&nbsp;&quot;are&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                240&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[value&nbsp;&amp;&nbsp;remainder]&nbsp;rest
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                241&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist&nbsp;(gen-token-value&nbsp;distance&nbsp;true)]
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                242&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;comparator&nbsp;quantity&nbsp;:state&nbsp;value&nbsp;remainder&nbsp;=&nbsp;dist))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                243&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;have-or-are&nbsp;&quot;have&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                244&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[property&nbsp;comp1&nbsp;comp2&nbsp;value&nbsp;&amp;&nbsp;remainder]&nbsp;rest
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                245&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist&nbsp;(gen-token-value&nbsp;distance&nbsp;true)]
+                </span><br/>
+<span class="partial" title="13 out of 14 forms covered">
+                246&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;equal&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;to&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                247&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;comparator&nbsp;quantity&nbsp;property
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                248&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;remainder&nbsp;=&nbsp;dist)
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                249&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;more&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;comparator&nbsp;quantity&nbsp;property
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                251&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;remainder&nbsp;&gt;&nbsp;dist)
+                </span><br/>
+<span class="partial" title="9 out of 10 forms covered">
+                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;less&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;comparator&nbsp;quantity&nbsp;property
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;remainder&nbsp;&lt;&nbsp;dist)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                256&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                257&nbsp;&nbsp;(defn&nbsp;parse-some-neighbours-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                258&nbsp;&nbsp;&nbsp;&nbsp;[[SOME&nbsp;NEIGHBOURS&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                259&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                260&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;SOME&nbsp;&quot;some&quot;)&nbsp;(=&nbsp;NEIGHBOURS&nbsp;&quot;neighbours&quot;))
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                261&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-comparator-neighbours-condition&nbsp;(concat&nbsp;&#x27;(&quot;more&quot;&nbsp;&quot;than&quot;&nbsp;&quot;0&quot;&nbsp;&quot;neighbours&quot;)&nbsp;rest))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                262&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                263&nbsp;&nbsp;(defn&nbsp;parse-simple-neighbours-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                264&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;conditions&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;...6&nbsp;neighbours&nbsp;are&nbsp;[condition]&#x27;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                265&nbsp;&nbsp;&nbsp;&nbsp;[[n&nbsp;NEIGHBOURS&nbsp;WITHIN&nbsp;distance&nbsp;have-or-are&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                266&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantity&nbsp;(first&nbsp;(parse-numeric-value&nbsp;(list&nbsp;n)))]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                267&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                268&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;quantity&nbsp;(=&nbsp;NEIGHBOURS&nbsp;&quot;neighbours&quot;))
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                269&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                270&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not=&nbsp;WITHIN&nbsp;&quot;within&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                271&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-simple-neighbours-condition
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                272&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(flatten
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                273&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;two&nbsp;tokens&nbsp;were&nbsp;mis-parsed&nbsp;as&nbsp;&#x27;within&nbsp;distance&#x27;&nbsp;that&nbsp;weren&#x27;t
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                274&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;actually&nbsp;&#x27;within&#x27;&nbsp;and&nbsp;a&nbsp;distance.&nbsp;Splice&nbsp;in&nbsp;&#x27;within&nbsp;1&#x27;&nbsp;and&nbsp;try
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                275&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;again.
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;n&nbsp;NEIGHBOURS&nbsp;&quot;within&quot;&nbsp;&quot;1&quot;&nbsp;WITHIN&nbsp;distance&nbsp;have-or-are&nbsp;rest)))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;have-or-are&nbsp;&quot;are&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                278&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[value&nbsp;&amp;&nbsp;remainder]&nbsp;rest
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                279&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist&nbsp;(gen-token-value&nbsp;distance&nbsp;true)]
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                280&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;&#x27;=&nbsp;quantity&nbsp;:state&nbsp;value&nbsp;remainder&nbsp;=&nbsp;dist))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                281&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;have-or-are&nbsp;&quot;have&quot;)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                282&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[property&nbsp;comp1&nbsp;comp2&nbsp;value&nbsp;&amp;&nbsp;remainder]&nbsp;rest
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                283&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist&nbsp;(gen-token-value&nbsp;distance&nbsp;true)]
+                </span><br/>
+<span class="partial" title="13 out of 14 forms covered">
+                284&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;equal&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;to&quot;))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                285&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;&#x27;=&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;=
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                286&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist)
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                287&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;more&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                288&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;&#x27;=&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;&gt;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                289&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist)
+                </span><br/>
+<span class="partial" title="9 out of 10 forms covered">
+                290&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;comp1&nbsp;&quot;less&quot;)&nbsp;(=&nbsp;comp2&nbsp;&quot;than&quot;))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                291&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(gen-neighbours-condition&nbsp;&#x27;=&nbsp;quantity&nbsp;property&nbsp;value&nbsp;remainder&nbsp;&lt;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                292&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                293&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                294&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                295&nbsp;&nbsp;(defn&nbsp;parse-neighbours-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                296&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;conditions&nbsp;referring&nbsp;to&nbsp;neighbours&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                297&nbsp;&nbsp;&nbsp;&nbsp;[tokens]
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                298&nbsp;&nbsp;&nbsp;&nbsp;(or
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-simple-neighbours-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-comparator-neighbours-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                301&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-some-neighbours-condition&nbsp;tokens)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                302&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                303&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                304&nbsp;&nbsp;(defn&nbsp;parse-simple-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                305&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;conditions&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;[property]&nbsp;[comparison]&nbsp;[value]&#x27;.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                306&nbsp;&nbsp;&nbsp;&nbsp;[tokens]
+                </span><br/>
+<span class="covered" title="25 out of 25 forms covered">
+                307&nbsp;&nbsp;&nbsp;&nbsp;(or
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                308&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-neighbours-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                309&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-member-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-not-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                311&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-less-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-more-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                313&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-between-condition&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                314&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-is-condition&nbsp;tokens)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                315&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                316&nbsp;&nbsp;(defn-&nbsp;parse-disjunction-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                317&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;&#x27;...&nbsp;or&nbsp;[condition]&#x27;&nbsp;from&nbsp;`tokens`,&nbsp;where&nbsp;`left`&nbsp;is&nbsp;the&nbsp;already&nbsp;parsed&nbsp;first&nbsp;disjunct.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                318&nbsp;&nbsp;&nbsp;&nbsp;[left&nbsp;tokens]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                319&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[partial&nbsp;(parse-conditions&nbsp;tokens)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;partial
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[right&nbsp;remainder]&nbsp;partial]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                322&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;or&nbsp;left&nbsp;right)&nbsp;remainder]))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                323&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                324&nbsp;&nbsp;(defn-&nbsp;parse-conjunction-condition
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                325&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;&#x27;...&nbsp;and&nbsp;[condition]&#x27;&nbsp;from&nbsp;`tokens`,&nbsp;where&nbsp;`left`&nbsp;is&nbsp;the&nbsp;already&nbsp;parsed&nbsp;first&nbsp;conjunct.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                326&nbsp;&nbsp;&nbsp;&nbsp;[left&nbsp;tokens]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                327&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[partial&nbsp;(parse-conditions&nbsp;tokens)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                328&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;partial
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                329&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[right&nbsp;remainder]&nbsp;partial]
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                330&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;and&nbsp;left&nbsp;right)&nbsp;remainder]))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                331&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                332&nbsp;&nbsp;(defn-&nbsp;parse-conditions
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                333&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;conditions&nbsp;from&nbsp;`tokens`,&nbsp;where&nbsp;conditions&nbsp;may&nbsp;be&nbsp;linked&nbsp;by&nbsp;either&nbsp;&#x27;and&#x27;&nbsp;or&nbsp;&#x27;or&#x27;.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                334&nbsp;&nbsp;&nbsp;&nbsp;[tokens]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                335&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[partial&nbsp;(parse-simple-condition&nbsp;tokens)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                336&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;partial
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                337&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[left&nbsp;[next&nbsp;&amp;&nbsp;remainder]]&nbsp;partial]
+                </span><br/>
+<span class="partial" title="4 out of 5 forms covered">
+                338&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                339&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;next&nbsp;&quot;and&quot;)&nbsp;(parse-conjunction-condition&nbsp;left&nbsp;remainder)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                340&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;next&nbsp;&quot;or&quot;)&nbsp;(parse-disjunction-condition&nbsp;left&nbsp;remainder)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                341&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;partial)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                342&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                343&nbsp;&nbsp;(defn-&nbsp;parse-left-hand-side
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                344&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;the&nbsp;left&nbsp;hand&nbsp;side&nbsp;(&#x27;if...&#x27;)&nbsp;of&nbsp;a&nbsp;production&nbsp;rule.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                345&nbsp;&nbsp;&nbsp;[[IF&nbsp;&amp;&nbsp;tokens]]
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                346&nbsp;&nbsp;&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                347&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;IF&nbsp;&quot;if&quot;)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                348&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-conditions&nbsp;tokens)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                349&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                350&nbsp;&nbsp;(defn-&nbsp;parse-arithmetic-action
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                351&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;actions&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;[property]&nbsp;should&nbsp;be&nbsp;[property]&nbsp;[arithmetic-operator]&nbsp;[value]&#x27;,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                352&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.g.&nbsp;&#x27;fertility&nbsp;should&nbsp;be&nbsp;fertility&nbsp;+&nbsp;1&#x27;,&nbsp;or&nbsp;&#x27;deer&nbsp;should&nbsp;be&nbsp;deer&nbsp;-&nbsp;wolves&#x27;.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                353&nbsp;&nbsp;&nbsp;&nbsp;[previous&nbsp;[prop1&nbsp;SHOULD&nbsp;BE&nbsp;prop2&nbsp;operator&nbsp;value&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                354&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                355&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(member?&nbsp;prop1&nbsp;&#x27;(&quot;x&quot;&nbsp;&quot;y&quot;))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                356&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                357&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.&nbsp;reserved-properties-error))
+                </span><br/>
+<span class="partial" title="10 out of 12 forms covered">
+                358&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;SHOULD&nbsp;&quot;should&quot;)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                359&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;BE&nbsp;&quot;be&quot;)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                360&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(member?&nbsp;operator&nbsp;&#x27;(&quot;+&quot;&nbsp;&quot;-&quot;&nbsp;&quot;*&quot;&nbsp;&quot;&#x2F;&quot;)))
+                </span><br/>
+<span class="partial" title="9 out of 10 forms covered">
+                361&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;merge&nbsp;(or&nbsp;previous&nbsp;&#x27;cell)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                362&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{(keyword&nbsp;prop1)&nbsp;(list&nbsp;&#x27;int
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                363&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(symbol&nbsp;operator)&nbsp;(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;prop2))
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                364&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                365&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(re-matches&nbsp;re-number&nbsp;value)&nbsp;(read-string&nbsp;value)
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                366&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;(list&nbsp;&#x27;get-int&nbsp;&#x27;cell&nbsp;(keyword&nbsp;value)))))})&nbsp;rest]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                367&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                368&nbsp;&nbsp;(defn-&nbsp;parse-set-action
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                369&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;actions&nbsp;of&nbsp;the&nbsp;form&nbsp;&#x27;[property]&nbsp;should&nbsp;be&nbsp;[value].&#x27;&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                370&nbsp;&nbsp;&nbsp;&nbsp;[previous&nbsp;[property&nbsp;SHOULD&nbsp;BE&nbsp;value&nbsp;&amp;&nbsp;rest]]
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                371&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                372&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(member?&nbsp;property&nbsp;&#x27;(&quot;x&quot;&nbsp;&quot;y&quot;))
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                373&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                </span><br/>
+<span class="not-covered" title="0 out of 2 forms covered">
+                374&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Exception.&nbsp;reserved-properties-error))
+                </span><br/>
+<span class="partial" title="9 out of 10 forms covered">
+                375&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;SHOULD&nbsp;&quot;should&quot;)&nbsp;(=&nbsp;BE&nbsp;&quot;be&quot;))
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                376&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;merge&nbsp;(or&nbsp;previous&nbsp;&#x27;cell)
+                </span><br/>
+<span class="partial" title="18 out of 19 forms covered">
+                377&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{(keyword&nbsp;property)&nbsp;(cond&nbsp;(re-matches&nbsp;re-number&nbsp;value)&nbsp;(read-string&nbsp;value)&nbsp;true&nbsp;(keyword&nbsp;value))})&nbsp;rest]))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                378&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                379&nbsp;&nbsp;(defn-&nbsp;parse-simple-action&nbsp;[previous&nbsp;tokens]
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                380&nbsp;&nbsp;&nbsp;&nbsp;(or&nbsp;(parse-arithmetic-action&nbsp;previous&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                381&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-set-action&nbsp;previous&nbsp;tokens)))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                382&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                383&nbsp;&nbsp;(defn-&nbsp;parse-actions
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                384&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;actions&nbsp;from&nbsp;tokens.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                385&nbsp;&nbsp;&nbsp;&nbsp;[previous&nbsp;tokens]
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                386&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[left&nbsp;remainder]&nbsp;(parse-simple-action&nbsp;previous&nbsp;tokens)]
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                387&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;left
+                </span><br/>
+<span class="partial" title="8 out of 9 forms covered">
+                388&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;(=&nbsp;(first&nbsp;remainder)&nbsp;&quot;and&quot;)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                389&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-actions&nbsp;left&nbsp;(rest&nbsp;remainder))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                390&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;(list&nbsp;left)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                391&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                392&nbsp;&nbsp;(defn-&nbsp;parse-probability
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                393&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;probability&nbsp;of&nbsp;an&nbsp;action&nbsp;from&nbsp;this&nbsp;collection&nbsp;of&nbsp;tokens&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                394&nbsp;&nbsp;&nbsp;&nbsp;[previous&nbsp;[n&nbsp;CHANCE&nbsp;IN&nbsp;m&nbsp;&amp;&nbsp;tokens]]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                395&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                396&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;CHANCE&nbsp;&quot;chance&quot;)(=&nbsp;IN&nbsp;&quot;in&quot;))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                397&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[action&nbsp;remainder]&nbsp;(parse-actions&nbsp;previous&nbsp;tokens)]
+                </span><br/>
+<span class="partial" title="2 out of 3 forms covered">
+                398&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;action
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                399&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(list&nbsp;&#x27;cond
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                400&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;&lt;
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                401&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;rand
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                402&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;m)&nbsp;true)))
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                403&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(first&nbsp;(parse-simple-value&nbsp;(list&nbsp;n)&nbsp;true)))
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                404&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action)&nbsp;remainder]))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                405&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                406&nbsp;&nbsp;(defn-&nbsp;parse-right-hand-side
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                407&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;the&nbsp;right&nbsp;hand&nbsp;side&nbsp;(&#x27;then...&#x27;)&nbsp;of&nbsp;a&nbsp;production&nbsp;rule.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                408&nbsp;&nbsp;&nbsp;&nbsp;[[THEN&nbsp;&amp;&nbsp;tokens]]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                409&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;THEN&nbsp;&quot;then&quot;)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                410&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                411&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-probability&nbsp;nil&nbsp;tokens)
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                412&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(parse-actions&nbsp;nil&nbsp;tokens))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                413&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                414&nbsp;&nbsp;(defn&nbsp;parse-rule
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                415&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;a&nbsp;complete&nbsp;rule&nbsp;from&nbsp;this&nbsp;`line`,&nbsp;expected&nbsp;to&nbsp;be&nbsp;either&nbsp;a&nbsp;string&nbsp;or&nbsp;a
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                416&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sequence&nbsp;of&nbsp;string&nbsp;tokens.&nbsp;Return&nbsp;the&nbsp;rule&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;an&nbsp;S-expression.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                417&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                418&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Throws&nbsp;an&nbsp;exception&nbsp;if&nbsp;parsing&nbsp;fails.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                419&nbsp;&nbsp;&nbsp;&nbsp;[line]
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                420&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                421&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string?&nbsp;line)
+                </span><br/>
+<span class="covered" title="9 out of 9 forms covered">
+                422&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[rule&nbsp;(parse-rule&nbsp;(split&nbsp;(triml&nbsp;line)&nbsp;#&quot;\s+&quot;))]
+                </span><br/>
+<span class="partial" title="5 out of 6 forms covered">
+                423&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond&nbsp;rule&nbsp;rule
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                424&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;(throw&nbsp;(Exception.&nbsp;(format&nbsp;bad-parse-error&nbsp;line)))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                425&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                426&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[[left&nbsp;remainder]&nbsp;(parse-left-hand-side&nbsp;line)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                427&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[right&nbsp;junk]&nbsp;(parse-right-hand-side&nbsp;remainder)]
+                </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                428&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                429&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;there&nbsp;should&nbsp;be&nbsp;a&nbsp;valide&nbsp;left&nbsp;hand&nbsp;side&nbsp;and&nbsp;a&nbsp;valid&nbsp;right&nbsp;hand&nbsp;side
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                430&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;there&nbsp;shouldn&#x27;t&nbsp;be&nbsp;anything&nbsp;left&nbsp;over&nbsp;(junk&nbsp;should&nbsp;be&nbsp;empty)
+                </span><br/>
+<span class="partial" title="12 out of 13 forms covered">
+                431&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;left&nbsp;right&nbsp;(empty?&nbsp;junk))
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                432&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;cell&nbsp;&#x27;world]&nbsp;(list&nbsp;&#x27;if&nbsp;left&nbsp;right))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                433&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                434&nbsp;&nbsp;(defn&nbsp;compile-rule
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                435&nbsp;&nbsp;&nbsp;&nbsp;&quot;Parse&nbsp;this&nbsp;`rule-text`,&nbsp;a&nbsp;string&nbsp;conforming&nbsp;to&nbsp;the&nbsp;grammar&nbsp;of&nbsp;MicroWorld&nbsp;rules,
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                436&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;Clojure&nbsp;source,&nbsp;and&nbsp;then&nbsp;compile&nbsp;it&nbsp;into&nbsp;an&nbsp;anonymous
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                437&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;object,&nbsp;getting&nbsp;round&nbsp;the&nbsp;problem&nbsp;of&nbsp;binding&nbsp;mw-engine.utils&nbsp;in
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                438&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;compiling&nbsp;environment.&nbsp;If&nbsp;`return-tuple?`&nbsp;is&nbsp;present&nbsp;and&nbsp;true,&nbsp;return
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                439&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;comprising&nbsp;the&nbsp;anonymous&nbsp;function&nbsp;compiled,&nbsp;and&nbsp;the&nbsp;function&nbsp;from
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                440&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;it&nbsp;was&nbsp;compiled.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                441&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                442&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Throws&nbsp;an&nbsp;exception&nbsp;if&nbsp;parsing&nbsp;fails.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                443&nbsp;&nbsp;&nbsp;&nbsp;([rule-text&nbsp;return-tuple?]
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                444&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(do
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                445&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(use&nbsp;&#x27;mw-engine.utils)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                446&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[afn&nbsp;(eval&nbsp;(parse-rule&nbsp;rule-text))]
+                </span><br/>
+<span class="partial" title="3 out of 4 forms covered">
+                447&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cond
+                </span><br/>
+<span class="partial" title="11 out of 12 forms covered">
+                448&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;afn&nbsp;return-tuple?)(list&nbsp;afn&nbsp;(trim&nbsp;rule-text))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                449&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;afn))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                450&nbsp;&nbsp;&nbsp;&nbsp;([rule-text]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                451&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(compile-rule&nbsp;rule-text&nbsp;false)))
+                </span><br/>
+ </body>
+</html>

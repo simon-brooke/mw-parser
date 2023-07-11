@@ -1,8 +1,6 @@
 (ns ^{:doc "Simplify a parse tree."
       :author "Simon Brooke"}
-  mw-parser.simplify
-  (:require [clojure.pprint :refer [pprint]]
-            [mw-engine.utils :refer [member?]]))
+ mw-parser.simplify)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -59,7 +57,7 @@
   semantically identical simpler fragments"
   [tree]
   (if
-    (coll? tree)
+   (coll? tree)
     (case (first tree)
       :ACTION (simplify-second-of-two tree)
       :ACTIONS (cons (first tree) (simplify-rule (rest tree)))
@@ -78,24 +76,9 @@
     tree))
 
 (defn simplify-determiner-condition
-  [tree])
-
-(defn simplify-flow
   [tree]
-  (if (coll? tree)
-    (case (first tree)
-      :FLOW nil
-      :DETERMINER (simplify-second-of-two tree)
-      :DETERMINER-CONDITION (simplify-determiner-condition tree)
-      :SPACE nil
-      :QUANTITY (simplify-second-of-two tree)
-      :STATE [:PROPERTY-CONDITION
-              [:SYMBOL "state"]
-              [:QUALIFIER 
-               [:EQUIVALENCE 
-                [:IS "is"]]]
-              [:EXPRESSION
-               [:VALUE
-                (second tree)]]]
-      (remove nil? (map simplify-flow tree)))
-    tree))
+  (apply vector
+         (cons :DETERMINER-CONDITION
+               (cons
+                (simplify-second-of-two (second tree))
+                (rest (rest tree))))))

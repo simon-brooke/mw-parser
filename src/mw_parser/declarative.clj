@@ -1,7 +1,7 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
  mw-parser.declarative
-  (:require [instaparse.core :as insta]
+  (:require [instaparse.core :refer [parser]]
             [clojure.string :refer [join trim]]
             [mw-parser.errors :refer [throw-parse-exception]]
             [mw-parser.generate :refer [generate]]
@@ -119,12 +119,18 @@
    non-latin alphabets, anyway."
   ([]
    (keywords-for-locale (get-default)))
-  ([^Locale locale]
+  ([^Locale _locale]
    keywords-en))
+
+(defmacro build-parser 
+  "Compose this grammar fragment `g` with the common grammar fragments to 
+   make a complete grammar, and return a parser for that complete grammar."
+  [g]
+  `(parser (join "\n" [~g common-grammar (keywords-for-locale)])))
 
 (def parse-rule
   "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
-  (insta/parser (join "\n" [rule-grammar common-grammar (keywords-for-locale)])))
+  (build-parser rule-grammar))
 
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,

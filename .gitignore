@@ -4,5 +4,6 @@ buildall.tmp.*
 target/
 pom.xml
 .calva/
-
+.clj-kondo/
+.lsp/
 .nrepl-port

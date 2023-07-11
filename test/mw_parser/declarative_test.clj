@@ -1,11 +1,10 @@
 (ns mw-parser.declarative-test
-  (:use clojure.pprint
-        mw-engine.core
-        mw-engine.world
-        mw-engine.utils
-        mw-parser.utils)
-  (:require [clojure.test :refer :all]
-            [mw-parser.declarative :refer :all]))
+   (:require [clojure.test :refer [deftest is testing]]
+             [mw-engine.core :refer [transform-world]]
+             [mw-engine.utils :refer [get-cell]]
+             [mw-engine.world :refer [make-world]]
+             [mw-parser.declarative :refer [compile-rule parse-rule]]
+             [mw-parser.utils :refer [rule?]]))
 
 (deftest rules-tests
   (testing "Rule parser - does not test whether generated functions actually work, just that something is generated!"
@@ -18,8 +17,7 @@
     (is (rule? (parse-rule "if deer is more than 1 and wolves is more than 1 then deer should be deer - wolves")))
     (is (rule? (parse-rule "if state is forest and fertility is between 55 and 75 then state should be climax")))
     (is (rule? (parse-rule "if fertility is between 55 and 75 then state should be climax")))
-    (is (rule? (parse-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3")))
-    ))
+    (is (rule? (parse-rule "if altitude is less than 100 and state is forest then state should be climax and deer should be 3")))))
 
 (deftest neighbours-rules-tests
   (testing "Rules which relate to neighbours - hard!"

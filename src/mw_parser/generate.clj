@@ -1,9 +1,8 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
-  mw-parser.generate
-  (:require [mw-engine.utils :refer []]
-        [mw-parser.utils :refer [assert-type TODO]]
-        [mw-parser.errors :as pe]))
+ mw-parser.generate
+  (:require [mw-parser.utils :refer [assert-type TODO]]
+            [mw-parser.errors :as pe]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -73,14 +72,14 @@
   this `property` where the `expression` is a numeric range, generate and return
   the appropriate clojure fragment."
   [tree property expression]
-   (assert-type tree :PROPERTY-CONDITION)
-   (assert-type (nth tree 3) :RANGE-EXPRESSION)
-   (let [l1 (generate (nth expression 2))
-         l2 (generate (nth expression 4))
-         pv (list property 'cell)]
-     (list 'let ['lower (list 'min l1 l2)
-                 'upper (list 'max l1 l2)]
-           (list 'and (list '>= pv 'lower)(list '<= pv 'upper)))))
+  (assert-type tree :PROPERTY-CONDITION)
+  (assert-type (nth tree 3) :RANGE-EXPRESSION)
+  (let [l1 (generate (nth expression 2))
+        l2 (generate (nth expression 4))
+        pv (list property 'cell)]
+    (list 'let ['lower (list 'min l1 l2)
+                'upper (list 'max l1 l2)]
+          (list 'and (list '>= pv 'lower) (list '<= pv 'upper)))))
 
 
 (defn generate-disjunct-property-condition
@@ -97,7 +96,7 @@
    (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
      (list 'let ['value (list property 'cell)]
            (if (= qualifier '=) e
-             (list 'not e))))))
+               (list 'not e))))))
 
 
 (defn generate-property-condition
@@ -106,15 +105,15 @@
   ([tree]
    (assert-type tree :PROPERTY-CONDITION)
    (if
-     (and (= (count tree) 2) (= (first (second tree)) :SYMBOL))
+    (and (= (count tree) 2) (= (first (second tree)) :SYMBOL))
      ;; it's a shorthand for 'state equal to symbol'. This should probably have
      ;; been handled in simplify...
      (generate-property-condition
-       (list
-         :PROPERTY-CONDITION
-         '(:SYMBOL "state")
-         '(:QUALIFIER (:EQUIVALENCE (:EQUAL "equal to")))
-         (second tree)))
+      (list
+       :PROPERTY-CONDITION
+       '(:SYMBOL "state")
+       '(:QUALIFIER (:EQUIVALENCE (:EQUAL "equal to")))
+       (second tree)))
      ;; otherwise...
      (generate-property-condition tree (first (nth tree 3)))))
   ([tree expression-type]
@@ -131,17 +130,15 @@
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
        (list qualifier (list property 'cell) expression)))))
 
-
 (defn generate-qualifier
   "From this `tree`, assumed to be a syntactically correct qualifier,
   generate and return the appropriate clojure fragment."
   [tree]
   (if
-    (= (count tree) 2)
+   (= (count tree) 2)
     (generate (second tree))
     ;; else
     (generate (nth tree 2))))
-
 
 (defn generate-simple-action
   "From this `tree`, assumed to be a syntactically correct simple action,
@@ -158,9 +155,8 @@
        (list 'merge
              (if (empty? others) 'cell
                ;; else
-               (generate others))
+                 (generate others))
              {property expression})))))
-
 
 (defn generate-probable-action
   "From this `tree`, assumed to be a syntactically correct probable action,
@@ -170,15 +166,14 @@
    (generate-probable-action tree []))
   ([tree others]
    (assert-type tree :PROBABLE-ACTION)
-  (let
+   (let
     [chances (generate (nth tree 1))
      total (generate (nth tree 2))
      action (generate-action (nth tree 3) others)]
     ;; TODO: could almost certainly be done better with macro syntax
-    (list 'if
-          (list '< (list 'rand total) chances)
-          action))))
-
+     (list 'if
+           (list '< (list 'rand total) chances)
+           action))))
 
 (defn generate-action
   "From this `tree`, assumed to be a syntactically correct action,
@@ -189,7 +184,6 @@
     :SIMPLE-ACTION (generate-simple-action tree others)
     :PROBABLE-ACTION (generate-probable-action tree others)
     (throw (Exception. (str "Not a known action type: " (first tree))))))
-
 
 (defn generate-multiple-actions
   "From this `tree`, assumed to be one or more syntactically correct actions,
@@ -207,7 +201,6 @@
     (cons (generate (second tree)) (generate (nth tree 3)))
     (list (generate (second tree)))))
 
-
 (defn generate-numeric-expression
   "From this `tree`, assumed to be a syntactically correct numeric expression,
   generate and return the appropriate clojure fragment."
@@ -220,7 +213,6 @@
     (case (first (second tree))
       :SYMBOL (list (keyword (second (second tree))) 'cell)
       (generate (second tree)))))
-
 
 (defn generate-neighbours-condition
   "Generate code for a condition which refers to neighbours."
@@ -239,8 +231,7 @@
        :MORE (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '> value pc 1))
        :LESS (let [value (generate (nth quantifier 3))]
-               (generate-neighbours-condition '< value pc 1))
-       )))
+               (generate-neighbours-condition '< value pc 1)))))
   ([comp1 quantity property-condition distance]
    (list comp1
          (list 'count
@@ -258,10 +249,10 @@
   desirable. It may be that it's better to simplify a `NEIGHBOURS-CONDITION`
   into a `WITHIN-CONDITION` in the simplification stage."
   ([tree]
-  (assert-type tree :WITHIN-CONDITION)
-    (case (first (second tree))
-      :QUANTIFIER (generate-within-condition tree (first (second (second tree))))
-      :QUALIFIER (TODO "qualified within... help!")))
+   (assert-type tree :WITHIN-CONDITION)
+   (case (first (second tree))
+     :QUANTIFIER (generate-within-condition tree (first (second (second tree))))
+     :QUALIFIER (TODO "qualified within... help!")))
   ([tree quantifier-type]
    (let [quantifier (second tree)
          distance (generate (nth tree 4))
@@ -272,15 +263,17 @@
        :MORE (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '> value pc distance))
        :LESS (let [value (generate (nth quantifier 3))]
-               (generate-neighbours-condition '< value pc distance))
-       ))))
+               (generate-neighbours-condition '< value pc distance))))))
 
+(defn generate-flow
+  [tree]
+  (assert-type tree :WITHIN-CONDITION))
 
 (defn generate
   "Generate code for this (fragment of a) parse tree"
   [tree]
   (if
-    (coll? tree)
+   (coll? tree)
     (case (first tree)
       :ACTIONS (generate-multiple-actions tree)
       :COMPARATIVE (generate (second tree))
@@ -293,12 +286,13 @@
       :DISJUNCT-VALUE (generate-disjunct-value tree)
       :EQUIVALENCE '=
       :EXPRESSION (generate (second tree))
+      :FLOW-RULE (generate-flow tree)
       :LESS '<
       :MORE '>
       :NEGATED-QUALIFIER (case (generate (second tree))
-                                 = 'not=
-                                 > '<
-                                 < '>)
+                           = 'not=
+                           > '<
+                           < '>)
       :NEIGHBOURS-CONDITION (generate-neighbours-condition tree)
       :NUMERIC-EXPRESSION (generate-numeric-expression tree)
       :NUMBER (read-string (second tree))
