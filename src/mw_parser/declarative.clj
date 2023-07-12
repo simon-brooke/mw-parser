@@ -1,9 +1,10 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
  mw-parser.declarative
-  (:require [instaparse.core :refer [parser]]
-            [clojure.string :refer [join trim]]
+  (:require [clojure.string :refer [join split trim]]
+            [instaparse.core :refer [parser]]
             [mw-parser.errors :refer [throw-parse-exception]]
+            [mw-parser.flow :refer [flow-grammar]]
             [mw-parser.generate :refer [generate]]
             [mw-parser.simplify :refer [simplify]]
             [mw-parser.utils :refer [rule?]]
@@ -71,8 +72,7 @@
               "SPACE := #'\\s+';"
               "VALUE := SYMBOL | NUMBER;"
               "VALUE := SYMBOL | NUMBER;"
-              "WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;"
-              ]))
+              "WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;"]))
 
 (def keywords-en
   "English language keyword literals used in rules - both in production
@@ -81,33 +81,33 @@
       It's a long term aim that the rule language should be easy to 
       internationalise; this isn't a full solution but it's a step towards
       a solution."
-  (join "\n" ["ALL := 'all'" 
-              "AND := 'and';" 
-              "BECOMES := 'should be' | 'becomes';" 
-              "BETWEEN := 'between';" 
-              "CHANCE-IN := 'chance in';" 
+  (join "\n" ["ALL := 'all'"
+              "AND := 'and';"
+              "BECOMES := 'should be' | 'becomes';"
+              "BETWEEN := 'between';"
+              "CHANCE-IN := 'chance in';"
               "EACH := 'each' | 'every' | 'all';"
-              "EQUAL := 'equal to';" 
+              "EQUAL := 'equal to';"
               "FIRST := 'first';"
-              "FLOW := 'flow' | 'move';" 
+              "FLOW := 'flow' | 'move';"
               "FROM := 'from';"
-              "IF := 'if';" 
-              "IN := 'in';" 
-              "IS := 'is' | 'are' | 'have' | 'has';" 
+              "IF := 'if';"
+              "IN := 'in';"
+              "IS := 'is' | 'are' | 'have' | 'has';"
               "LEAST := 'least';"
-              "LESS := 'less' | 'fewer';" 
-              "MORE := 'more' | 'greater';" 
+              "LESS := 'less' | 'fewer';"
+              "MORE := 'more' | 'greater';"
               "MOST := 'most';"
-              "NEIGHBOURS := 'neighbour' | 'neighbor' | 'neighbours' | 'neighbors';" 
-              "NONE := 'no';" 
-              "NOT := 'not';" 
-              "OR := 'or';" 
-              "SOME := 'some';" 
+              "NEIGHBOURS := 'neighbour' | 'neighbor' | 'neighbours' | 'neighbors';"
+              "NONE := 'no';"
+              "NOT := 'not';"
+              "OR := 'or';"
+              "SOME := 'some';"
               ;; SYMBOL is in the per-language file so that languages that use
               ;; (e.g.) Cyrillic characters can change the definition.
-              "SYMBOL := #'[a-z]+';" 
-              "THAN := 'than';" 
-              "THEN := 'then';" 
+              "SYMBOL := #'[a-z]+';"
+              "THAN := 'than';"
+              "THEN := 'then';"
               "TO := 'to';"
               "WITH := 'with' | 'where' | 'having';"
               "WITHIN := 'within';"]))
@@ -122,7 +122,7 @@
   ([^Locale _locale]
    keywords-en))
 
-(defmacro build-parser 
+(defmacro build-parser
   "Compose this grammar fragment `g` with the common grammar fragments to 
    make a complete grammar, and return a parser for that complete grammar."
   [g]
@@ -131,6 +131,22 @@
 (def parse-rule
   "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
   (build-parser rule-grammar))
+
+(def parse-flow
+  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
+  (build-parser flow-grammar))
+
+(defn parse
+  "Top level parser function: parse this `text` as either a production or a flow rule; 
+   return a raw parse tree."
+  [^String rule-text]
+  (let [text (trim rule-text)]
+    (when-not (zero? (count text))
+      (case (first (split text #"\s+"))
+        "if" (parse-rule text)
+        "flow" (parse-flow text)
+        ";;" nil
+        (throw (ex-info "Rule text was not recognised" {:text text}))))))
 
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,

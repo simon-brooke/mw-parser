@@ -1,7 +1,7 @@
 (ns mw-parser.bulk-test
-  (:use clojure.java.io)
-  (:require [clojure.test :refer :all]
-            [mw-parser.bulk :refer :all]))
+  (:require [clojure.java.io :refer [as-file]]
+            [clojure.test :refer [deftest is testing]]
+            [mw-parser.bulk :refer [compile-file parse-file]]))
 
 (deftest bulk-parsing-test
          (testing "Bulk (file) parsing and compilation"

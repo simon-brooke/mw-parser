@@ -280,9 +280,23 @@
 ;;; (fn [cell world])
 ;;;    (if (= (:state cell) (or (:house cell) :house))
 
+(defmacro flow-rule
+  [source property quantity-frag destinations]
+  `(fn [cell world]
+     (when (and ~source (pos? cell ~property))
+       (map 
+       (fn [d] {:source (select-keys cell [:x :y])
+                :destination (select-keys d [:x :y])
+                :property ~property
+                :quantity ~quantity-frag})
+        ~destinations))))
+
 (defn generate-flow
   [tree]
-  (assert-type tree :FLOW-RULE))
+  (assert-type tree :FLOW-RULE)
+  (let [clauses (reduce #(assoc %1 (first %2) %2) {} (rest tree))]
+    (list 'fn ['cell 'world] 
+          (list 'when (generate (:SOURCE clauses))))))
 
 ;;; Top level; only function anything outside this file (except tests) should 
 ;;; really call.

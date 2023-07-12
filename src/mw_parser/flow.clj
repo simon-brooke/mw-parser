@@ -1,9 +1,7 @@
 (ns ^{:doc "A very simple parser which parses flow rules."
       :author "Simon Brooke"}
  mw-parser.flow
-  (:require [clojure.string :refer [join]]
-            [mw-parser.declarative :refer [build-parser]]
-            [mw-parser.simplify :refer [simplify-second-of-two]]))
+  (:require [clojure.string :refer [join]]))
 
 (def flow-grammar
   "Grammar for flow rules.
@@ -21,7 +19,7 @@
    The basic rule I want to be able to compile at this stage is the 'mutual
    aid' rule:
 
-   `flow 1 food from house having food > 1 to house with least food within 2`
+   `flow 1 food from house to house within 2 with least food`
    "
   (join "\n" ["FLOW-RULE := FLOW SPACE QUANTITY SPACE PROPERTY SPACE FROM SPACE SOURCE SPACE TO-HOW SPACE DESTINATION;"
               "PERCENTAGE := NUMBER #'%';"
@@ -35,33 +33,3 @@
               "TO-HOW := TO | TO-EACH | TO-FIRST;"
               "TO-EACH := TO SPACE EACH | TO SPACE ALL;"
               "TO-FIRST := TO SPACE FIRST"]))
-
-(def parse-flow
-  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
-  (build-parser flow-grammar))
-
-(defn simplify-flow
-  [tree]
-  (if (coll? tree)
-    (case (first tree)
-      :CONDITION (simplify-second-of-two tree)
-      :CONDITIONS (simplify-second-of-two tree)
-      :DETERMINER (simplify-second-of-two tree)
-;;      :DETERMINER-CONDITION (simplify-determiner-condition tree)
-      :EXPRESSION (simplify-second-of-two tree)
-      :FLOW nil
-;;      :FLOW-CONDITIONS (simplify-second-of-two tree)
-      :PROPERTY (simplify-second-of-two tree)
-      :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
-      :SPACE nil
-      :QUANTITY (simplify-second-of-two tree)
-      :STATE (list :PROPERTY-CONDITION
-                   (list :SYMBOL "state")
-                   '(:QUALIFIER
-                     (:EQUIVALENCE
-                      (:IS "is")))
-                   (list :EXPRESSION
-                         (list :VALUE (second tree))))
-      (remove nil? (map simplify-flow tree)))
-    tree))
-
