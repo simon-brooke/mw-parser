@@ -14,79 +14,79 @@
                 003&nbsp;&nbsp;&nbsp;mw-parser.generate
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                004&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[mw-parser.utils&nbsp;:refer&nbsp;[assert-type&nbsp;TODO]]
+                004&nbsp;&nbsp;&nbsp;&nbsp;(:require&nbsp;[clojure.pprint&nbsp;:refer&nbsp;[pprint]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.errors&nbsp;:as&nbsp;pe]))
+                005&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[clojure.tools.trace&nbsp;:refer&nbsp;[deftrace]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                006&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.utils&nbsp;:refer&nbsp;[assert-type&nbsp;TODO]]
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                007&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.errors&nbsp;:as&nbsp;pe]))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                006&nbsp;&nbsp;
+                008&nbsp;&nbsp;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                007&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                009&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                008&nbsp;&nbsp;;;
+                010&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                009&nbsp;&nbsp;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
+                011&nbsp;&nbsp;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and&#x2F;or
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                010&nbsp;&nbsp;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                012&nbsp;&nbsp;;;&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                011&nbsp;&nbsp;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
+                013&nbsp;&nbsp;;;&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either&nbsp;version&nbsp;2
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                012&nbsp;&nbsp;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
+                014&nbsp;&nbsp;;;&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                013&nbsp;&nbsp;;;
+                015&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                014&nbsp;&nbsp;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
+                016&nbsp;&nbsp;;;&nbsp;This&nbsp;program&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                015&nbsp;&nbsp;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
+                017&nbsp;&nbsp;;;&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                016&nbsp;&nbsp;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
+                018&nbsp;&nbsp;;;&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                017&nbsp;&nbsp;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
+                019&nbsp;&nbsp;;;&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                018&nbsp;&nbsp;;;
+                020&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                019&nbsp;&nbsp;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
+                021&nbsp;&nbsp;;;&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public&nbsp;License
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                020&nbsp;&nbsp;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
+                022&nbsp;&nbsp;;;&nbsp;along&nbsp;with&nbsp;this&nbsp;program;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                021&nbsp;&nbsp;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,
+                023&nbsp;&nbsp;;;&nbsp;Foundation,&nbsp;Inc.,&nbsp;51&nbsp;Franklin&nbsp;Street,&nbsp;Fifth&nbsp;Floor,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02110-1301,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                022&nbsp;&nbsp;;;&nbsp;USA.
+                024&nbsp;&nbsp;;;&nbsp;USA.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                023&nbsp;&nbsp;;;
+                025&nbsp;&nbsp;;;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                024&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                026&nbsp;&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                025&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                026&nbsp;&nbsp;
+                027&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                027&nbsp;&nbsp;(declare&nbsp;generate&nbsp;generate-action)
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                028&nbsp;&nbsp;
+                028&nbsp;&nbsp;(declare&nbsp;generate&nbsp;generate-action)
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 029&nbsp;&nbsp;
@@ -106,83 +106,83 @@
 <span class="covered" title="4 out of 4 forms covered">
                 034&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:RULE)
                 </span><br/>
+<span class="covered" title="2 out of 2 forms covered">
+                035&nbsp;&nbsp;&nbsp;&nbsp;(vary-meta
+                </span><br/>
 <span class="covered" title="19 out of 19 forms covered">
-                035&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;cell&nbsp;&#x27;world]&nbsp;(list&nbsp;&#x27;if&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3)))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                036&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                037&nbsp;&nbsp;
+                036&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;cell&nbsp;&#x27;world]&nbsp;(list&nbsp;&#x27;when&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))))
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                038&nbsp;&nbsp;(defn&nbsp;generate-conditions
+                037&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;merge
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                038&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:rule-type
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                039&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;conditions&nbsp;clause,
+                039&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:production}))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                040&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                041&nbsp;&nbsp;(defn&nbsp;generate-conditions
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                040&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                042&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;conditions&nbsp;clause,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                041&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                043&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                044&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                042&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONDITIONS)
+                045&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONDITIONS)
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                043&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))
+                046&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                044&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                045&nbsp;&nbsp;
+                047&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                046&nbsp;&nbsp;(defn&nbsp;generate-condition
+                048&nbsp;&nbsp;(defn&nbsp;generate-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                047&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;condition&nbsp;clause,
+                049&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;condition&nbsp;clause,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                048&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                050&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                049&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                051&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                050&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONDITION)
+                052&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONDITION)
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                051&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))
+                053&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                052&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                053&nbsp;&nbsp;
+                054&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                054&nbsp;&nbsp;(defn&nbsp;generate-conjunct-condition
+                055&nbsp;&nbsp;(defn&nbsp;generate-conjunct-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                055&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;conjunct&nbsp;correct&nbsp;condition&nbsp;clause,
+                056&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;conjunct&nbsp;correct&nbsp;condition&nbsp;clause,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                056&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                057&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                057&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                058&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                058&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONJUNCT-CONDITION)
+                059&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:CONJUNCT-CONDITION)
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
-                059&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;&#x27;and&nbsp;(map&nbsp;generate&nbsp;(rest&nbsp;tree))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                060&nbsp;&nbsp;
+                060&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;&#x27;and&nbsp;(map&nbsp;generate&nbsp;(rest&nbsp;tree))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
                 061&nbsp;&nbsp;
@@ -208,755 +208,785 @@
 <span class="blank" title="0 out of 0 forms covered">
                 068&nbsp;&nbsp;
                 </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                069&nbsp;&nbsp;
-                </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                070&nbsp;&nbsp;(defn&nbsp;generate-ranged-property-condition
+                069&nbsp;&nbsp;(defn&nbsp;generate-ranged-property-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                071&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause&nbsp;for
+                070&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause&nbsp;for
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                072&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;`property`&nbsp;where&nbsp;the&nbsp;`expression`&nbsp;is&nbsp;a&nbsp;numeric&nbsp;range,&nbsp;generate&nbsp;and&nbsp;return
+                071&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;`property`&nbsp;where&nbsp;the&nbsp;`expression`&nbsp;is&nbsp;a&nbsp;numeric&nbsp;range,&nbsp;generate&nbsp;and&nbsp;return
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                073&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                072&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                074&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;property&nbsp;expression]
+                073&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;property&nbsp;expression]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                075&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
+                074&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                076&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;(nth&nbsp;tree&nbsp;3)&nbsp;:RANGE-EXPRESSION)
+                075&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;(nth&nbsp;tree&nbsp;3)&nbsp;:RANGE-EXPRESSION)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                077&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[l1&nbsp;(generate&nbsp;(nth&nbsp;expression&nbsp;2))
+                076&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[l1&nbsp;(generate&nbsp;(nth&nbsp;expression&nbsp;2))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l2&nbsp;(generate&nbsp;(nth&nbsp;expression&nbsp;4))
+                077&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l2&nbsp;(generate&nbsp;(nth&nbsp;expression&nbsp;4))
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pv&nbsp;(list&nbsp;property&nbsp;&#x27;cell)]
+                078&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pv&nbsp;(list&nbsp;property&nbsp;&#x27;cell)]
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;let&nbsp;[&#x27;lower&nbsp;(list&nbsp;&#x27;min&nbsp;l1&nbsp;l2)
+                079&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;let&nbsp;[&#x27;lower&nbsp;(list&nbsp;&#x27;min&nbsp;l1&nbsp;l2)
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;upper&nbsp;(list&nbsp;&#x27;max&nbsp;l1&nbsp;l2)]
+                080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;upper&nbsp;(list&nbsp;&#x27;max&nbsp;l1&nbsp;l2)]
                 </span><br/>
 <span class="covered" title="13 out of 13 forms covered">
-                082&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;and&nbsp;(list&nbsp;&#x27;&gt;=&nbsp;pv&nbsp;&#x27;lower)&nbsp;(list&nbsp;&#x27;&lt;=&nbsp;pv&nbsp;&#x27;upper)))))
+                081&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;and&nbsp;(list&nbsp;&#x27;&gt;=&nbsp;pv&nbsp;&#x27;lower)&nbsp;(list&nbsp;&#x27;&lt;=&nbsp;pv&nbsp;&#x27;upper)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                083&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                084&nbsp;&nbsp;
+                082&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                085&nbsp;&nbsp;(defn&nbsp;generate-disjunct-property-condition
+                083&nbsp;&nbsp;(defn&nbsp;generate-disjunct-property-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                086&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause
+                084&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                087&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;the&nbsp;expression&nbsp;is&nbsp;a&nbsp;a&nbsp;disjunction,&nbsp;generate&nbsp;and&nbsp;return
+                085&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;the&nbsp;expression&nbsp;is&nbsp;a&nbsp;a&nbsp;disjunction,&nbsp;generate&nbsp;and&nbsp;return
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                088&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.
+                086&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                089&nbsp;&nbsp;&nbsp;&nbsp;TODO:&nbsp;this&nbsp;is&nbsp;definitely&nbsp;still&nbsp;wrong!&quot;
+                087&nbsp;&nbsp;&nbsp;&nbsp;TODO:&nbsp;this&nbsp;is&nbsp;definitely&nbsp;still&nbsp;wrong!&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                090&nbsp;&nbsp;&nbsp;&nbsp;([tree]
+                088&nbsp;&nbsp;&nbsp;&nbsp;([tree]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
+                089&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qualifier&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
+                090&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qualifier&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
                 </span><br/>
 <span class="not-covered" title="0 out of 5 forms covered">
-                093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))]
+                091&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-disjunct-property-condition&nbsp;tree&nbsp;property&nbsp;qualifier&nbsp;expression)))
+                092&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-disjunct-property-condition&nbsp;tree&nbsp;property&nbsp;qualifier&nbsp;expression)))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                095&nbsp;&nbsp;&nbsp;&nbsp;([_tree&nbsp;property&nbsp;qualifier&nbsp;expression]
+                093&nbsp;&nbsp;&nbsp;&nbsp;([_tree&nbsp;property&nbsp;qualifier&nbsp;expression]
                 </span><br/>
-<span class="covered" title="14 out of 14 forms covered">
-                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[e&nbsp;(list&nbsp;&#x27;some&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;i]&nbsp;&#x27;(=&nbsp;i&nbsp;value))&nbsp;(list&nbsp;&#x27;quote&nbsp;expression))]
-                </span><br/>
-<span class="covered" title="9 out of 9 forms covered">
-                097&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;let&nbsp;[&#x27;value&nbsp;(list&nbsp;property&nbsp;&#x27;cell)]
+<span class="covered" title="8 out of 8 forms covered">
+                094&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[e&nbsp;(list&nbsp;expression&nbsp;(list&nbsp;property&nbsp;&#x27;cell))]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                098&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;qualifier&nbsp;&#x27;=)&nbsp;e
+                095&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;qualifier&nbsp;&#x27;=)&nbsp;e
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                099&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;not&nbsp;e))))))
+                096&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;not&nbsp;e)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                100&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                101&nbsp;&nbsp;
+                097&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                102&nbsp;&nbsp;(defn&nbsp;generate-property-condition
+                098&nbsp;&nbsp;(defn&nbsp;generate-property-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                103&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause,
+                099&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;property&nbsp;condition&nbsp;clause,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                104&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                100&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                105&nbsp;&nbsp;&nbsp;&nbsp;([tree]
+                101&nbsp;&nbsp;&nbsp;&nbsp;([tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
+                102&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
+                103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="covered" title="15 out of 15 forms covered">
-                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;2)&nbsp;(=&nbsp;(first&nbsp;(second&nbsp;tree))&nbsp;:SYMBOL))
+                104&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;2)&nbsp;(=&nbsp;(first&nbsp;(second&nbsp;tree))&nbsp;:SYMBOL))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                109&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;it&#x27;s&nbsp;a&nbsp;shorthand&nbsp;for&nbsp;&#x27;state&nbsp;equal&nbsp;to&nbsp;symbol&#x27;.&nbsp;This&nbsp;should&nbsp;probably&nbsp;have
+                105&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;it&#x27;s&nbsp;a&nbsp;shorthand&nbsp;for&nbsp;&#x27;state&nbsp;equal&nbsp;to&nbsp;symbol&#x27;.&nbsp;This&nbsp;should&nbsp;probably&nbsp;have
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;been&nbsp;handled&nbsp;in&nbsp;simplify...
+                106&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;been&nbsp;handled&nbsp;in&nbsp;simplify...
                 </span><br/>
 <span class="covered" title="2 out of 2 forms covered">
-                111&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-property-condition
+                107&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-property-condition
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                112&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list
+                108&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY-CONDITION
+                109&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY-CONDITION
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                114&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;(:SYMBOL&nbsp;&quot;state&quot;)
+                110&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;(:SYMBOL&nbsp;&quot;state&quot;)
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                115&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;(:QUALIFIER&nbsp;(:EQUIVALENCE&nbsp;(:EQUAL&nbsp;&quot;equal&nbsp;to&quot;)))
+                111&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x27;(:QUALIFIER&nbsp;(:EQUIVALENCE&nbsp;(:EQUAL&nbsp;&quot;equal&nbsp;to&quot;)))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(second&nbsp;tree)))
+                112&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(second&nbsp;tree)))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;otherwise...
+                113&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;otherwise...
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-property-condition&nbsp;tree&nbsp;(first&nbsp;(nth&nbsp;tree&nbsp;3)))))
+                114&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-property-condition&nbsp;tree&nbsp;(first&nbsp;(nth&nbsp;tree&nbsp;3)))))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                119&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;expression-type]
+                115&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;expression-type]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
+                116&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROPERTY-CONDITION)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
+                117&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qualifier&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
+                118&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qualifier&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))
+                119&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                124&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(cond
+                120&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(cond
                 </span><br/>
 <span class="covered" title="20 out of 20 forms covered">
-                125&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(not&nbsp;(=&nbsp;qualifier&nbsp;&#x27;=))&nbsp;(keyword?&nbsp;e))&nbsp;(list&nbsp;&#x27;or&nbsp;(list&nbsp;e&nbsp;&#x27;cell)&nbsp;e)
+                121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(not&nbsp;(=&nbsp;qualifier&nbsp;&#x27;=))&nbsp;(keyword?&nbsp;e))&nbsp;(list&nbsp;&#x27;or&nbsp;(list&nbsp;e&nbsp;&#x27;cell)&nbsp;e)
                 </span><br/>
 <span class="covered" title="20 out of 20 forms covered">
-                126&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(not&nbsp;(=&nbsp;qualifier&nbsp;&#x27;not=))&nbsp;(keyword?&nbsp;e))&nbsp;(list&nbsp;&#x27;or&nbsp;(list&nbsp;e&nbsp;&#x27;cell)&nbsp;e)
+                122&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(and&nbsp;(not&nbsp;(=&nbsp;qualifier&nbsp;&#x27;not=))&nbsp;(keyword?&nbsp;e))&nbsp;(list&nbsp;&#x27;or&nbsp;(list&nbsp;e&nbsp;&#x27;cell)&nbsp;e)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                127&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;e)]
+                123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:else&nbsp;e)]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                128&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;expression-type
+                124&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;expression-type
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                129&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-EXPRESSION&nbsp;(generate-disjunct-property-condition&nbsp;tree&nbsp;property&nbsp;qualifier&nbsp;expression)
+                125&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-EXPRESSION&nbsp;(generate-disjunct-property-condition&nbsp;tree&nbsp;property&nbsp;qualifier&nbsp;expression)
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                130&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:RANGE-EXPRESSION&nbsp;(generate-ranged-property-condition&nbsp;tree&nbsp;property&nbsp;expression)
+                126&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:RANGE-EXPRESSION&nbsp;(generate-ranged-property-condition&nbsp;tree&nbsp;property&nbsp;expression)
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                131&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;qualifier&nbsp;(list&nbsp;property&nbsp;&#x27;cell)&nbsp;expression)))))
+                127&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;qualifier&nbsp;(list&nbsp;property&nbsp;&#x27;cell)&nbsp;expression)))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                132&nbsp;&nbsp;
+                128&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                133&nbsp;&nbsp;(defn&nbsp;generate-qualifier
+                129&nbsp;&nbsp;(defn&nbsp;generate-qualifier
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                134&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;qualifier,
+                130&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;qualifier,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                135&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                131&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                136&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                132&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                137&nbsp;&nbsp;&nbsp;&nbsp;(if
+                133&nbsp;&nbsp;&nbsp;&nbsp;(if
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;2)
+                134&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;2)
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree))
+                135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                140&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
+                136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                141&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))))
+                137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                142&nbsp;&nbsp;
+                138&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                143&nbsp;&nbsp;(defn&nbsp;generate-simple-action
+                139&nbsp;&nbsp;(defn&nbsp;generate-simple-action
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                144&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;simple&nbsp;action,
+                140&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;simple&nbsp;action,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                145&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                141&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                146&nbsp;&nbsp;&nbsp;&nbsp;([tree]
+                142&nbsp;&nbsp;&nbsp;&nbsp;([tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:SIMPLE-ACTION)
+                143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:SIMPLE-ACTION)
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-simple-action&nbsp;tree&nbsp;[]))
+                144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-simple-action&nbsp;tree&nbsp;[]))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                149&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;others]
+                145&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;others]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:SIMPLE-ACTION)
+                146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:SIMPLE-ACTION)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
+                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[property&nbsp;(generate&nbsp;(second&nbsp;tree))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))]
+                148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3))]
                 </span><br/>
 <span class="covered" title="11 out of 11 forms covered">
-                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(or&nbsp;(=&nbsp;property&nbsp;:x)&nbsp;(=&nbsp;property&nbsp;:y))
+                149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(or&nbsp;(=&nbsp;property&nbsp;:x)&nbsp;(=&nbsp;property&nbsp;:y))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(Exception.&nbsp;pe&#x2F;reserved-properties-error))
+                150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(Exception.&nbsp;pe&#x2F;reserved-properties-error))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;merge
+                151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;merge
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(empty?&nbsp;others)&nbsp;&#x27;cell
+                152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(empty?&nbsp;others)&nbsp;&#x27;cell
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
+                153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;else
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;others))
+                154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;others))
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{property&nbsp;expression})))))
+                155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{property&nbsp;expression})))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                160&nbsp;&nbsp;
+                156&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                161&nbsp;&nbsp;(defn&nbsp;generate-probable-action
+                157&nbsp;&nbsp;(defn&nbsp;generate-probable-action
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                162&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;probable&nbsp;action,
+                158&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;probable&nbsp;action,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                163&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                159&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                164&nbsp;&nbsp;&nbsp;&nbsp;([tree]
+                160&nbsp;&nbsp;&nbsp;&nbsp;([tree]
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROBABLE-ACTION)
+                161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROBABLE-ACTION)
                 </span><br/>
 <span class="not-covered" title="0 out of 4 forms covered">
-                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-probable-action&nbsp;tree&nbsp;[]))
+                162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-probable-action&nbsp;tree&nbsp;[]))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                167&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;others]
+                163&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;others]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROBABLE-ACTION)
+                164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:PROBABLE-ACTION)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let
+                165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[chances&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;1))
+                166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[chances&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;1))
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
+                167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                172&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action&nbsp;(generate-action&nbsp;(nth&nbsp;tree&nbsp;3)&nbsp;others)]
+                168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action&nbsp;(generate-action&nbsp;(nth&nbsp;tree&nbsp;3)&nbsp;others)]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                173&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;could&nbsp;almost&nbsp;certainly&nbsp;be&nbsp;done&nbsp;better&nbsp;with&nbsp;macro&nbsp;syntax
+                169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;;&nbsp;TODO:&nbsp;could&nbsp;almost&nbsp;certainly&nbsp;be&nbsp;done&nbsp;better&nbsp;with&nbsp;macro&nbsp;syntax
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                174&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;if
+                170&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;if
                 </span><br/>
 <span class="covered" title="8 out of 8 forms covered">
-                175&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;&lt;&nbsp;(list&nbsp;&#x27;rand&nbsp;total)&nbsp;chances)
+                171&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;&lt;&nbsp;(list&nbsp;&#x27;rand&nbsp;total)&nbsp;chances)
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                176&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action))))
+                172&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                177&nbsp;&nbsp;
+                173&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                178&nbsp;&nbsp;(defn&nbsp;generate-action
+                174&nbsp;&nbsp;(defn&nbsp;generate-action
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                179&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;action,
+                175&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;action,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                180&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                176&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                181&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;others]
+                177&nbsp;&nbsp;&nbsp;&nbsp;[tree&nbsp;others]
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                182&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;tree)
+                178&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;tree)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                183&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTIONS&nbsp;(generate-action&nbsp;(first&nbsp;tree)&nbsp;others)
+                179&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTIONS&nbsp;(generate-action&nbsp;(first&nbsp;tree)&nbsp;others)
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                184&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SIMPLE-ACTION&nbsp;(generate-simple-action&nbsp;tree&nbsp;others)
+                180&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SIMPLE-ACTION&nbsp;(generate-simple-action&nbsp;tree&nbsp;others)
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                185&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROBABLE-ACTION&nbsp;(generate-probable-action&nbsp;tree&nbsp;others)
+                181&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROBABLE-ACTION&nbsp;(generate-probable-action&nbsp;tree&nbsp;others)
                 </span><br/>
 <span class="not-covered" title="0 out of 8 forms covered">
-                186&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(Exception.&nbsp;(str&nbsp;&quot;Not&nbsp;a&nbsp;known&nbsp;action&nbsp;type:&nbsp;&quot;&nbsp;(first&nbsp;tree))))))
+                182&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw&nbsp;(Exception.&nbsp;(str&nbsp;&quot;Not&nbsp;a&nbsp;known&nbsp;action&nbsp;type:&nbsp;&quot;&nbsp;(first&nbsp;tree))))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                187&nbsp;&nbsp;
+                183&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                188&nbsp;&nbsp;(defn&nbsp;generate-multiple-actions
+                184&nbsp;&nbsp;(defn&nbsp;generate-multiple-actions
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                189&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;one&nbsp;or&nbsp;more&nbsp;syntactically&nbsp;correct&nbsp;actions,
+                185&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;one&nbsp;or&nbsp;more&nbsp;syntactically&nbsp;correct&nbsp;actions,
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                190&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
+                186&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                191&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                187&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                192&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:ACTIONS)
+                188&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:ACTIONS)
                 </span><br/>
 <span class="covered" title="12 out of 12 forms covered">
-                193&nbsp;&nbsp;&nbsp;&nbsp;(generate-action&nbsp;(first&nbsp;(rest&nbsp;tree))&nbsp;(second&nbsp;(rest&nbsp;tree))))
+                189&nbsp;&nbsp;&nbsp;&nbsp;(generate-action&nbsp;(first&nbsp;(rest&nbsp;tree))&nbsp;(second&nbsp;(rest&nbsp;tree))))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                194&nbsp;&nbsp;
+                190&nbsp;&nbsp;
                 </span><br/>
 <span class="covered" title="1 out of 1 forms covered">
-                195&nbsp;&nbsp;(defn&nbsp;generate-disjunct-value
+                191&nbsp;&nbsp;(defn&nbsp;generate-disjunct-value
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                196&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;disjunct&nbsp;value.&nbsp;Essentially&nbsp;what&nbsp;we&nbsp;need&nbsp;here&nbsp;is&nbsp;to&nbsp;generate&nbsp;a
+                192&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;a&nbsp;disjunct&nbsp;value.&nbsp;Essentially&nbsp;what&nbsp;we&nbsp;need&nbsp;here&nbsp;is&nbsp;to&nbsp;generate&nbsp;a
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                197&nbsp;&nbsp;&nbsp;&nbsp;flat&nbsp;list&nbsp;of&nbsp;values,&nbsp;since&nbsp;the&nbsp;`member`&nbsp;has&nbsp;already&nbsp;been&nbsp;taken&nbsp;care&nbsp;of.&quot;
+                193&nbsp;&nbsp;&nbsp;&nbsp;flat&nbsp;list&nbsp;of&nbsp;values,&nbsp;since&nbsp;the&nbsp;`member`&nbsp;has&nbsp;already&nbsp;been&nbsp;taken&nbsp;care&nbsp;of.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                198&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                194&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                199&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:DISJUNCT-VALUE)
+<span class="not-covered" title="0 out of 4 forms covered">
+                195&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:DISJUNCT-VALUE)
                 </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                200&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;4)
+<span class="not-covered" title="0 out of 5 forms covered">
+                196&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(count&nbsp;tree)&nbsp;4)
                 </span><br/>
-<span class="covered" title="12 out of 12 forms covered">
-                201&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3)))
-                </span><br/>
-<span class="covered" title="7 out of 7 forms covered">
-                202&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;(second&nbsp;tree)))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                203&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                204&nbsp;&nbsp;(defn&nbsp;generate-numeric-expression
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                205&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;numeric&nbsp;expression,
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                206&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                207&nbsp;&nbsp;&nbsp;&nbsp;[tree]
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                208&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:NUMERIC-EXPRESSION)
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                209&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(count&nbsp;tree)
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;(let&nbsp;[[p&nbsp;operator&nbsp;expression]&nbsp;(rest&nbsp;tree)
-                </span><br/>
-<span class="partial" title="8 out of 9 forms covered">
-                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;property&nbsp;(if&nbsp;(number?&nbsp;p)&nbsp;p&nbsp;(list&nbsp;p&nbsp;&#x27;cell))]
-                </span><br/>
-<span class="covered" title="11 out of 11 forms covered">
-                212&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;operator)&nbsp;(generate&nbsp;property)&nbsp;(generate&nbsp;expression)))
-                </span><br/>
-<span class="covered" title="7 out of 7 forms covered">
-                213&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="covered" title="10 out of 10 forms covered">
-                214&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SYMBOL&nbsp;(list&nbsp;(keyword&nbsp;(second&nbsp;(second&nbsp;tree)))&nbsp;&#x27;cell)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                215&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                216&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                217&nbsp;&nbsp;(defn&nbsp;generate-neighbours-condition
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                218&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;a&nbsp;condition&nbsp;which&nbsp;refers&nbsp;to&nbsp;neighbours.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                219&nbsp;&nbsp;&nbsp;&nbsp;([tree]
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                220&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:NEIGHBOURS-CONDITION)
-                </span><br/>
-<span class="partial" title="7 out of 13 forms covered">
-                221&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
+<span class="not-covered" title="0 out of 12 forms covered">
+                197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cons&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;3)))
                 </span><br/>
 <span class="not-covered" title="0 out of 7 forms covered">
-                222&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;tree)))
+                198&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;(second&nbsp;tree)))))
                 </span><br/>
-<span class="covered" title="10 out of 10 forms covered">
-                223&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUANTIFIER&nbsp;(generate-neighbours-condition&nbsp;tree&nbsp;(first&nbsp;(second&nbsp;(second&nbsp;tree))))
+<span class="blank" title="0 out of 0 forms covered">
+                199&nbsp;&nbsp;
                 </span><br/>
-<span class="covered" title="14 out of 14 forms covered">
-                224&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(cons&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;(rest&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))))))
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                225&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;quantifier-type]
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                226&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantifier&nbsp;(second&nbsp;tree)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                227&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pc&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;4))]
-                </span><br/>
-<span class="partial" title="3 out of 9 forms covered">
-                228&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;quantifier-type
-                </span><br/>
-<span class="covered" title="12 out of 12 forms covered">
-                229&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(generate-neighbours-condition&nbsp;&#x27;=&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;quantifier)))&nbsp;pc&nbsp;1)
-                </span><br/>
-<span class="covered" title="6 out of 6 forms covered">
-                230&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SOME&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;0&nbsp;pc&nbsp;1)
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                231&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                232&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;value&nbsp;pc&nbsp;1))
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&lt;&nbsp;value&nbsp;pc&nbsp;1)))))
+<span class="covered" title="1 out of 1 forms covered">
+                200&nbsp;&nbsp;(defn&nbsp;generate-numeric-expression
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                235&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property-condition&nbsp;distance]
+                201&nbsp;&nbsp;&nbsp;&nbsp;&quot;From&nbsp;this&nbsp;`tree`,&nbsp;assumed&nbsp;to&nbsp;be&nbsp;a&nbsp;syntactically&nbsp;correct&nbsp;numeric&nbsp;expression,
                 </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                236&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;comp1
+<span class="not-tracked" title="0 out of 0 forms covered">
+                202&nbsp;&nbsp;&nbsp;&nbsp;generate&nbsp;and&nbsp;return&nbsp;the&nbsp;appropriate&nbsp;clojure&nbsp;fragment.&quot;
                 </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                237&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;count
+<span class="not-tracked" title="0 out of 0 forms covered">
+                203&nbsp;&nbsp;&nbsp;&nbsp;[tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                238&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;remove&nbsp;&#x27;false?
+                204&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:NUMERIC-EXPRESSION)
                 </span><br/>
-<span class="covered" title="9 out of 9 forms covered">
-                239&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;map&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;cell]&nbsp;property-condition)
+<span class="covered" title="4 out of 4 forms covered">
+                205&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(count&nbsp;tree)
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                206&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;(let&nbsp;[[p&nbsp;operator&nbsp;expression]&nbsp;(rest&nbsp;tree)
+                </span><br/>
+<span class="partial" title="8 out of 9 forms covered">
+                207&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;property&nbsp;(if&nbsp;(number?&nbsp;p)&nbsp;p&nbsp;(list&nbsp;p&nbsp;&#x27;cell))]
+                </span><br/>
+<span class="covered" title="11 out of 11 forms covered">
+                208&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;(generate&nbsp;operator)&nbsp;(generate&nbsp;property)&nbsp;(generate&nbsp;expression)))
                 </span><br/>
 <span class="covered" title="7 out of 7 forms covered">
-                240&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;mw-engine.utils&#x2F;get-neighbours&nbsp;&#x27;world&nbsp;&#x27;cell&nbsp;distance))))&nbsp;quantity))
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                241&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property-condition]
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                242&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;comp1&nbsp;quantity&nbsp;property-condition&nbsp;1)))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                243&nbsp;&nbsp;
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                244&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                245&nbsp;&nbsp;(defn&nbsp;generate-within-condition
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                246&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;a&nbsp;condition&nbsp;which&nbsp;refers&nbsp;to&nbsp;neighbours&nbsp;within&nbsp;a&nbsp;specified&nbsp;distance.
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                247&nbsp;&nbsp;&nbsp;&nbsp;NOTE&nbsp;THAT&nbsp;there&#x27;s&nbsp;clearly&nbsp;masses&nbsp;of&nbsp;commonality&nbsp;between&nbsp;this&nbsp;and
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                248&nbsp;&nbsp;&nbsp;&nbsp;`generate-neighbours-condition`,&nbsp;and&nbsp;that&nbsp;some&nbsp;refactoring&nbsp;is&nbsp;almost&nbsp;certainly
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                249&nbsp;&nbsp;&nbsp;&nbsp;desirable.&nbsp;It&nbsp;may&nbsp;be&nbsp;that&nbsp;it&#x27;s&nbsp;better&nbsp;to&nbsp;simplify&nbsp;a&nbsp;`NEIGHBOURS-CONDITION`
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                250&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;a&nbsp;`WITHIN-CONDITION`&nbsp;in&nbsp;the&nbsp;simplification&nbsp;stage.&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                251&nbsp;&nbsp;&nbsp;&nbsp;([tree]
-                </span><br/>
-<span class="covered" title="4 out of 4 forms covered">
-                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:WITHIN-CONDITION)
-                </span><br/>
-<span class="partial" title="7 out of 13 forms covered">
-                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
+                209&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
                 </span><br/>
 <span class="covered" title="10 out of 10 forms covered">
-                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUANTIFIER&nbsp;(generate-within-condition&nbsp;tree&nbsp;(first&nbsp;(second&nbsp;(second&nbsp;tree))))
+                210&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SYMBOL&nbsp;(list&nbsp;(keyword&nbsp;(second&nbsp;(second&nbsp;tree)))&nbsp;&#x27;cell)
                 </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(TODO&nbsp;&quot;qualified&nbsp;within...&nbsp;help!&quot;)))
+<span class="covered" title="5 out of 5 forms covered">
+                211&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate&nbsp;(second&nbsp;tree)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                212&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                213&nbsp;&nbsp;(defn&nbsp;generate-neighbours-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                256&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;quantifier-type]
+                214&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;a&nbsp;condition&nbsp;which&nbsp;refers&nbsp;to&nbsp;neighbours.&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                215&nbsp;&nbsp;&nbsp;&nbsp;([tree]
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantifier&nbsp;(second&nbsp;tree)
+                216&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:NEIGHBOURS-CONDITION)
+                </span><br/>
+<span class="partial" title="7 out of 13 forms covered">
+                217&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 7 forms covered">
+                218&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;tree)))
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                219&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUANTIFIER&nbsp;(generate-neighbours-condition&nbsp;tree&nbsp;(first&nbsp;(second&nbsp;(second&nbsp;tree))))
+                </span><br/>
+<span class="covered" title="14 out of 14 forms covered">
+                220&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(cons&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;(rest&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))))))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                221&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;quantifier-type]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                222&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantifier&nbsp;(second&nbsp;tree)
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;distance&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;4))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                259&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pc&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;6))]
+                223&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pc&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;4))]
                 </span><br/>
 <span class="partial" title="3 out of 9 forms covered">
-                260&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;quantifier-type
+                224&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;quantifier-type
                 </span><br/>
 <span class="covered" title="12 out of 12 forms covered">
-                261&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(generate-neighbours-condition&nbsp;&#x27;=&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;quantifier)))&nbsp;pc&nbsp;distance)
-                </span><br/>
-<span class="not-covered" title="0 out of 6 forms covered">
-                262&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SOME&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;0&nbsp;pc&nbsp;distance)
+                225&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(generate-neighbours-condition&nbsp;&#x27;=&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;quantifier)))&nbsp;pc&nbsp;1)
                 </span><br/>
 <span class="covered" title="6 out of 6 forms covered">
-                263&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
-                </span><br/>
-<span class="covered" title="6 out of 6 forms covered">
-                264&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;value&nbsp;pc&nbsp;distance))
+                226&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SOME&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;0&nbsp;pc&nbsp;1)
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                265&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
+                227&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
                 </span><br/>
 <span class="not-covered" title="0 out of 6 forms covered">
-                266&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&lt;&nbsp;value&nbsp;pc&nbsp;distance))))))
+                228&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;value&nbsp;pc&nbsp;1))
                 </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                267&nbsp;&nbsp;
+<span class="not-covered" title="0 out of 6 forms covered">
+                229&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
                 </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                268&nbsp;&nbsp;(defn&nbsp;generate-flow
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                269&nbsp;&nbsp;&nbsp;&nbsp;[tree]
-                </span><br/>
-<span class="not-covered" title="0 out of 4 forms covered">
-                270&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:WITHIN-CONDITION))
-                </span><br/>
-<span class="blank" title="0 out of 0 forms covered">
-                271&nbsp;&nbsp;
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                272&nbsp;&nbsp;(defn&nbsp;generate
+<span class="not-covered" title="0 out of 6 forms covered">
+                230&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&lt;&nbsp;value&nbsp;pc&nbsp;1)))))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                273&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;this&nbsp;(fragment&nbsp;of&nbsp;a)&nbsp;parse&nbsp;tree&quot;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                274&nbsp;&nbsp;&nbsp;&nbsp;[tree]
-                </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                275&nbsp;&nbsp;&nbsp;&nbsp;(if
+                231&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property-condition&nbsp;distance]
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                276&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;tree)
-                </span><br/>
-<span class="covered" title="8 out of 8 forms covered">
-                277&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;tree)
+                232&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;comp1
                 </span><br/>
 <span class="covered" title="3 out of 3 forms covered">
-                278&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTIONS&nbsp;(generate-multiple-actions&nbsp;tree)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                279&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:COMPARATIVE&nbsp;(generate&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                280&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:COMPARATIVE-QUALIFIER&nbsp;(generate&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                281&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITION&nbsp;(generate-condition&nbsp;tree)
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                282&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITIONS&nbsp;(generate-conditions&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                283&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONJUNCT-CONDITION&nbsp;(generate-conjunct-condition&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                284&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-CONDITION&nbsp;(generate-disjunct-condition&nbsp;tree)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                285&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-EXPRESSION&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;2))
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                286&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-VALUE&nbsp;(generate-disjunct-value&nbsp;tree)
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                287&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:EQUIVALENCE&nbsp;&#x27;=
-                </span><br/>
-<span class="not-covered" title="0 out of 5 forms covered">
-                288&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:EXPRESSION&nbsp;(generate&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                289&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:FLOW-RULE&nbsp;(generate-flow&nbsp;tree)
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                290&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;&#x27;&lt;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                291&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;&#x27;&gt;
-                </span><br/>
-<span class="partial" title="8 out of 16 forms covered">
-                292&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NEGATED-QUALIFIER&nbsp;(case&nbsp;(generate&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                293&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&#x27;not=
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                294&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&#x27;&lt;
-                </span><br/>
-<span class="not-tracked" title="0 out of 0 forms covered">
-                295&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&nbsp;&#x27;&gt;)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                296&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NEIGHBOURS-CONDITION&nbsp;(generate-neighbours-condition&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                297&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMERIC-EXPRESSION&nbsp;(generate-numeric-expression&nbsp;tree)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(read-string&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:OPERATOR&nbsp;(symbol&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="not-covered" title="0 out of 3 forms covered">
-                300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROBABLE-ACTION&nbsp;(generate-probable-action&nbsp;tree)
-                </span><br/>
-<span class="not-covered" title="0 out of 8 forms covered">
-                301&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY&nbsp;(list&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;&#x27;cell)&nbsp;;;&nbsp;dubious&nbsp;-&nbsp;may&nbsp;not&nbsp;be&nbsp;right
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                302&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY-CONDITION&nbsp;(generate-property-condition&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                303&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(generate-qualifier&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:RULE&nbsp;(generate-rule&nbsp;tree)
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                305&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SIMPLE-ACTION&nbsp;(generate-simple-action&nbsp;tree)
-                </span><br/>
-<span class="covered" title="5 out of 5 forms covered">
-                306&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SYMBOL&nbsp;(keyword&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="not-covered" title="0 out of 5 forms covered">
-                307&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:VALUE&nbsp;(generate&nbsp;(second&nbsp;tree))
-                </span><br/>
-<span class="covered" title="3 out of 3 forms covered">
-                308&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:WITHIN-CONDITION&nbsp;(generate-within-condition&nbsp;tree)
+                233&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;count
                 </span><br/>
 <span class="covered" title="4 out of 4 forms covered">
-                309&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map&nbsp;generate&nbsp;tree))
+                234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;remove&nbsp;&#x27;false?
                 </span><br/>
-<span class="covered" title="1 out of 1 forms covered">
-                310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree))
+<span class="covered" title="9 out of 9 forms covered">
+                235&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;map&nbsp;(list&nbsp;&#x27;fn&nbsp;[&#x27;cell]&nbsp;property-condition)
+                </span><br/>
+<span class="covered" title="7 out of 7 forms covered">
+                236&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(list&nbsp;&#x27;mw-engine.utils&#x2F;get-neighbours&nbsp;&#x27;world&nbsp;&#x27;cell&nbsp;distance))))&nbsp;quantity))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                237&nbsp;&nbsp;&nbsp;&nbsp;([comp1&nbsp;quantity&nbsp;property-condition]
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                238&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;comp1&nbsp;quantity&nbsp;property-condition&nbsp;1)))
                 </span><br/>
 <span class="blank" title="0 out of 0 forms covered">
-                311&nbsp;&nbsp;
+                239&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                240&nbsp;&nbsp;(defn&nbsp;generate-within-condition
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                312&nbsp;&nbsp;;;;&nbsp;Flow&nbsp;rules.&nbsp;A&nbsp;flow&nbsp;rule&nbsp;DOES&nbsp;NOT&nbsp;return&nbsp;a&nbsp;modified&nbsp;world;&nbsp;instead,&nbsp;it&nbsp;
+                241&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;a&nbsp;condition&nbsp;which&nbsp;refers&nbsp;to&nbsp;neighbours&nbsp;within&nbsp;a&nbsp;specified&nbsp;distance.
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                313&nbsp;&nbsp;;;;&nbsp;returns&nbsp;a&nbsp;PLAN&nbsp;to&nbsp;modify&nbsp;the&nbsp;world,&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;a&nbsp;sequence&nbsp;of&nbsp;`flows`.
+                242&nbsp;&nbsp;&nbsp;&nbsp;NOTE&nbsp;THAT&nbsp;there&#x27;s&nbsp;clearly&nbsp;masses&nbsp;of&nbsp;commonality&nbsp;between&nbsp;this&nbsp;and
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                314&nbsp;&nbsp;;;;&nbsp;It&nbsp;is&nbsp;only&nbsp;when&nbsp;the&nbsp;plan&nbsp;is&nbsp;executed&nbsp;that&nbsp;the&nbsp;world&nbsp;is&nbsp;modified.
+                243&nbsp;&nbsp;&nbsp;&nbsp;`generate-neighbours-condition`,&nbsp;and&nbsp;that&nbsp;some&nbsp;refactoring&nbsp;is&nbsp;almost&nbsp;certainly
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                315&nbsp;&nbsp;;;;
+                244&nbsp;&nbsp;&nbsp;&nbsp;desirable.&nbsp;It&nbsp;may&nbsp;be&nbsp;that&nbsp;it&#x27;s&nbsp;better&nbsp;to&nbsp;simplify&nbsp;a&nbsp;`NEIGHBOURS-CONDITION`
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                316&nbsp;&nbsp;;;;&nbsp;so&nbsp;we&#x27;re&nbsp;looking&nbsp;at&nbsp;something&nbsp;like
+                245&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;a&nbsp;`WITHIN-CONDITION`&nbsp;in&nbsp;the&nbsp;simplification&nbsp;stage.&quot;
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                317&nbsp;&nbsp;;;;&nbsp;(fn&nbsp;[cell&nbsp;world])
+                246&nbsp;&nbsp;&nbsp;&nbsp;([tree]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                247&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:WITHIN-CONDITION)
+                </span><br/>
+<span class="partial" title="7 out of 13 forms covered">
+                248&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="covered" title="10 out of 10 forms covered">
+                249&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUANTIFIER&nbsp;(generate-within-condition&nbsp;tree&nbsp;(first&nbsp;(second&nbsp;(second&nbsp;tree))))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(TODO&nbsp;&quot;qualified&nbsp;within...&nbsp;help!&quot;)))
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                318&nbsp;&nbsp;;;;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(:state&nbsp;cell)&nbsp;(or&nbsp;(:house&nbsp;cell)&nbsp;:house))
+                251&nbsp;&nbsp;&nbsp;&nbsp;([tree&nbsp;quantifier-type]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                252&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[quantifier&nbsp;(second&nbsp;tree)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;distance&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;4))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pc&nbsp;(generate&nbsp;(nth&nbsp;tree&nbsp;6))]
+                </span><br/>
+<span class="partial" title="3 out of 9 forms covered">
+                255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;quantifier-type
+                </span><br/>
+<span class="covered" title="12 out of 12 forms covered">
+                256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(generate-neighbours-condition&nbsp;&#x27;=&nbsp;(read-string&nbsp;(second&nbsp;(second&nbsp;quantifier)))&nbsp;pc&nbsp;distance)
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SOME&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;0&nbsp;pc&nbsp;distance)
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
+                </span><br/>
+<span class="covered" title="6 out of 6 forms covered">
+                259&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&gt;&nbsp;value&nbsp;pc&nbsp;distance))
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                260&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;(let&nbsp;[value&nbsp;(generate&nbsp;(nth&nbsp;quantifier&nbsp;3))]
+                </span><br/>
+<span class="not-covered" title="0 out of 6 forms covered">
+                261&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(generate-neighbours-condition&nbsp;&#x27;&lt;&nbsp;value&nbsp;pc&nbsp;distance))))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                262&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                263&nbsp;&nbsp;(defn-&nbsp;generate-disjunct-expression
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                264&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                265&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:DISJUNCT-EXPRESSION)
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                266&nbsp;&nbsp;&nbsp;&nbsp;(try
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                267&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(set&nbsp;(map&nbsp;generate&nbsp;(rest&nbsp;tree)))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                268&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(catch&nbsp;Exception&nbsp;x
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                269&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(throw
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                270&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ex-info
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                271&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Failed&nbsp;to&nbsp;compile&nbsp;:DISJUNCT-EXPRESSION&quot;
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                272&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:tree&nbsp;tree}
+                </span><br/>
+<span class="not-covered" title="0 out of 1 forms covered">
+                273&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x)))))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                274&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                275&nbsp;&nbsp;;;;&nbsp;Flow&nbsp;rules.&nbsp;A&nbsp;flow&nbsp;rule&nbsp;DOES&nbsp;NOT&nbsp;return&nbsp;a&nbsp;modified&nbsp;world;&nbsp;instead,&nbsp;it&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                276&nbsp;&nbsp;;;;&nbsp;returns&nbsp;a&nbsp;PLAN&nbsp;to&nbsp;modify&nbsp;the&nbsp;world,&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;a&nbsp;sequence&nbsp;of&nbsp;`flows`.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                277&nbsp;&nbsp;;;;&nbsp;It&nbsp;is&nbsp;only&nbsp;when&nbsp;the&nbsp;plan&nbsp;is&nbsp;executed&nbsp;that&nbsp;the&nbsp;world&nbsp;is&nbsp;modified.
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                278&nbsp;&nbsp;;;;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                279&nbsp;&nbsp;;;;&nbsp;so&nbsp;we&#x27;re&nbsp;looking&nbsp;at&nbsp;something&nbsp;like
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                280&nbsp;&nbsp;;;;&nbsp;(fn&nbsp;[cell&nbsp;world])
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                281&nbsp;&nbsp;;;;&nbsp;&nbsp;&nbsp;&nbsp;(if&nbsp;(=&nbsp;(:state&nbsp;cell)&nbsp;(or&nbsp;(:house&nbsp;cell)&nbsp;:house))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                282&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                283&nbsp;&nbsp;(defn&nbsp;generate-flow
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                284&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="not-covered" title="0 out of 4 forms covered">
+                285&nbsp;&nbsp;&nbsp;&nbsp;(assert-type&nbsp;tree&nbsp;:FLOW-RULE))
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                286&nbsp;&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                287&nbsp;&nbsp;;;;&nbsp;Top&nbsp;level;&nbsp;only&nbsp;function&nbsp;anything&nbsp;outside&nbsp;this&nbsp;file&nbsp;(except&nbsp;tests)&nbsp;should&nbsp;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                288&nbsp;&nbsp;;;;&nbsp;really&nbsp;call.
+                </span><br/>
+<span class="blank" title="0 out of 0 forms covered">
+                289&nbsp;&nbsp;
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                290&nbsp;&nbsp;(defn&nbsp;generate
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                291&nbsp;&nbsp;&nbsp;&nbsp;&quot;Generate&nbsp;code&nbsp;for&nbsp;this&nbsp;(fragment&nbsp;of&nbsp;a)&nbsp;parse&nbsp;tree&quot;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                292&nbsp;&nbsp;&nbsp;&nbsp;[tree]
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                293&nbsp;&nbsp;&nbsp;&nbsp;(if
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                294&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(coll?&nbsp;tree)
+                </span><br/>
+<span class="covered" title="8 out of 8 forms covered">
+                295&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(case&nbsp;(first&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                296&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ACTIONS&nbsp;(generate-multiple-actions&nbsp;tree)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                297&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:COMPARATIVE&nbsp;(generate&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                298&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:COMPARATIVE-QUALIFIER&nbsp;(generate&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                299&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITION&nbsp;(generate-condition&nbsp;tree)
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONDITIONS&nbsp;(generate-conditions&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                301&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:CONJUNCT-CONDITION&nbsp;(generate-conjunct-condition&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                302&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-CONDITION&nbsp;(generate-disjunct-condition&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                303&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-EXPRESSION&nbsp;(generate-disjunct-expression&nbsp;tree)
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:DISJUNCT-VALUE&nbsp;(generate-disjunct-value&nbsp;tree)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                305&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:EQUIVALENCE&nbsp;&#x27;=
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                306&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:EXPRESSION&nbsp;(generate&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                307&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:FLOW-RULE&nbsp;(generate-flow&nbsp;tree)
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                308&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:LESS&nbsp;&#x27;&lt;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                309&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:MORE&nbsp;&#x27;&gt;
+                </span><br/>
+<span class="partial" title="8 out of 16 forms covered">
+                310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NEGATED-QUALIFIER&nbsp;(case&nbsp;(generate&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                311&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&#x27;not=
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&#x27;&lt;
+                </span><br/>
+<span class="not-tracked" title="0 out of 0 forms covered">
+                313&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&nbsp;&#x27;&gt;)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                314&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NEIGHBOURS-CONDITION&nbsp;(generate-neighbours-condition&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                315&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMERIC-EXPRESSION&nbsp;(generate-numeric-expression&nbsp;tree)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                316&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:NUMBER&nbsp;(read-string&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                317&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:OPERATOR&nbsp;(symbol&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 3 forms covered">
+                318&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROBABLE-ACTION&nbsp;(generate-probable-action&nbsp;tree)
+                </span><br/>
+<span class="not-covered" title="0 out of 8 forms covered">
+                319&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY&nbsp;(list&nbsp;(generate&nbsp;(second&nbsp;tree))&nbsp;&#x27;cell)&nbsp;;;&nbsp;dubious&nbsp;-&nbsp;may&nbsp;not&nbsp;be&nbsp;right
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:PROPERTY-CONDITION&nbsp;(generate-property-condition&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                321&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:QUALIFIER&nbsp;(generate-qualifier&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                322&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:RULE&nbsp;(generate-rule&nbsp;tree)
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                323&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SIMPLE-ACTION&nbsp;(generate-simple-action&nbsp;tree)
+                </span><br/>
+<span class="covered" title="5 out of 5 forms covered">
+                324&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:SYMBOL&nbsp;(keyword&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="not-covered" title="0 out of 5 forms covered">
+                325&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:VALUE&nbsp;(generate&nbsp;(second&nbsp;tree))
+                </span><br/>
+<span class="covered" title="3 out of 3 forms covered">
+                326&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:WITHIN-CONDITION&nbsp;(generate-within-condition&nbsp;tree)
+                </span><br/>
+<span class="covered" title="4 out of 4 forms covered">
+                327&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(map&nbsp;generate&nbsp;tree))
+                </span><br/>
+<span class="covered" title="1 out of 1 forms covered">
+                328&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree))
                 </span><br/>
  </body>
 </html>

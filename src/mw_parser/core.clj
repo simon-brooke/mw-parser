@@ -1,4 +1,7 @@
-(ns ^{:doc "A very simple parser which parses production rules."
+(ns ^{:doc "A very simple parser which parses production rules.
+            
+            **NOTE**: This parser is obsolete and is superceded by the 
+            declarative parser, q.v."
       :author "Simon Brooke"}
   mw-parser.core
   (:use mw-engine.utils

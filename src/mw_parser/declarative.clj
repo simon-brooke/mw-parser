@@ -5,7 +5,7 @@
             [clojure.string :refer [join trim]]
             [mw-parser.errors :refer [throw-parse-exception]]
             [mw-parser.generate :refer [generate]]
-            [mw-parser.simplify :refer [simplify-rule]]
+            [mw-parser.simplify :refer [simplify]]
             [mw-parser.utils :refer [rule?]]
             [trptr.java-wrapper.locale :refer [get-default]])
   (:import [java.util Locale]))
@@ -144,7 +144,7 @@
   ([rule-text return-tuple?]
    (assert (string? rule-text))
    (let [rule (trim rule-text)
-         tree (simplify-rule (parse-rule rule))
+         tree (simplify (parse-rule rule))
          afn (if (rule? tree) (eval (generate tree))
                ;; else
                  (throw-parse-exception tree))]

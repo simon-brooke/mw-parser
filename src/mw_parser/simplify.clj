@@ -25,34 +25,38 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare simplify-flow simplify-rule)
-
-;; (defn simplify-qualifier
-;;   "Given that this `tree` fragment represents a qualifier, what
-;;   qualifier is that?"
-;;   [tree]
-;;   (cond
-;;     (empty? tree) nil
-;;     (and (coll? tree)
-;;          (#{:EQUIVALENCE :COMPARATIVE} (first tree))) tree
-;;     (coll? (first tree)) (or (simplify-qualifier (first tree))
-;;                              (simplify-qualifier (rest tree)))
-;;     (coll? tree) (simplify-qualifier (rest tree))
-;;     :else tree))
+(declare simplify)
 
 (defn simplify-second-of-two
   "There are a number of possible simplifications such that if the `tree` has
   only two elements, the second is semantically sufficient."
   [tree]
-  (if (= (count tree) 2) (simplify-rule (nth tree 1)) tree))
+  (if (= (count tree) 2) (simplify (nth tree 1)) tree))
 
-;; (defn simplify-quantifier
-;;   "If this quantifier is a number, 'simplifiy' it into a comparative whose operator is '='
-;;   and whose quantity is that number. This is actually more complicated but makes generation easier."
-;;   [tree]
-;;   (if (number? (second tree)) [:COMPARATIVE '= (second tree)] (simplify-rule (second tree))))
+(defn simplify-chained-list
+  "Some parse trees take the form 
+   `[:X [:Y 1] :NOISE :NOISE [:X [:Y 2] :NOISE :NOISE [:X [:Y 3]]]]`
+   where what's wanted is `[:X [:Y 1] [:Y 2] [:Y 2]]` -- :DISJUNCT-VALUE is a case
+   in point. This takes such a parse `tree`, where `branch-tag` is the tag of
+   the enclosing form and `leaf-tag` is the tag of the form to be collected, and 
+   returns the desired form."
+  [tree branch-tag leaf-tag]
+  (cons
+   (first tree)
+   (reverse
+    (loop [chain (rest tree) v '()]
+      (let [car (first chain)]
+        (cond (empty? chain) v
+              (coll? car) (let [caar (first car)]
+                            (cond
+                              (= branch-tag caar) (recur car v)
+                              (= leaf-tag caar) (recur
+                                                 (rest chain)
+                                                 (cons (simplify car) v))
+                              :else (recur (rest chain) v)))
+              :else (recur (rest chain) v)))))))
 
-(defn simplify-rule
+(defn simplify
   "Simplify/canonicalise this `tree`. Opportunistically replace complex fragments with
   semantically identical simpler fragments"
   [tree]
@@ -60,19 +64,22 @@
    (coll? tree)
     (case (first tree)
       :ACTION (simplify-second-of-two tree)
-      :ACTIONS (cons (first tree) (simplify-rule (rest tree)))
+      :ACTIONS (cons (first tree) (simplify (rest tree)))
+      :AND nil
       :CHANCE-IN nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
+      :DISJUNCT-EXPRESSION (simplify-chained-list tree :DISJUNCT-VALUE :VALUE)
       :EXPRESSION (simplify-second-of-two tree)
+      :IN nil
       :PROPERTY (simplify-second-of-two tree)
       :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
+      :OR nil
       :SPACE nil
       :THEN nil
-      :AND nil
       :VALUE (simplify-second-of-two tree)
-      (remove nil? (map simplify-rule tree)))
+      (remove nil? (map simplify tree)))
     tree))
 
 (defn simplify-determiner-condition

@@ -1,9 +1,10 @@
 (ns mw-parser.core-test
-  (:use clojure.pprint
-        mw-engine.core 
-        mw-engine.world)
-  (:require [clojure.test :refer :all]
-            [mw-parser.core :refer :all]))
+  (:require [clojure.test :refer [deftest is testing]]
+            [mw-engine.core :refer [transform-world]]
+            [mw-engine.world :refer [make-world]]
+            [mw-parser.core :refer [compile-rule parse-property-value 
+                                    parse-rule parse-simple-value
+                                    parse-value]]))
 
 (deftest primitives-tests
   (testing "Simple functions supporting the parser"
@@ -356,8 +357,7 @@
                  "Rule fires when condition is met (strip of altitude 0 down right hand side)")
              (is (nil? (apply afn (list {:x 0 :y 1} world)))
                  "Left of world is all high, so rule should not fire.")))
-            
-            
+
 ;; 'single action' already tested in 'condition' tests above
 ;; action and actions
   (testing "Conjunction of actions"

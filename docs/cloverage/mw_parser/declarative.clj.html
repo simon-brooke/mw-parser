@@ -26,7 +26,7 @@
                 007&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.generate&nbsp;:refer&nbsp;[generate]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
-                008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.simplify&nbsp;:refer&nbsp;[simplify-rule]]
+                008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.simplify&nbsp;:refer&nbsp;[simplify]]
                 </span><br/>
 <span class="not-tracked" title="0 out of 0 forms covered">
                 009&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mw-parser.utils&nbsp;:refer&nbsp;[rule?]]
@@ -443,7 +443,7 @@
                 146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(let&nbsp;[rule&nbsp;(trim&nbsp;rule-text)
                 </span><br/>
 <span class="covered" title="5 out of 5 forms covered">
-                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree&nbsp;(simplify-rule&nbsp;(parse-rule&nbsp;rule))
+                147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree&nbsp;(simplify&nbsp;(parse-rule&nbsp;rule))
                 </span><br/>
 <span class="covered" title="9 out of 9 forms covered">
                 148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;afn&nbsp;(if&nbsp;(rule?&nbsp;tree)&nbsp;(eval&nbsp;(generate&nbsp;tree))

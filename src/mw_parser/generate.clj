@@ -1,7 +1,9 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
  mw-parser.generate
-  (:require [mw-parser.utils :refer [assert-type TODO]]
+  (:require [clojure.pprint :refer [pprint]]
+            [clojure.tools.trace :refer [deftrace]]
+            [mw-parser.utils :refer [assert-type TODO]]
             [mw-parser.errors :as pe]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -23,17 +25,18 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (declare generate generate-action)
-
 
 (defn generate-rule
   "From this `tree`, assumed to be a syntactically correct rule specification,
   generate and return the appropriate rule as a function of two arguments."
   [tree]
   (assert-type tree :RULE)
-  (list 'fn ['cell 'world] (list 'if (generate (nth tree 2)) (generate (nth tree 3)))))
-
+  (vary-meta
+   (list 'fn ['cell 'world] (list 'when (generate (nth tree 2)) (generate (nth tree 3))))
+   merge
+   {:rule-type
+    :production}))
 
 (defn generate-conditions
   "From this `tree`, assumed to be a syntactically correct conditions clause,
@@ -42,14 +45,12 @@
   (assert-type tree :CONDITIONS)
   (generate (second tree)))
 
-
 (defn generate-condition
   "From this `tree`, assumed to be a syntactically correct condition clause,
   generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :CONDITION)
   (generate (second tree)))
-
 
 (defn generate-conjunct-condition
   "From this `tree`, assumed to be a syntactically conjunct correct condition clause,
@@ -58,14 +59,12 @@
   (assert-type tree :CONJUNCT-CONDITION)
   (cons 'and (map generate (rest tree))))
 
-
 (defn generate-disjunct-condition
   "From this `tree`, assumed to be a syntactically correct disjunct condition clause,
   generate and return the appropriate clojure fragment."
   [tree]
   (assert-type tree :DISJUNCT-CONDITION)
   (cons 'or (map generate (rest tree))))
-
 
 (defn generate-ranged-property-condition
   "From this `tree`, assumed to be a syntactically property condition clause for
@@ -81,7 +80,6 @@
                 'upper (list 'max l1 l2)]
           (list 'and (list '>= pv 'lower) (list '<= pv 'upper)))))
 
-
 (defn generate-disjunct-property-condition
   "From this `tree`, assumed to be a syntactically property condition clause
   where the expression is a a disjunction, generate and return
@@ -93,11 +91,9 @@
          expression (generate (nth tree 3))]
      (generate-disjunct-property-condition tree property qualifier expression)))
   ([_tree property qualifier expression]
-   (let [e (list 'some (list 'fn ['i] '(= i value)) (list 'quote expression))]
-     (list 'let ['value (list property 'cell)]
-           (if (= qualifier '=) e
-               (list 'not e))))))
-
+   (let [e (list expression (list property 'cell))]
+     (if (= qualifier '=) e
+         (list 'not e)))))
 
 (defn generate-property-condition
   "From this `tree`, assumed to be a syntactically property condition clause,
@@ -241,7 +237,6 @@
   ([comp1 quantity property-condition]
    (generate-neighbours-condition comp1 quantity property-condition 1)))
 
-
 (defn generate-within-condition
   "Generate code for a condition which refers to neighbours within a specified distance.
   NOTE THAT there's clearly masses of commonality between this and
@@ -265,9 +260,32 @@
        :LESS (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '< value pc distance))))))
 
+(defn- generate-disjunct-expression
+  [tree]
+  (assert-type tree :DISJUNCT-EXPRESSION)
+  (try
+    (set (map generate (rest tree)))
+    (catch Exception x
+      (throw
+       (ex-info
+        "Failed to compile :DISJUNCT-EXPRESSION"
+        {:tree tree}
+        x)))))
+
+;;; Flow rules. A flow rule DOES NOT return a modified world; instead, it 
+;;; returns a PLAN to modify the world, in the form of a sequence of `flows`.
+;;; It is only when the plan is executed that the world is modified.
+;;;
+;;; so we're looking at something like
+;;; (fn [cell world])
+;;;    (if (= (:state cell) (or (:house cell) :house))
+
 (defn generate-flow
   [tree]
-  (assert-type tree :WITHIN-CONDITION))
+  (assert-type tree :FLOW-RULE))
+
+;;; Top level; only function anything outside this file (except tests) should 
+;;; really call.
 
 (defn generate
   "Generate code for this (fragment of a) parse tree"
@@ -282,7 +300,7 @@
       :CONDITIONS (generate-conditions tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
       :DISJUNCT-CONDITION (generate-disjunct-condition tree)
-      :DISJUNCT-EXPRESSION (generate (nth tree 2))
+      :DISJUNCT-EXPRESSION (generate-disjunct-expression tree)
       :DISJUNCT-VALUE (generate-disjunct-value tree)
       :EQUIVALENCE '=
       :EXPRESSION (generate (second tree))
@@ -308,11 +326,3 @@
       :WITHIN-CONDITION (generate-within-condition tree)
       (map generate tree))
     tree))
-
-;;; Flow rules. A flow rule DOES NOT return a modified world; instead, it 
-;;; returns a PLAN to modify the world, in the form of a sequence of `flows`.
-;;; It is only when the plan is executed that the world is modified.
-;;;
-;;; so we're looking at something like
-;;; (fn [cell world])
-;;;    (if (= (:state cell) (or (:house cell) :house))
