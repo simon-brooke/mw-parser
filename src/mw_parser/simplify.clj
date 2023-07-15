@@ -1,6 +1,7 @@
 (ns ^{:doc "Simplify a parse tree."
       :author "Simon Brooke"}
- mw-parser.simplify)
+ mw-parser.simplify 
+  (:require [mw-parser.utils :refer [search-tree]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -72,15 +73,28 @@
       :CONDITIONS (simplify-second-of-two tree)
       :DISJUNCT-EXPRESSION (simplify-chained-list tree :DISJUNCT-VALUE :VALUE)
       :EXPRESSION (simplify-second-of-two tree)
+      :FLOW-CONDITIONS (simplify-second-of-two tree)
       :IN nil
       :PROPERTY (simplify-second-of-two tree)
       :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
       :OR nil
       :SPACE nil
+      :STATE (list :PROPERTY-CONDITION
+                   (list :SYMBOL "state")
+                   '(:QUALIFIER
+                     (:EQUIVALENCE
+                      (:IS "is")))
+                   (list :EXPRESSION
+                         (list :VALUE (second tree))))
       :THEN nil
       :VALUE (simplify-second-of-two tree)
       (remove nil? (map simplify tree)))
     tree))
+
+;; OK, there is a major unresolved problem. If there is a determiner condition,
+;; the tree as parsed from natural language is the wrong shape, and we're 
+;; going to have to restructure it somewhere to being the determiner upstream
+;; of the property conditions. It *may* be possible to do that in `generate`.
 
 (defn simplify-determiner-condition
   [tree]

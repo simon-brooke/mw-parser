@@ -49,7 +49,9 @@
   "If `tree-fragment` is not a tree fragment of the expected `type`, throw an exception."
   [tree-fragment type]
   (assert (suitable-fragment? tree-fragment type)
-          (throw (Exception. (format "Expected a %s fragment" type)))))
+          (throw (ex-info (format "Expected a %s fragment" type)
+                          {:actual tree-fragment
+                           :expected type}))))
 
 
 (defn search-tree

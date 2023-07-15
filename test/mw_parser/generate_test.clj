@@ -1,19 +1,17 @@
 (ns mw-parser.generate-test 
   (:require [clojure.test :refer [deftest is testing]]
-            [mw-parser.generate :refer [generate]]))
-
-;; TODO: these tests are badly written and many (all?!?) of them were not 
-;; actually firing. rewrite ALL to the pattern:
-;;
-;; (let [actual ...
-;;       expected ...]
-;;    (is (= actual expected)))
+            [mw-parser.generate :refer [generate]]
+            [mw-parser.declarative :refer [parse]]
+            [mw-parser.simplify :refer [simplify]]))
 
 (deftest expressions-tests
   (testing "Generating primitive expressions."
-    (is (= (generate '(:NUMERIC-EXPRESSION (:NUMBER "50"))) 50))
-    (is (= (generate '(:NUMERIC-EXPRESSION (:SYMBOL "sealevel")))
-        '(:sealevel cell)))))
+    (let [actual (generate '(:NUMERIC-EXPRESSION (:NUMBER "50")))
+          expected 50] 
+      (is (= actual expected)))
+    (let [actual (generate '(:NUMERIC-EXPRESSION (:SYMBOL "sealevel")))
+          expected '(:sealevel cell)]
+      (is (= actual expected)))))
 
 (deftest lhs-generators-tests
   (testing "Generating left-hand-side fragments of rule functions from appropriate fragments of parse trees"
@@ -85,3 +83,20 @@
           actual-meta (meta actual)]
       (is (= actual expected))
       (is (= actual-meta expected-meta)))))
+
+(deftest metadata-tests
+  (testing "Rules have correct metadata"
+    (let [expected :production
+        actual (:rule-type
+                (meta
+                (generate 
+                 (simplify 
+                  (parse "if state is house then state should be waste")))))]
+    (is (= actual expected)))
+    (let [expected :flow
+            actual (:rule-type
+                    (meta
+                     (generate
+                      (simplify
+                       (parse "flow 10% food from house to house within 2 with least food")))))]
+        (is (= actual expected)))))

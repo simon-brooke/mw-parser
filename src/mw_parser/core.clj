@@ -4,7 +4,7 @@
             declarative parser, q.v."
       :author "Simon Brooke"}
  mw-parser.core
-  (:require [clojure.string :only [split trim triml]]
+  (:require [clojure.string :refer [split trim triml]]
             [mw-engine.utils :refer [member?]])
   (:gen-class))
 
@@ -102,7 +102,7 @@
   "Parse a token assumed to be the name of a property of the current cell,
   whose value is assumed to be an integer."
   [[value & remainder]]
-  (when value [(list 'get-int 'cell (keyword value)) remainder]))
+  (when value [(list 'mw-engine.utils/get-int 'cell (keyword value)) remainder]))
 
 (defn parse-property-value
   "Parse a token assumed to be the name of a property of the current cell."

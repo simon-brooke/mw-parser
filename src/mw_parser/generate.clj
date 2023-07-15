@@ -1,10 +1,8 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
  mw-parser.generate
-  (:require [clojure.pprint :refer [pprint]]
-            [clojure.tools.trace :refer [deftrace]]
-            [mw-parser.utils :refer [assert-type TODO]]
-            [mw-parser.errors :as pe]))
+  (:require [mw-parser.errors :as pe]
+            [mw-parser.utils :refer [assert-type search-tree TODO]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -233,7 +231,8 @@
          (list 'count
                (list 'remove 'false?
                      (list 'map (list 'fn ['cell] property-condition)
-                           (list 'mw-engine.utils/get-neighbours 'world 'cell distance)))) quantity))
+                           (list 'mw-engine.utils/get-neighbours 'world 'cell distance))))
+         quantity))
   ([comp1 quantity property-condition]
    (generate-neighbours-condition comp1 quantity property-condition 1)))
 
@@ -253,7 +252,11 @@
          distance (generate (nth tree 4))
          pc (generate (nth tree 6))]
      (case quantifier-type
-       :NUMBER (generate-neighbours-condition '= (read-string (second (second quantifier))) pc distance)
+       :NUMBER (generate-neighbours-condition
+                '=
+                (read-string (second (second quantifier)))
+                pc
+                distance)
        :SOME (generate-neighbours-condition '> 0 pc distance)
        :MORE (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '> value pc distance))
@@ -280,23 +283,100 @@
 ;;; (fn [cell world])
 ;;;    (if (= (:state cell) (or (:house cell) :house))
 
-(defmacro flow-rule
+(defn flow-rule
+  "Generate a flow rule for this `quantity` of this `property` from this 
+   `source` to this `destination`."
   [source property quantity-frag destinations]
-  `(fn [cell world]
-     (when (and ~source (pos? cell ~property))
-       (map 
-       (fn [d] {:source (select-keys cell [:x :y])
-                :destination (select-keys d [:x :y])
-                :property ~property
-                :quantity ~quantity-frag})
-        ~destinations))))
+  (vary-meta
+   (list 'fn ['cell 'world]
+         (list 'when (list 'and source (list 'pos? 'cell property))
+               (list 'map
+                     (list 'fn ['d]
+                          {:source (list 'select-keys 'cell [:x :y])
+                           :destination (list 'select-keys 'd [:x :y])
+                           :property property
+                           :quantity quantity-frag})
+                     destinations)))
+   merge
+   {:rule-type
+    :flow}))
+
+(defn generate-quantity-accessor
+  "Generate a code fragment which will generate the appropriate quantity of
+   the `property` specified in a rule, from this `q-clause`."
+  [q-clause property]
+  (case (first q-clause)
+    ;; TODO :EXPRESSION still needed
+    :NUMBER (generate q-clause)
+    :PERCENTAGE (let [multiplier (/ (generate (second q-clause)) 100)]
+                  (list '* multiplier (list property 'cell)))
+    :SOME (list 'rand (list property 'cell))
+    (throw (ex-info
+            (format "Unexpected QUANTITY type: `%s`" (first q-clause))
+            {:clause q-clause
+             :property property}))))
+
+(defn generate-target-state-filter
+  [clause targets-frag]
+  (assert-type clause :DESTINATION)
+  (list 'filter
+        (list 'fn ['cell]
+              (generate-property-condition
+               (search-tree (search-tree clause :TARGET)
+                            :PROPERTY-CONDITION)))
+        targets-frag))
+
+(defn generate-dest-accessor
+  [clause]
+  (let [dc (search-tree clause :DETERMINER-CONDITION)
+        range (search-tree clause :RANGE)
+        distance (if range (generate (nth range 2)) 1)]
+    (list 'let ['candidates
+                (generate-target-state-filter
+                 clause
+                 (list 'mw-engine.utils/get-neighbours 'world 'cell distance))]
+          (if dc
+            (list 'list
+                  (let [determiner (first (second (search-tree dc :DETERMINER)))
+                        prop (generate (nth dc 2))]
+                    (case determiner
+                      :LEAST (list 'mw-engine.utils/get-least-cell 'candidates prop)
+                      :MOST (list 'mw-engine.utils/get-most-cell 'candidates prop))))
+            'candidates))))
+;; (fn
+;;   [cell world]
+;;   (when
+;;    (and (= (:state cell) (or (:house cell) :house)) (pos? cell :food))
+;; (map
+;;    (fn
+;;      [d]
+;;      (assoc
+;;       {}
+;;       :source
+;;       (select-keys cell [:x :y])
+;;       :destination
+;;       (select-keys d [:x :y])
+;;       :property
+;;       :food
+;;       :quantity
+;;       (* 1/10 (:food cell)))
+;;      {})
+;;    (let
+;;     [candidates
+;;      (filter
+;;       (fn [cell] (= (:state cell) (or (:house cell) :house)))
+;;       (mw-engine.utils/get-neighbours world cell 2))]
+;;      (list (mw-engine.utils/get-least-cell candidates :food))))))
 
 (defn generate-flow
   [tree]
   (assert-type tree :FLOW-RULE)
-  (let [clauses (reduce #(assoc %1 (first %2) %2) {} (rest tree))]
-    (list 'fn ['cell 'world] 
-          (list 'when (generate (:SOURCE clauses))))))
+  (let [clauses (reduce #(assoc %1 (first %2) %2) {} (rest tree))
+        source-accessor (generate (:SOURCE clauses))
+        property (generate (:SYMBOL clauses))
+        quantity (generate-quantity-accessor (second (:QUANTITY clauses)) property)
+        dest-accessor (generate-dest-accessor (:DESTINATION clauses))]
+    (flow-rule source-accessor property quantity dest-accessor)))
 
 ;;; Top level; only function anything outside this file (except tests) should 
 ;;; really call.
@@ -333,8 +413,10 @@
       :PROPERTY (list (generate (second tree)) 'cell) ;; dubious - may not be right
       :PROPERTY-CONDITION (generate-property-condition tree)
       :QUALIFIER (generate-qualifier tree)
+      :QUANTITY (generate (second tree))
       :RULE (generate-rule tree)
       :SIMPLE-ACTION (generate-simple-action tree)
+      :SOURCE (generate (second tree))
       :SYMBOL (keyword (second tree))
       :VALUE (generate (second tree))
       :WITHIN-CONDITION (generate-within-condition tree)
