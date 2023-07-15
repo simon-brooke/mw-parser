@@ -150,24 +150,28 @@
 
 (defn compile-rule
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
-  into Clojure source, and then compile it into an anonymous
-  function object, getting round the problem of binding mw-engine.utils in
-  the compiling environment. If `return-tuple?` is present and true, return
-  a list comprising the anonymous function compiled, and the function from
-  which it was compiled.
+   into Clojure source, and then compile it into an anonymous
+   function object, getting round the problem of binding mw-engine.utils in
+   the compiling environment. If `return-tuple?` is present and true, return
+   a list comprising the anonymous function compiled, and the function from
+   which it was compiled.
 
-  Throws an exception if parsing fails."
+   Throws an exception if parsing fails."
   ([rule-text return-tuple?]
-   (assert (string? rule-text))
-   (let [rule (trim rule-text)
-         tree (simplify (parse-rule rule))
-         afn (if (rule? tree) (eval (generate tree))
-               ;; else
-                 (throw-parse-exception tree))]
-     (if return-tuple?
-       (list afn rule)
-       ;; else
+   (let [src (trim rule-text)
+         parse-tree (simplify (parse src))
+         fn' (generate parse-tree)
+         afn (try
+               (if (= 'fn (first fn'))
+                 (vary-meta (eval fn') merge (meta fn'))
+                 (throw (Exception. (format "Parse of `%s` did not return a functionn" src))))
+               (catch Exception any (throw (ex-info (.getMessage any)
+                                                    {:src src
+                                                     :parse parse-tree
+                                                     :fn fn'}))))]
+     (if
+      return-tuple?
+       (list afn (trim rule-text))
        afn)))
   ([rule-text]
    (compile-rule rule-text false)))
-

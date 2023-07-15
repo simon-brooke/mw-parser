@@ -32,12 +32,10 @@
 ;; (3) the reason for the error
 (def bad-parse-error "I did not understand:\n  '%s'\n  %s\n  %s")
 
-
 (defn- explain-parse-error-reason
   "Attempt to explain the reason for the parse error."
   [reason]
   (str "Expecting one of (" (apply str (map #(str (:expecting %) " ") reason)) ")"))
-
 
 (defn- parser-error-to-map
   [parser-error]
@@ -46,7 +44,6 @@
                  #(reduce (fn [map item] (merge {(first item) (second item)} map)) {} %)
                  (:reason m))]
     (merge m {:reason reason})))
-
 
 (defn throw-parse-exception
   "Construct a helpful error message from this `parser-error`, and throw an exception with that message."

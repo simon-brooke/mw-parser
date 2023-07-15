@@ -289,7 +289,7 @@
   [source property quantity-frag destinations]
   (vary-meta
    (list 'fn ['cell 'world]
-         (list 'when (list 'and source (list 'pos? 'cell property))
+         (list 'when (list 'and source (list 'pos? (list 'cell property)))
                (list 'map
                      (list 'fn ['d]
                           {:source (list 'select-keys 'cell [:x :y])
@@ -310,6 +310,12 @@
     :NUMBER (generate q-clause)
     :PERCENTAGE (let [multiplier (/ (generate (second q-clause)) 100)]
                   (list '* multiplier (list property 'cell)))
+    :SIMPLE-EXPRESSION (if (= (count q-clause) 2)
+                         (generate-quantity-accessor (second q-clause) property)
+                         (throw (ex-info
+                                 (format "Cannot yet handle q-clause of form: `%s`" q-clause)
+                                 {:clause q-clause
+                                  :property property})))
     :SOME (list 'rand (list property 'cell))
     (throw (ex-info
             (format "Unexpected QUANTITY type: `%s`" (first q-clause))
@@ -343,30 +349,6 @@
                       :LEAST (list 'mw-engine.utils/get-least-cell 'candidates prop)
                       :MOST (list 'mw-engine.utils/get-most-cell 'candidates prop))))
             'candidates))))
-;; (fn
-;;   [cell world]
-;;   (when
-;;    (and (= (:state cell) (or (:house cell) :house)) (pos? cell :food))
-;; (map
-;;    (fn
-;;      [d]
-;;      (assoc
-;;       {}
-;;       :source
-;;       (select-keys cell [:x :y])
-;;       :destination
-;;       (select-keys d [:x :y])
-;;       :property
-;;       :food
-;;       :quantity
-;;       (* 1/10 (:food cell)))
-;;      {})
-;;    (let
-;;     [candidates
-;;      (filter
-;;       (fn [cell] (= (:state cell) (or (:house cell) :house)))
-;;       (mw-engine.utils/get-neighbours world cell 2))]
-;;      (list (mw-engine.utils/get-least-cell candidates :food))))))
 
 (defn generate-flow
   [tree]

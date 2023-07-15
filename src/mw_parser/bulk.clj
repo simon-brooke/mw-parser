@@ -1,10 +1,9 @@
 (ns ^{:doc "parse multiple rules from a stream, possibly a file."
       :author "Simon Brooke"}
   mw-parser.bulk
-  (:use mw-parser.core
-        mw-engine.utils
-        clojure.java.io
-        [clojure.string :only [split trim]])
+  (:require [clojure.string :refer [split trim]]
+            [mw-engine.utils :refer [member?]]
+            [mw-parser.declarative :refer [compile-rule]])
   (:import (java.io BufferedReader StringReader)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -30,7 +29,6 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (defn comment?
   "Is this `line` a comment?"
   [line]
@@ -40,8 +38,8 @@
   "Parse rules from successive lines in this `string`, assumed to have multiple
    lines delimited by the new-line character. Return a list of S-expressions."
   [string]
-        ;; TODO: tried to do this using with-open, but couldn't make it work.
-  (map #(parse-rule (trim %)) (remove comment? (split string #"\n"))))
+  (map compile-rule 
+       (remove comment? (split string #"\n"))))
 
 (defn parse-file
   "Parse rules from successive lines in the file loaded from this `filename`.
