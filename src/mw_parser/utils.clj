@@ -1,6 +1,8 @@
 (ns ^{:doc "Utilities used in more than one namespace within the parser."
       :author "Simon Brooke"}
-  mw-parser.utils)
+  mw-parser.utils 
+  (:require [clojure.string :refer [trim]]
+            [mw-engine.utils :refer [member?]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -25,6 +27,10 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn comment?
+  "Is this `line` a comment?"
+  [line]
+  (or (empty? (trim line)) (member? (first line) '(nil \# \;))))
 
 (defn suitable-fragment?
   "Return `true` if `tree-fragment` appears to be a tree fragment of the expected `type`."

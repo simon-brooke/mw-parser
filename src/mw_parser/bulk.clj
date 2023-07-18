@@ -1,10 +1,9 @@
 (ns ^{:doc "parse multiple rules from a stream, possibly a file."
       :author "Simon Brooke"}
   mw-parser.bulk
-  (:require [clojure.string :refer [split trim]]
-            [mw-engine.utils :refer [member?]]
-            [mw-parser.declarative :refer [compile-rule]])
-  (:import (java.io BufferedReader StringReader)))
+  (:require [clojure.string :refer [split]]
+            [mw-parser.declarative :refer [compile]]
+            [mw-parser.utils :refer [comment?]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -29,16 +28,12 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn comment?
-  "Is this `line` a comment?"
-  [line]
-  (or (empty? (trim line)) (member? (first line) '(nil \# \;))))
 
 (defn parse-string
   "Parse rules from successive lines in this `string`, assumed to have multiple
    lines delimited by the new-line character. Return a list of S-expressions."
   [string]
-  (map compile-rule 
+  (map compile 
        (remove comment? (split string #"\n"))))
 
 (defn parse-file
@@ -47,14 +42,8 @@
   [filename]
   (parse-string (slurp filename)))
 
-(defn compile-string
-  "Compile each non-comment line of this `string` into an executable anonymous
-   function, and return the sequence of such functions."
-  [string]
-  (map #(compile-rule % true) (remove comment? (split string #"\n"))))
-
 (defn compile-file
   "Compile each non-comment line of the file indicated by this `filename` into
    an executable anonymous function, and return the sequence of such functions."
   [filename]
-  (compile-string (slurp filename)))
+  (compile (slurp filename) true))

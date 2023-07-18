@@ -1,13 +1,12 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
  mw-parser.declarative
-  (:require [clojure.string :refer [join split trim]]
+  (:require [clojure.string :refer [join split split-lines trim]]
             [instaparse.core :refer [parser]]
-            [mw-parser.errors :refer [throw-parse-exception]]
             [mw-parser.flow :refer [flow-grammar]]
             [mw-parser.generate :refer [generate]]
             [mw-parser.simplify :refer [simplify]]
-            [mw-parser.utils :refer [rule?]]
+            [mw-parser.utils :refer [comment?]]
             [trptr.java-wrapper.locale :refer [get-default]])
   (:import [java.util Locale]))
 
@@ -148,7 +147,7 @@
         ";;" nil
         (throw (ex-info "Rule text was not recognised" {:text text}))))))
 
-(defn compile-rule
+(defn compile
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
    function object, getting round the problem of binding mw-engine.utils in
@@ -158,20 +157,23 @@
 
    Throws an exception if parsing fails."
   ([rule-text return-tuple?]
-   (let [src (trim rule-text)
-         parse-tree (simplify (parse src))
-         fn' (generate parse-tree)
-         afn (try
-               (if (= 'fn (first fn'))
-                 (vary-meta (eval fn') merge (meta fn'))
-                 (throw (Exception. (format "Parse of `%s` did not return a functionn" src))))
-               (catch Exception any (throw (ex-info (.getMessage any)
-                                                    {:src src
-                                                     :parse parse-tree
-                                                     :fn fn'}))))]
-     (if
-      return-tuple?
-       (list afn (trim rule-text))
-       afn)))
+   (let [lines (remove comment? (split-lines rule-text))]
+     (if (> (count lines) 1)
+       (map #(compile % return-tuple?) lines)
+       (let [src (trim rule-text)
+             parse-tree (simplify (parse src))
+             fn' (generate parse-tree)
+             afn (try
+                   (if (= 'fn (first fn'))
+                     (vary-meta (eval fn') merge (meta fn'))
+                     (throw (Exception. (format "Parse of `%s` did not return a functionn" src))))
+                   (catch Exception any (throw (ex-info (.getMessage any)
+                                                        {:src src
+                                                         :parse parse-tree
+                                                         :fn fn'}))))]
+         (if
+          return-tuple?
+           (vary-meta (list afn src fn') merge (meta afn))
+           afn)))))
   ([rule-text]
-   (compile-rule rule-text false)))
+   (compile rule-text false)))

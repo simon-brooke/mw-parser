@@ -3,7 +3,7 @@
             [mw-engine.core :refer [transform-world]]
             [mw-engine.utils :refer [get-cell]]
             [mw-engine.world :refer [make-world]]
-            [mw-parser.declarative :refer [compile-rule parse-rule]]
+            [mw-parser.declarative :refer [compile parse-rule]]
             [mw-parser.utils :refer [rule?]]))
 
 (deftest rules-tests
@@ -34,18 +34,18 @@
 (deftest exception-tests
   (testing "Constructions which should cause exceptions to be thrown"
     (is (thrown-with-msg? Exception #"^I did not understand.*"
-                          (compile-rule "the quick brown fox jumped over the lazy dog"))
+                          (compile "the quick brown fox jumped over the lazy dog"))
         "Exception thrown if rule text does not match grammar")
     (is (thrown-with-msg? Exception #"^I did not understand.*"
-                          (compile-rule "if i have a cat on my lap then everything is fine"))
+                          (compile "if i have a cat on my lap then everything is fine"))
         "Exception thrown if rule text does not match grammar")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile-rule "if state is new then x should be 0"))
+         (compile "if state is new then x should be 0"))
         "Exception thrown on attempt to set 'x'")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile-rule "if state is new then y should be 0"))
+         (compile "if state is new then y should be 0"))
         "Exception thrown on attempt to set 'y'")))
 
 
@@ -53,7 +53,7 @@
   ;; these are, in so far as possible, the same as the correctness-tests in core-tests - i.e., the two compilers
   ;; compile the same language.
   (testing "Simplest possible rule"
-    (let [afn (compile-rule "if state is new then state should be grassland")]
+    (let [afn (compile "if state is new then state should be grassland")]
       (is (= (apply afn (list {:state :new} nil))
              {:state :grassland})
           "Rule fires when condition is met")
@@ -61,7 +61,7 @@
           "Rule doesn't fire when condition isn't met")))
 
   (testing "Condition conjunction rule"
-    (let [afn (compile-rule "if state is new and altitude is 0 then state should be water")]
+    (let [afn (compile "if state is new and altitude is 0 then state should be water")]
       (is (= (apply afn (list {:state :new :altitude 0} nil))
              {:state :water :altitude 0})
           "Rule fires when conditions are met")
@@ -71,7 +71,7 @@
           "Rule does not fire: first condition not met")))
 
   (testing "Condition disjunction rule"
-    (let [afn (compile-rule "if state is new or state is waste then state should be grassland")]
+    (let [afn (compile "if state is new or state is waste then state should be grassland")]
       (is (= (apply afn (list {:state :new} nil))
              {:state :grassland})
           "Rule fires: first condition met")
@@ -82,7 +82,7 @@
           "Rule does not fire: neither condition met")))
 
   (testing "Simple negation rule"
-    (let [afn (compile-rule "if state is not new then state should be grassland")]
+    (let [afn (compile "if state is not new then state should be grassland")]
       (is (nil? (apply afn (list {:state :new} nil)))
           "Rule doesn't fire when condition isn't met")
       (is (= (apply afn (list {:state :forest} nil))
@@ -92,15 +92,15 @@
   (testing "Can't set x or y properties"
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile-rule "if state is new then x should be 0"))
+         (compile "if state is new then x should be 0"))
         "Exception thrown on attempt to set 'x'")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile-rule "if state is new then y should be 0"))
+         (compile "if state is new then y should be 0"))
         "Exception thrown on attempt to set 'y'"))
 
   (testing "Simple list membership rule"
-    (let [afn (compile-rule "if state is in heath or scrub or forest then state should be climax")]
+    (let [afn (compile "if state is in heath or scrub or forest then state should be climax")]
       (is (= (apply afn (list {:state :heath} nil))
              {:state :climax})
           "Rule fires when condition is met")
@@ -114,7 +114,7 @@
           "Rule does not fire when condition is not met")))
 
   (testing "Negated list membership rule"
-    (let [afn (compile-rule "if state is not in heath or scrub or forest then state should be climax")]
+    (let [afn (compile "if state is not in heath or scrub or forest then state should be climax")]
       (is (nil? (apply afn (list {:state :heath} nil)))
           "Rule does not fire when condition is not met")
       (is (nil? (apply afn (list {:state :scrub} nil)))
@@ -126,7 +126,7 @@
           "Rule fires when condition is met")))
 
   (testing "Property is more than numeric-value"
-    (let [afn (compile-rule "if altitude is more than 200 then state should be snow")]
+    (let [afn (compile "if altitude is more than 200 then state should be snow")]
       (is (= (apply afn (list {:altitude 201} nil))
              {:state :snow :altitude 201})
           "Rule fires when condition is met")
@@ -134,7 +134,7 @@
           "Rule does not fire when condition is not met")))
 
   (testing "Property is more than property"
-    (let [afn (compile-rule "if wolves are more than deer then deer should be 0")]
+    (let [afn (compile "if wolves are more than deer then deer should be 0")]
       (is (= (apply afn (list {:deer 2 :wolves 3} nil))
              {:deer 0 :wolves 3})
           "Rule fires when condition is met")
@@ -142,7 +142,7 @@
           "Rule does not fire when condition is not met")))
 
   (testing "Property is less than numeric-value"
-    (let [afn (compile-rule "if altitude is less than 10 then state should be water")]
+    (let [afn (compile "if altitude is less than 10 then state should be water")]
       (is (= (apply afn (list {:altitude 9} nil))
              {:state :water :altitude 9})
           "Rule fires when condition is met")
@@ -150,7 +150,7 @@
           "Rule does not fire when condition is not met")))
 
   (testing "Property is less than property"
-    (let [afn (compile-rule "if wolves are less than deer then deer should be deer - wolves")]
+    (let [afn (compile "if wolves are less than deer then deer should be deer - wolves")]
       (is (= (apply afn (list {:deer 3 :wolves 2} nil))
              {:deer 1 :wolves 2})
           "Rule fires when condition is met")
@@ -158,14 +158,14 @@
           "Rule does not fire when condition is not met")))
 
   (testing "Number neighbours have property equal to value"
-    (let [afn (compile-rule "if 3 neighbours have state equal to new then state should be water")
+    (let [afn (compile "if 3 neighbours have state equal to new then state should be water")
           world (make-world 3 3)]
       (is (= (apply afn (list {:x 0 :y 0} world))
              {:state :water :x 0 :y 0})
           "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
           "Middle cell has eight neighbours, so rule does not fire."))
-    (let [afn (compile-rule "if 3 neighbours are new then state should be water")
+    (let [afn (compile "if 3 neighbours are new then state should be water")
           world (make-world 3 3)]
       ;; 'are new' and 'is new' should be the same as 'have state equal to new'
       (is (= (apply afn (list {:x 0 :y 0} world))
@@ -173,7 +173,7 @@
           "Rule fires when condition is met (in a new world all cells are new, corner cell has three neighbours)")
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
           "Middle cell has eight neighbours, so rule does not fire."))
-    (let [afn (compile-rule "if 3 neighbours is new then state should be water")
+    (let [afn (compile "if 3 neighbours is new then state should be water")
           world (make-world 3 3)]
       ;; 'are new' and 'is new' should be the same as 'have state equal to new'
       (is (= (apply afn (list {:x 0 :y 0} world))
@@ -184,76 +184,76 @@
 
   (testing "Number neighbours have property more than numeric-value"
     ;; if 3 neighbours have altitude more than 10 then state should be beach
-    (let [afn (compile-rule "if 3 neighbours have altitude more than 10 then state should be beach")
+    (let [afn (compile "if 3 neighbours have altitude more than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
           "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
 
   (testing "Number neighbours have property less than numeric-value"
-    (let [afn (compile-rule "if 5 neighbours have altitude less than 10 then state should be beach")
+    (let [afn (compile "if 5 neighbours have altitude less than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
           "Middle cell of the strip has two high neighbours, so rule should not fire.")))
 
   (testing "More than number neighbours have property equal to numeric-value"
-    (let [afn (compile-rule "if more than 2 neighbours have altitude equal to 11 then state should be beach")
+    (let [afn (compile "if more than 2 neighbours have altitude equal to 11 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
           "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
 
   (testing "More than number neighbours have property equal to symbolic-value"
-    (let [afn (compile-rule "if more than 2 neighbours have state equal to grassland then state should be beach")
+    (let [afn (compile "if more than 2 neighbours have state equal to grassland then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is less than 2 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
           "Middle cell of the strip has only two high neighbours, so rule should not fire."))
-    (let [afn (compile-rule "if more than 2 neighbours are grassland then state should be beach")
+    (let [afn (compile "if more than 2 neighbours are grassland then state should be beach")
           ;; 'are grassland' should mean the same as 'have state equal to grassland'.
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is less than 2 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
           "Middle cell of the strip has only two high neighbours, so rule should not fire.")))
 
   (testing "Fewer than number neighbours have property equal to numeric-value"
-    (let [afn (compile-rule "if fewer than 3 neighbours have altitude equal to 11 then state should be beach")
+    (let [afn (compile "if fewer than 3 neighbours have altitude equal to 11 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 2 :y 1} world))) :beach)
           "Rule fires when condition is met (Middle cell of the strip has only two high neighbours)")
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
           "Middle cell of world has three high neighbours, so rule should not fire.")))
 
   (testing "Fewer than number neighbours have property equal to symbolic-value"
-    (let [afn (compile-rule "if fewer than 3 neighbours have state equal to grassland then state should be beach")
+    (let [afn (compile "if fewer than 3 neighbours have state equal to grassland then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is less than 2 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 2 :y 1} world))) :beach)
           "Rule fires when condition is met (Middle cell of the strip has only two high neighbours)")
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
@@ -261,22 +261,22 @@
 
   ;; some neighbours have property equal to value
   (testing "Some neighbours have property equal to numeric-value"
-    (let [afn (compile-rule "if some neighbours have altitude equal to 11 then state should be beach")
+    (let [afn (compile "if some neighbours have altitude equal to 11 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))
           "Left hand side of world has no high neighbours, so rule should not fire.")))
 
   (testing "Some neighbours have property equal to symbolic-value"
-    (let [afn (compile-rule "if some neighbours have state equal to grassland then state should be beach")
+    (let [afn (compile "if some neighbours have state equal to grassland then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is less than 2 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))
@@ -284,11 +284,11 @@
 
   ;; more than number neighbours have property more than numeric-value
   (testing "More than number neighbours have property more than symbolic-value"
-    (let [afn (compile-rule "if more than 2 neighbours have altitude more than 10 then state should be beach")
+    (let [afn (compile "if more than 2 neighbours have altitude more than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is less than 2 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is less than 2 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
@@ -296,11 +296,11 @@
 
   ;; fewer than number neighbours have property more than numeric-value
   (testing "Fewer than number neighbours have property more than numeric-value"
-    (let [afn (compile-rule "if fewer than 3 neighbours have altitude more than 10 then state should be beach")
+    (let [afn (compile "if fewer than 3 neighbours have altitude more than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 2 :y 1} world))) :beach)
           "Rule fires when condition is met (Middle cell of the strip has only two high neighbours)")
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
@@ -308,11 +308,11 @@
 
   ;; some neighbours have property more than numeric-value
   (testing "Some neighbours have property more than numeric-value"
-    (let [afn (compile-rule "if some neighbours have altitude more than 10 then state should be beach")
+    (let [afn (compile "if some neighbours have altitude more than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))
@@ -320,11 +320,11 @@
 
   ;; more than number neighbours have property less than numeric-value
   (testing "More than number neighbours have property less than numeric-value"
-    (let [afn (compile-rule "if more than 4 neighbours have altitude less than 10 then state should be beach")
+    (let [afn (compile "if more than 4 neighbours have altitude less than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 2 :y 1} world)))
@@ -332,11 +332,11 @@
 
   ;; fewer than number neighbours have property less than numeric-value
   (testing "Fewer than number neighbours have property less than numeric-value"
-    (let [afn (compile-rule "if fewer than 4 neighbours have altitude less than 10 then state should be beach")
+    (let [afn (compile "if fewer than 4 neighbours have altitude less than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then altitude should be 0")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then altitude should be 0")))]
       (is (nil? (apply afn (list {:x 1 :y 1} world)))
           "Centre cell has five low neighbours, so rule should not fire")
       (is (= (:state (apply afn (list {:x 2 :y 1} world))) :beach)
@@ -344,11 +344,11 @@
 
   ;; some neighbours have property less than numeric-value
   (testing "Some number neighbours have property less than numeric-value"
-    (let [afn (compile-rule "if some neighbours have altitude less than 10 then state should be beach")
+    (let [afn (compile "if some neighbours have altitude less than 10 then state should be beach")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is less than 2 then altitude should be 11")
-                       (compile-rule "if x is 2 then altitude should be 0")))]
+                 (list (compile "if x is less than 2 then altitude should be 11")
+                       (compile "if x is 2 then altitude should be 0")))]
       (is (= (:state (apply afn (list {:x 1 :y 1} world))) :beach)
           "Rule fires when condition is met (strip of altitude 0 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))
@@ -358,7 +358,7 @@
   ;; 'single action' already tested in 'condition' tests above
   ;; action and actions
   (testing "Conjunction of actions"
-    (let [afn (compile-rule "if state is new then state should be grassland and fertility should be 0")]
+    (let [afn (compile "if state is new then state should be grassland and fertility should be 0")]
       (is (= (apply afn (list {:state :new} nil))
              {:state :grassland :fertility 0})
           "Both actions are executed")))
@@ -368,23 +368,23 @@
 
   ;; number chance in number property should be value
   (testing "Syntax of probability rule - action of real probability very hard to test"
-    (let [afn (compile-rule "if state is forest then 5 chance in 5 state should be climax")]
+    (let [afn (compile "if state is forest then 5 chance in 5 state should be climax")]
       (is (= (:state (apply afn (list {:state :forest} nil))) :climax)
           "five chance in five should fire every time"))
-    (let [afn (compile-rule "if state is forest then 0 chance in 5 state should be climax")]
+    (let [afn (compile "if state is forest then 0 chance in 5 state should be climax")]
       (is (nil? (apply afn (list {:state :forest} nil)))
           "zero chance in five should never fire")))
 
   ;; property operator numeric-value
   (testing "Arithmetic action: addition of number"
-    (let [afn (compile-rule "if state is climax then fertility should be fertility + 1")]
+    (let [afn (compile "if state is climax then fertility should be fertility + 1")]
       (is (= (:fertility
               (apply afn (list {:state :climax :fertility 0} nil)))
              1)
           "Addition is executed")))
 
   (testing "Arithmetic action: addition of property value"
-    (let [afn (compile-rule "if state is climax then fertility should be fertility + leaffall")]
+    (let [afn (compile "if state is climax then fertility should be fertility + leaffall")]
       (is (= (:fertility
               (apply afn
                      (list {:state :climax
@@ -394,14 +394,14 @@
           "Addition is executed")))
 
   (testing "Arithmetic action: subtraction of number"
-    (let [afn (compile-rule "if state is crop then fertility should be fertility - 1")]
+    (let [afn (compile "if state is crop then fertility should be fertility - 1")]
       (is (= (:fertility
               (apply afn (list {:state :crop :fertility 2} nil)))
              1)
           "Action is executed")))
 
   (testing "Arithmetic action: subtraction of property value"
-    (let [afn (compile-rule "if wolves are more than 0 then deer should be deer - wolves")]
+    (let [afn (compile "if wolves are more than 0 then deer should be deer - wolves")]
       (is (= (:deer
               (apply afn
                      (list {:deer 3
@@ -410,14 +410,14 @@
           "Action is executed")))
 
   (testing "Arithmetic action: multiplication by number"
-    (let [afn (compile-rule "if deer are more than 1 then deer should be deer * 2")]
+    (let [afn (compile "if deer are more than 1 then deer should be deer * 2")]
       (is (= (:deer
               (apply afn (list {:deer 2} nil)))
              4)
           "Action is executed")))
 
   (testing "Arithmetic action: multiplication by property value"
-    (let [afn (compile-rule "if state is crop then deer should be deer * deer")]
+    (let [afn (compile "if state is crop then deer should be deer * deer")]
       (is (= (:deer
               (apply afn
                      (list {:state :crop :deer 2} nil)))
@@ -425,14 +425,14 @@
           "Action is executed")))
 
   (testing "Arithmetic action: division by number"
-    (let [afn (compile-rule "if wolves are more than 0 then deer should be deer / 2")]
+    (let [afn (compile "if wolves are more than 0 then deer should be deer / 2")]
       (is (= (:deer
               (apply afn (list {:deer 2 :wolves 1} nil)))
              1)
           "Action is executed")))
 
   (testing "Arithmetic action: division by property value"
-    (let [afn (compile-rule "if wolves are more than 0 then deer should be deer / wolves")]
+    (let [afn (compile "if wolves are more than 0 then deer should be deer / wolves")]
       (is (= (:deer
               (apply afn
                      (list {:deer 2 :wolves 2} nil)))
@@ -441,7 +441,7 @@
 
   ;; simple within distance
   (testing "Number neighbours within distance have property equal to value"
-    (let [afn (compile-rule "if 8 neighbours within 2 have state equal to new then state should be water")
+    (let [afn (compile "if 8 neighbours within 2 have state equal to new then state should be water")
           world (make-world 5 5)]
       (is (= (apply afn (list {:x 0 :y 0} world))
              {:state :water :x 0 :y 0})
@@ -451,7 +451,7 @@
 
   ;; comparator within distance
   (testing "More than number neighbours within distance have property equal to symbolic-value"
-    (let [afn (compile-rule "if more than 7 neighbours within 2 have state equal to grassland and more than 7 neighbours within 2 have state equal to water then state should be beach")
+    (let [afn (compile "if more than 7 neighbours within 2 have state equal to grassland and more than 7 neighbours within 2 have state equal to water then state should be beach")
           ;; 5x5 world, strip of high ground two cells wide down left hand side
           ;; xxooo
           ;; xxooo
@@ -460,8 +460,8 @@
           ;; xxooo
           world (transform-world
                  (make-world 5 5)
-                 (list (compile-rule "if x is less than 2 then altitude should be 11 and state should be grassland")
-                       (compile-rule "if x is more than 1 then altitude should be 0 and state should be water")))]
+                 (list (compile "if x is less than 2 then altitude should be 11 and state should be grassland")
+                       (compile "if x is more than 1 then altitude should be 0 and state should be water")))]
       (is (= (:state (apply afn (list {:x 2 :y 2} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))
@@ -469,11 +469,11 @@
 
 (deftest regression-tests
   (testing "Rule in default set which failed on switchover to declarative rules"
-    (let [afn (compile-rule "if state is scrub then 1 chance in 1 state should be forest")
+    (let [afn (compile "if state is scrub then 1 chance in 1 state should be forest")
           world (transform-world
                  (make-world 3 3)
-                 (list (compile-rule "if x is 2 then altitude should be 11")
-                       (compile-rule "if x is less than 2 then state should be scrub")))]
+                 (list (compile "if x is 2 then altitude should be 11")
+                       (compile "if x is less than 2 then state should be scrub")))]
       (is (= (:state (apply afn (list (get-cell world 1 1) world))) :forest)
           "Centre cell is scrub, so rule should fire")
       (is (= (apply afn (list (get-cell world 2 1) world)) nil)

@@ -1,13 +1,16 @@
-(ns mw-parser.generate-test 
-  (:require [clojure.test :refer [deftest is testing]]
+(ns mw-parser.generate-test
+  (:require [clojure.pprint :as pprint]
+            [clojure.test :refer [deftest is testing]]
+            [mw-engine.core :refer [apply-rule]]
+            [mw-engine.utils :refer [get-cell]]
+            [mw-parser.declarative :refer [compile parse]]
             [mw-parser.generate :refer [generate]]
-            [mw-parser.declarative :refer [parse]]
             [mw-parser.simplify :refer [simplify]]))
 
 (deftest expressions-tests
   (testing "Generating primitive expressions."
     (let [actual (generate '(:NUMERIC-EXPRESSION (:NUMBER "50")))
-          expected 50] 
+          expected 50]
       (is (= actual expected)))
     (let [actual (generate '(:NUMERIC-EXPRESSION (:SYMBOL "sealevel")))
           expected '(:sealevel cell)]
@@ -17,18 +20,18 @@
   (testing "Generating left-hand-side fragments of rule functions from appropriate fragments of parse trees"
     (let [expected '(= (:state cell) (or (:forest cell) :forest))
           actual (generate
-           '(:PROPERTY-CONDITION 
-             (:SYMBOL "state") 
-             [:EQUIVALENCE [:IS "is"]] 
-             (:SYMBOL "forest")))] 
+                  '(:PROPERTY-CONDITION
+                    (:SYMBOL "state")
+                    [:EQUIVALENCE [:IS "is"]]
+                    (:SYMBOL "forest")))]
       (is (= actual expected)))
     (is (= (generate
-         '(:PROPERTY-CONDITION (:SYMBOL "fertility") [:EQUIVALENCE [:IS "is"]] (:NUMBER "10")))
-        '(= (:fertility cell) 10)))
+            '(:PROPERTY-CONDITION (:SYMBOL "fertility") [:EQUIVALENCE [:IS "is"]] (:NUMBER "10")))
+           '(= (:fertility cell) 10)))
     (is (= (generate '(:PROPERTY-CONDITION (:SYMBOL "fertility") [:COMPARATIVE [:LESS "less"]] (:NUMBER "10")))
-        '(< (:fertility cell) 10)))
+           '(< (:fertility cell) 10)))
     (is (= (generate '(:PROPERTY-CONDITION (:SYMBOL "fertility") [:COMPARATIVE [:MORE "more"]] (:NUMBER "10")))
-        '(> (:fertility cell) 10)))
+           '(> (:fertility cell) 10)))
     (is (= (generate '(:CONJUNCT-CONDITION
                        (:PROPERTY-CONDITION
                         (:SYMBOL "state")
@@ -38,9 +41,9 @@
                         (:SYMBOL "fertility")
                         (:QUALIFIER (:EQUIVALENCE (:IS "is")))
                         (:NUMBER "10"))))
-        '(and (= (:state cell) (or (:forest cell) :forest)) (= (:fertility cell) 10))))
+           '(and (= (:state cell) (or (:forest cell) :forest)) (= (:fertility cell) 10))))
     (is (= (generate '(:DISJUNCT-CONDITION (:PROPERTY-CONDITION (:SYMBOL "state") (:EQUIVALENCE (:IS "is")) (:SYMBOL "forest")) (:PROPERTY-CONDITION (:SYMBOL "fertility") (:EQUIVALENCE (:IS "is")) (:NUMBER "10"))))
-        '(or (= (:state cell) (or (:forest cell) :forest)) (= (:fertility cell) 10))))
+           '(or (= (:state cell) (or (:forest cell) :forest)) (= (:fertility cell) 10))))
     (is (= (generate '(:PROPERTY-CONDITION
                        (:SYMBOL "state")
                        (:QUALIFIER (:EQUIVALENCE (:IS "is")))
@@ -48,18 +51,18 @@
                         (:SYMBOL "heath")
                         (:SYMBOL "scrub")
                         (:SYMBOL "forest"))))
-        '(#{:scrub :forest :heath} (:state cell))))
+           '(#{:scrub :forest :heath} (:state cell))))
     (is (= (generate '(:PROPERTY-CONDITION (:SYMBOL "altitude") [:EQUIVALENCE [:IS "is"]] (:RANGE-EXPRESSION (:BETWEEN "between") (:NUMERIC-EXPRESSION (:NUMBER "50")) (:AND "and") (:NUMERIC-EXPRESSION (:NUMBER "100")))))
-        '(let [lower (min 50 100) upper (max 50 100)] (and (>= (:altitude cell) lower) (<= (:altitude cell) upper)))))))
+           '(let [lower (min 50 100) upper (max 50 100)] (and (>= (:altitude cell) lower) (<= (:altitude cell) upper)))))))
 
 (deftest rhs-generators-tests
   (testing "Generating right-hand-side fragments of rule functions from appropriate fragments of parse trees"
     (is (= (generate
-         '(:SIMPLE-ACTION (:SYMBOL "state") (:BECOMES "should be") (:SYMBOL "climax")))
-        '(merge cell {:state :climax})))
+            '(:SIMPLE-ACTION (:SYMBOL "state") (:BECOMES "should be") (:SYMBOL "climax")))
+           '(merge cell {:state :climax})))
     (is (= (generate
-         '(:SIMPLE-ACTION (:SYMBOL "fertility") (:BECOMES "should be") (:NUMBER "10")))
-         '(merge cell {:fertility 10})))))
+            '(:SIMPLE-ACTION (:SYMBOL "fertility") (:BECOMES "should be") (:NUMBER "10")))
+           '(merge cell {:fertility 10})))))
 
 (deftest full-generation-tests
   (testing "Full rule generation from pre-parsed tree"
@@ -75,8 +78,8 @@
                    (:BECOMES "should be")
                    (:SYMBOL "climax"))))
           expected '(fn [cell world]
-                      (when 
-                       (= (:state cell) (or (:forest cell) :forest)) 
+                      (when
+                       (= (:state cell) (or (:forest cell) :forest))
                         (merge cell {:state :climax})))
           actual (generate rule)
           expected-meta {:rule-type :production}
@@ -87,16 +90,35 @@
 (deftest metadata-tests
   (testing "Rules have correct metadata"
     (let [expected :production
-        actual (:rule-type
-                (meta
-                (generate 
-                 (simplify 
-                  (parse "if state is house then state should be waste")))))]
-    (is (= actual expected)))
+          actual (:rule-type
+                  (meta
+                   (generate
+                    (simplify
+                     (parse "if state is house then state should be waste")))))]
+      (is (= actual expected)))
     (let [expected :flow
-            actual (:rule-type
-                    (meta
-                     (generate
-                      (simplify
-                       (parse "flow 10% food from house to house within 2 with least food")))))]
-        (is (= actual expected)))))
+          actual (:rule-type
+                  (meta
+                   (generate
+                    (simplify
+                     (parse "flow 10% food from house to house within 2 with least food")))))]
+      (is (= actual expected)))))
+
+(deftest chance-bug-test
+  (testing "exception thrown when evaluating``"
+    (let [cell {:y 1, :generation 10,
+                :state :scrub, :gradient 85,
+                :x 1, :altitude 92}
+          world [[{:y 0, :state :new, :x 0} {:y 0, :state :new, :x 1} {:y 0, :state :new, :x 2}]
+                 [{:y 1, :state :new, :x 0} cell {:y 1, :state :new, :x 2}]
+                 [{:y 2, :state :new, :x 0} {:y 2, :state :new, :x 1} {:y 2, :state :new, :x 2}]]
+          rule (compile "if state is scrub then 1 chance in 5 state should be forest")
+          expected #{:scrub :forest}
+          cell' (reduce
+              (fn [c i] (merge (or (apply-rule world c rule) c) {:i i}))
+              cell
+              (range 20))
+          actual (:state cell')]
+      (pprint/pprint cell')
+      (is (expected actual)))))
+
