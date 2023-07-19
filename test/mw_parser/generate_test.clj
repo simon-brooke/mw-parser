@@ -112,7 +112,7 @@
           world [[{:y 0, :state :new, :x 0} {:y 0, :state :new, :x 1} {:y 0, :state :new, :x 2}]
                  [{:y 1, :state :new, :x 0} cell {:y 1, :state :new, :x 2}]
                  [{:y 2, :state :new, :x 0} {:y 2, :state :new, :x 1} {:y 2, :state :new, :x 2}]]
-          rule (compile "if state is scrub then 1 chance in 5 state should be forest")
+          rule (first (compile "if state is scrub then 1 chance in 5 state should be forest"))
           expected #{:scrub :forest}
           cell' (reduce
               (fn [c i] (merge (or (apply-rule world c rule) c) {:i i}))

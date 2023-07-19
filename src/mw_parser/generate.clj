@@ -1,8 +1,7 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
  mw-parser.generate
-  (:require [mw-parser.errors :as pe]
-            [mw-parser.utils :refer [assert-type search-tree TODO]]))
+  (:require [mw-parser.utils :refer [assert-type search-tree TODO]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -24,6 +23,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare generate generate-action)
+
+(def reserved-properties-error
+  "The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions")
 
 ;;; macros used in generated rules ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -152,7 +154,7 @@
    (let [property (generate (second tree))
          expression (generate (nth tree 3))]
      (if (or (= property :x) (= property :y))
-       (throw (Exception. pe/reserved-properties-error))
+       (throw (Exception. reserved-properties-error))
        (list 'merge
              (if (empty? others) 'cell
                ;; else

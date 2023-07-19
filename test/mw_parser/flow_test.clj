@@ -4,7 +4,7 @@
    [mw-parser.declarative :refer [parse]]
    [mw-parser.simplify :refer [simplify]]))
 
-(deftest parse-flow-tests
+(deftest parse-tests
   (testing "flow-grammar"
     (let [rule "flow 1 food from house having food more than 10 to house within 2 with least food"
           expected '(:FLOW-RULE 

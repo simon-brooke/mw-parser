@@ -1,6 +1,6 @@
 (ns mw-parser.simplify-test
   (:require [clojure.test :refer [deftest is testing]]
-            [mw-parser.declarative :refer [parse-rule]]
+            [mw-parser.declarative :refer [parse]]
             [mw-parser.simplify :refer [simplify]]
             [mw-parser.utils :refer [search-tree]]))
 
@@ -81,7 +81,7 @@
                      (:SYMBOL "scrub")
                      (:DISJUNCT-VALUE (:SYMBOL "forest")))))
            parse-tree (search-tree
-                       (parse-rule
+                       (parse
                         "if state is not in heath or scrub or forest then state should be climax")
                        :DISJUNCT-EXPRESSION)
            actual (simplify parse-tree)]
@@ -91,7 +91,7 @@
                       (:SYMBOL "scrub")
                       (:SYMBOL "forest"))
            parse-tree (search-tree
-                       (parse-rule
+                       (parse
                         "if state is not in heath or scrub or forest then state should be climax")
                        :DISJUNCT-EXPRESSION)
            actual (simplify parse-tree)]

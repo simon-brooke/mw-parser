@@ -24,8 +24,6 @@
 
 
 ;; error thrown when an attempt is made to set a reserved property
-(def reserved-properties-error
-  "The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions")
 ;; error thrown when a rule cannot be parsed. Slots are for
 ;; (1) rule text
 ;; (2) cursor showing where in the rule text the error occurred

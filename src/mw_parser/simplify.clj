@@ -1,6 +1,6 @@
 (ns ^{:doc "Simplify a parse tree."
       :author "Simon Brooke"}
- mw-parser.simplify 
+ mw-parser.simplify
   (:require [mw-parser.utils :refer [search-tree]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,13 +68,32 @@
       :ACTIONS (cons (first tree) (simplify (rest tree)))
       :AND nil
       :CHANCE-IN nil
+      :COMMENT nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
+      :CR nil
       :DISJUNCT-EXPRESSION (simplify-chained-list tree :DISJUNCT-VALUE :VALUE)
       :EXPRESSION (simplify-second-of-two tree)
       :FLOW-CONDITIONS (simplify-second-of-two tree)
       :IN nil
+      ;; this is like simplify-second-of-two except if there isn't
+      ;; a second element it returns nil
+      :LINE (when (= (count tree) 2) (simplify (nth tree 1)))
+      :LINES (loop [lines tree result '()]
+               (let [line (simplify (second lines))
+                     ;; the reason for putting :BLANK in the result in place
+                     ;; of lines that weren't rules is so that we can keep 
+                     ;; track of the source text of the line we're compiling.
+                     result' (concat result (list (or line :BLANK)))]
+                 (when-not (= :LINES (first lines))
+                   (throw (ex-info "Unexpeced parse tree: LINES"
+                                   {:lines lines})))
+                 (case (count lines)
+                   2 result'
+                   4 (recur (nth lines 3) result')
+                   (throw (ex-info "Unexpeced parse tree: LINES"
+                                   {:lines lines})))))
       :PROPERTY (simplify-second-of-two tree)
       :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
       :OR nil

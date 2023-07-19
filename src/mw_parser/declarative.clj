@@ -1,12 +1,11 @@
 (ns ^{:doc "A very simple parser which parses production rules."
       :author "Simon Brooke"}
  mw-parser.declarative
-  (:require [clojure.string :refer [join split split-lines trim]]
+  (:require [clojure.string :refer [join split-lines]]
             [instaparse.core :refer [parser]]
             [mw-parser.flow :refer [flow-grammar]]
             [mw-parser.generate :refer [generate]]
             [mw-parser.simplify :refer [simplify]]
-            [mw-parser.utils :refer [comment?]]
             [trptr.java-wrapper.locale :refer [get-default]])
   (:import [java.util Locale]))
 
@@ -33,11 +32,18 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(def ruleset-grammar
+  "Experimental: parse a whole file in one go."
+  (join "\n" ["LINES := LINE | LINE CR LINES;"
+              "LINE := RULE | FLOW-RULE | CR | COMMENT | '' ;"
+              "CR := #'[\\r\\n]';"
+              "COMMENT := #'[;#]+[^\\r\\n]*' | #'/\\*.*\\*/'"]))
+
 (def rule-grammar
   "Basic rule language grammar.
    
   in order to simplify translation into other natural languages, all
-  TOKENS within the parser should be unambiguou."
+  TOKENS within the parser should be unambiguous."
   (join "\n" ["RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;"
               "ACTIONS := ACTION | ACTION SPACE AND SPACE ACTIONS"
               "ACTION := SIMPLE-ACTION | PROBABLE-ACTION;"
@@ -68,7 +74,7 @@
               "QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;"
               "RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;"
               "SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;"
-              "SPACE := #'\\s+';"
+              "SPACE := #'[ \\t]+';"
               "VALUE := SYMBOL | NUMBER;"
               "VALUE := SYMBOL | NUMBER;"
               "WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;"]))
@@ -121,61 +127,61 @@
   ([^Locale _locale]
    keywords-en))
 
-(defmacro build-parser
-  "Compose this grammar fragment `g` with the common grammar fragments to 
-   make a complete grammar, and return a parser for that complete grammar."
-  [g]
-  `(parser (join "\n" [~g common-grammar (keywords-for-locale)])))
-
-(def parse-rule
+(def parse
   "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
-  (build-parser rule-grammar))
+  (parser (join "\n" [ruleset-grammar rule-grammar flow-grammar common-grammar (keywords-for-locale)])))
 
-(def parse-flow
-  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
-  (build-parser flow-grammar))
-
-(defn parse
-  "Top level parser function: parse this `text` as either a production or a flow rule; 
-   return a raw parse tree."
-  [^String rule-text]
-  (let [text (trim rule-text)]
-    (when-not (zero? (count text))
-      (case (first (split text #"\s+"))
-        "if" (parse-rule text)
-        "flow" (parse-flow text)
-        ";;" nil
-        (throw (ex-info "Rule text was not recognised" {:text text}))))))
+(defn- compile-rule
+  "Compile a rule function from this `parse-tree` derived from this `source`
+   at the zero-based line number `n` in the source file; return a compiled
+   function, whose metadata has the keys:
+   
+   * `:rule-type` : the type of rule the function represents;
+   * `:parse` : this `parse-tree`;
+   * `:lisp` : the lisp source generated from this `parse-tree`;
+   * `:line : the one-based line number of the definition in the source file,
+     i.e. `(inc n)`."
+  [parse-tree source n]
+  (when-not (keyword? parse-tree)
+    (let [lisp (generate parse-tree)
+          line-no (inc n)]
+      (try
+        (if (#{'fn 'fn*} (first lisp))
+          (vary-meta
+           (eval lisp)
+           merge (meta lisp) {:src source :lisp lisp :line line-no})
+          (throw
+           (Exception.
+            (format "Parse of `%s` did not return a function: %s" source lisp))))
+        (catch Exception any (throw (ex-info (.getMessage any)
+                                             {:source source
+                                              :parse parse-tree
+                                              :lisp lisp
+                                              :line line-no})))))))
 
 (defn compile
   "Parse this `rule-text`, a string conforming to the grammar of MicroWorld rules,
    into Clojure source, and then compile it into an anonymous
    function object, getting round the problem of binding mw-engine.utils in
-   the compiling environment. If `return-tuple?` is present and true, return
-   a list comprising the anonymous function compiled, and the function from
-   which it was compiled.
+   the compiling environment. 
 
+   Returns a list of anonymous functions each of two arguments, `[cell world]`,
+   as expected for a MicroWorld rule function. Each function is decorated with 
+   metadata having the keys:
+  
+   * `:rule-type` : the type of rule the function represents;
+   * `:lisp` : the lisp source from which the function was compiled;
+   * `:parse` : the parse-tree from which that lisp source was derived;
+   * `:source` : the rule source from which the parse-tree was derived;
+   * `:line : the one-based line number of the rule source in the source file.
+ 
    Throws an exception if parsing fails."
-  ([rule-text return-tuple?]
-   (let [lines (map trim (remove comment? (split-lines rule-text)))]
-     (if (> (count lines) 1)
-       (map #(compile % return-tuple?) lines)
-       (let [src (first lines)
-             parse-tree (doall (simplify (parse src)))
-             fn' (doall (generate parse-tree))
-             afn (try
-                   (if (#{'fn 'fn*} (first fn'))
-                     (vary-meta (eval fn') merge (meta fn'))
-                     (throw (Exception. 
-                             (format "Parse of `%s` did not return a function: %s" 
-                                     src fn'))))
-                   (catch Exception any (throw (ex-info (.getMessage any)
-                                                        {:src src
-                                                         :parse parse-tree
-                                                         :fn fn'}))))]
-         (if
-          return-tuple?
-           (vary-meta (list afn src fn') merge (meta afn))
-           afn)))))
-  ([rule-text]
-   (compile rule-text false)))
+  [rule-text]
+  (let [lines (split-lines rule-text)]
+    (remove
+     nil?
+     (map
+      compile-rule
+      (simplify (parse rule-text))
+      lines
+      (range (count lines))))))

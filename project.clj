@@ -1,4 +1,4 @@
-(defproject mw-parser "0.2.0-SNAPSHOT"
+(defproject mw-parser "0.3.0-SNAPSHOT"
   :cloverage {:output "docs/cloverage"}
   :codox {:metadata {:doc "**TODO**: write docs"
                      :doc/format :markdown}
@@ -7,7 +7,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/tools.trace "0.7.11"]
                  [instaparse "1.4.12"]
-                 [mw-engine "0.2.0-SNAPSHOT"]
+                 [mw-engine "0.3.0-SNAPSHOT"]
                  [trptr/java-wrapper "0.2.3"]]
   :description "Parser for production rules for MicroWorld engine"
   :license {:name "GNU General Public License v2"

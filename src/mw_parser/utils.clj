@@ -1,8 +1,6 @@
 (ns ^{:doc "Utilities used in more than one namespace within the parser."
       :author "Simon Brooke"}
-  mw-parser.utils 
-  (:require [clojure.string :refer [trim]]
-            [mw-engine.utils :refer [member?]]))
+  mw-parser.utils)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -27,11 +25,6 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn comment?
-  "Is this `line` a comment?"
-  [line]
-  (or (empty? (trim line)) (member? (first line) '(nil \# \;))))
-
 (defn suitable-fragment?
   "Return `true` if `tree-fragment` appears to be a tree fragment of the expected `type`."
   [tree-fragment type]
@@ -39,17 +32,10 @@
        (keyword? type)
        (= (first tree-fragment) type)))
 
-(defn rule?
-  "Return true if the argument appears to be a parsed rule tree, else false."
-  [maybe-rule]
-  (suitable-fragment? maybe-rule :RULE))
-
 (defn TODO
   "Marker to indicate I'm not yet finished!"
   [message]
   message)
-
-
 
 (defn assert-type
   "If `tree-fragment` is not a tree fragment of the expected `type`, throw an exception."
@@ -58,7 +44,6 @@
           (throw (ex-info (format "Expected a %s fragment" type)
                           {:actual tree-fragment
                            :expected type}))))
-
 
 (defn search-tree
   "Return the first element of this tree which has this tag in a depth-first, left-to-right search"
