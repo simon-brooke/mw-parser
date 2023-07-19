@@ -157,16 +157,18 @@
 
    Throws an exception if parsing fails."
   ([rule-text return-tuple?]
-   (let [lines (remove comment? (split-lines rule-text))]
+   (let [lines (map trim (remove comment? (split-lines rule-text)))]
      (if (> (count lines) 1)
        (map #(compile % return-tuple?) lines)
-       (let [src (trim rule-text)
-             parse-tree (simplify (parse src))
-             fn' (generate parse-tree)
+       (let [src (first lines)
+             parse-tree (doall (simplify (parse src)))
+             fn' (doall (generate parse-tree))
              afn (try
-                   (if (= 'fn (first fn'))
+                   (if (#{'fn 'fn*} (first fn'))
                      (vary-meta (eval fn') merge (meta fn'))
-                     (throw (Exception. (format "Parse of `%s` did not return a functionn" src))))
+                     (throw (Exception. 
+                             (format "Parse of `%s` did not return a function: %s" 
+                                     src fn'))))
                    (catch Exception any (throw (ex-info (.getMessage any)
                                                         {:src src
                                                          :parse parse-tree

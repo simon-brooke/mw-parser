@@ -25,13 +25,20 @@
 
 (declare generate generate-action)
 
+;;; macros used in generated rules ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; production (if-then) rules ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn generate-rule
   "From this `tree`, assumed to be a syntactically correct rule specification,
   generate and return the appropriate rule as a function of two arguments."
   [tree]
   (assert-type tree :RULE)
-  (vary-meta
-   (list 'fn ['cell 'world] (list 'when (generate (nth tree 2)) (generate (nth tree 3))))
+  (vary-meta 
+   ;; do macro-expansion here, because at least in theory I know what
+   ;; macros are in scope here.
+   (macroexpand
+    (list 'fn ['cell 'world] (list 'when (generate (nth tree 2)) (generate (nth tree 3)))))
    merge
    {:rule-type
     :production}))
@@ -275,28 +282,36 @@
         {:tree tree}
         x)))))
 
-;;; Flow rules. A flow rule DOES NOT return a modified world; instead, it 
-;;; returns a PLAN to modify the world, in the form of a sequence of `flows`.
-;;; It is only when the plan is executed that the world is modified.
+;;; Flow rules. ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; A flow rule DOES NOT return a modified cell; instead, it 
+;;; returns a PLAN to modify the world, in the form of a sequence of `flow`
+;;; objects. See `mw-engine.flow`
 ;;;
-;;; so we're looking at something like
-;;; (fn [cell world])
-;;;    (if (= (:state cell) (or (:house cell) :house))
+;;; It is only when the plan is executed that the world is modified.
 
 (defn flow-rule
   "Generate a flow rule for this `quantity` of this `property` from this 
-   `source` to this `destination`."
+   `source` to this `destination`.
+   
+   A flow rule **does not** return a modified cell; instead, it 
+   returns a **plan** to modify the world, in the form of a sequence of 
+   `flow` objects. See `mw-engine.flow`
+
+   It is only when the plan is executed that the world is modified."
   [source property quantity-frag destinations]
   (vary-meta
-   (list 'fn ['cell 'world]
-         (list 'when (list 'and source (list 'pos? (list 'cell property)))
-               (list 'map
-                     (list 'fn ['d]
-                          {:source (list 'select-keys 'cell [:x :y])
-                           :destination (list 'select-keys 'd [:x :y])
-                           :property property
-                           :quantity quantity-frag})
-                     destinations)))
+   ;; do macro-expansion here, because at least in theory I know what
+   ;; macros are in scope here.
+   (macroexpand
+    (list 'fn ['cell 'world]
+          (list 'when (list 'and source (list 'pos? (list 'cell property)))
+                (list 'map
+                      (list 'fn ['d]
+                            {:source (list 'select-keys 'cell [:x :y])
+                             :destination (list 'select-keys 'd [:x :y])
+                             :property property
+                             :quantity quantity-frag})
+                      destinations))))
    merge
    {:rule-type
     :flow}))

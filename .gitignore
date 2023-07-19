@@ -7,3 +7,5 @@ pom.xml
 .clj-kondo/
 .lsp/
 .nrepl-port
+
+doc/scratch.clj

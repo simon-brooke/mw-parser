@@ -3,7 +3,7 @@
             [mw-engine.core :refer [transform-world]]
             [mw-engine.utils :refer [get-cell]]
             [mw-engine.world :refer [make-world]]
-            [mw-parser.declarative :refer [compile parse-rule]]
+            [mw-parser.declarative :refer [compile parse parse-rule]]
             [mw-parser.utils :refer [rule?]]))
 
 (deftest rules-tests
@@ -34,20 +34,19 @@
 (deftest exception-tests
   (testing "Constructions which should cause exceptions to be thrown"
     (is (thrown-with-msg? Exception #"^I did not understand.*"
-                          (compile "the quick brown fox jumped over the lazy dog"))
+                          (parse "the quick brown fox jumped over the lazy dog"))
         "Exception thrown if rule text does not match grammar")
     (is (thrown-with-msg? Exception #"^I did not understand.*"
-                          (compile "if i have a cat on my lap then everything is fine"))
+                          (parse "if i have a cat on my lap then everything is fine"))
         "Exception thrown if rule text does not match grammar")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile "if state is new then x should be 0"))
+         (parse "if state is new then x should be 0"))
         "Exception thrown on attempt to set 'x'")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (compile "if state is new then y should be 0"))
+         (parse "if state is new then y should be 0"))
         "Exception thrown on attempt to set 'y'")))
-
 
 (deftest correctness-tests
   ;; these are, in so far as possible, the same as the correctness-tests in core-tests - i.e., the two compilers

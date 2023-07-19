@@ -77,10 +77,10 @@
                    (:SYMBOL "state")
                    (:BECOMES "should be")
                    (:SYMBOL "climax"))))
-          expected '(fn [cell world]
+          expected '(fn* ([cell world]
                       (when
                        (= (:state cell) (or (:forest cell) :forest))
-                        (merge cell {:state :climax})))
+                        (merge cell {:state :climax}))))
           actual (generate rule)
           expected-meta {:rule-type :production}
           actual-meta (meta actual)]
