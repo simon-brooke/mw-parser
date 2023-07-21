@@ -32,6 +32,11 @@
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; TODO: Either, when I first wrote this parser, I didn't adequately read the
+;;; Instaparse documentation, or Instaparse has advanced considerably since 
+;;; then. Reading the documentation now, I could probably rewrite this to
+;;; eliminate the simplify step altogether, and that would be well worth doing.
+
 (def ruleset-grammar
   "Experimental: parse a whole file in one go."
   (join "\n" ["LINES := LINE | LINE CR LINES;"

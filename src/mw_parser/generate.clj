@@ -1,7 +1,9 @@
 (ns ^{:doc "Generate Clojure source from simplified parse trees."
       :author "Simon Brooke"}
- mw-parser.generate
-  (:require [mw-parser.utils :refer [assert-type search-tree TODO]]))
+ mw-parser.generate 
+  (:require 
+   [mw-engine.utils :refer :all] ;; may need these when macro-expanding rules.
+   [mw-parser.utils :refer [assert-type search-tree TODO]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -36,7 +38,7 @@
   generate and return the appropriate rule as a function of two arguments."
   [tree]
   (assert-type tree :RULE)
-  (vary-meta 
+  (vary-meta
    ;; do macro-expansion here, because at least in theory I know what
    ;; macros are in scope here.
    (macroexpand
@@ -131,7 +133,9 @@
      (case expression-type
        :DISJUNCT-EXPRESSION (generate-disjunct-property-condition tree property qualifier expression)
        :RANGE-EXPRESSION (generate-ranged-property-condition tree property expression)
-       (list qualifier (list property 'cell) expression)))))
+       (list qualifier (if (number? expression)
+                         (list 'mw-engine.utils/get-num 'cell property)
+                         (list property 'cell)) expression)))))
 
 (defn generate-qualifier
   "From this `tree`, assumed to be a syntactically correct qualifier,
@@ -161,6 +165,21 @@
                  (generate others))
              {property expression})))))
 
+(defn trap-errors-in-dice-throw
+  "We're getting a wierd -- many would say 'impossible' -- intermittent bug
+   which appears to happen here. "
+  [sides chances action]
+  ;; (list 'try 
+        (list 'if (list '< (list 'rand sides) chances) action)
+        ;; (list 'catch 'Exception 'any
+        ;;       (list 'println (list 'format "Dice throw bug %d/%d" chances sides))
+        ;;       (list 'throw (list 'ex-info "Error in dice throw"
+        ;;                          {:total sides
+        ;;                           :chances chances
+        ;;                           :action action}
+        ;;                          'any))))
+  )
+
 (defn generate-probable-action
   "From this `tree`, assumed to be a syntactically correct probable action,
   generate and return the appropriate clojure fragment."
@@ -174,9 +193,7 @@
      total (generate (nth tree 2))
      action (generate-action (nth tree 3) others)]
     ;; TODO: could almost certainly be done better with macro syntax
-     (list 'if
-           (list '< (list 'rand total) chances)
-           action))))
+     (trap-errors-in-dice-throw total chances action))))
 
 (defn generate-action
   "From this `tree`, assumed to be a syntactically correct action,
@@ -211,10 +228,10 @@
   (assert-type tree :NUMERIC-EXPRESSION)
   (case (count tree)
     4 (let [[p operator expression] (rest tree)
-            property (if (number? p) p (list p 'cell))]
+            property (if (number? p) p (list 'mw-engine.utils/get-num 'cell p))]
         (list (generate operator) (generate property) (generate expression)))
     (case (first (second tree))
-      :SYMBOL (list (keyword (second (second tree))) 'cell)
+      :SYMBOL (list 'mw-engine.utils/get-num 'cell (generate (second tree)))
       (generate (second tree)))))
 
 (defn generate-neighbours-condition

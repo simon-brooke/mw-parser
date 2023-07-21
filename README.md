@@ -13,15 +13,49 @@ You can see MicroWorld in action [here](http://www.journeyman.cc/microworld/) -
 but please don't be mean to my poor little server. If you want to run big maps
 or complex rule-sets, please run it on your own machines.
 
+### Version compatibility
+
+There are substantial changes in how rule functions are evaluated between 0.1.x
+versions of MicroWorld libraries and 0.3.x versions. In particular, in 0.3.x
+metadata is held on rule functions which is essential to the functioning of the
+engine. Consequently, you cannot mix 0.1.x and 0.3.x libraries: it will not work.
+
+In particular the parser in actual use has changed in 0.3.x from the
+`mw-parser.core` parser to the `mw-parser.declarative` parser. The API of the
+parser is also substantially revised and is not backwards compatible, so if
+you have code written to use 0.1.x versions of this library it will need to be
+modified. I apologise for this. On the upside, the new parser API is much
+simpler.
+
 ## Usage
 
-Main entry point is (parse-rule _string_), where string takes a form detailed
-in __[grammar](#grammar)__, below. If the rule is interpretted correctly the result will
-be the source code of a Clojure anonymous function; if the rule cannot be interpretted,
-an error 'I did not understand...' will be shown.
+Main entry point is (compile _string_), where string takes a form detailed
+in __[grammar](#grammar)__, below. If the rules represnted by the string are
+interpretted correctly, the result will be a a list of compiled Clojure
+anonymous functions; if the rule cannot be interpretted, an error 'I did not
+understand...' will be thrown.
 
-The function (compile-rule _string_) is like parse-rule, except that it returns
-a compiled Clojure anonymous function.
+Each of these functions will have metadata including:
+
+* `:rule-type` : the type of rule the function represents;
+* `:lisp` : the lisp source from which the function was compiled;
+* `:parse` : the parse-tree from which that lisp source was derived;
+* `:source` : the rule source from which the parse-tree was derived;
+* `:line : the one-based line number of the rule source in the source file.
+
+The values of `:rule-type` currently supported are:
+
+* `:production` : an if-then rule which transforms the properties of a single
+  cell, based on the values of properties of that cell and optionally of its
+  neighbours;
+* `:flow` : a flow rule which creates flows of values of a numeric property
+  from one cell to other cells.
+
+Values which it is intended will be supported include rules to create graphs
+which will enable the user to aggregate and interpret what is happening in
+the world. Types which it is envisaged will be supported include
+`:time-series`, `bar-graph` and perhaps others, but grammar for these has not
+yet been developed.
 
 ### Generated function and evaluation environment
 

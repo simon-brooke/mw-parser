@@ -9,3 +9,5 @@ pom.xml
 .nrepl-port
 
 doc/scratch.clj
+
+src/mw_parser/scratch.clj
