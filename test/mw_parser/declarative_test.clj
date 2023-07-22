@@ -42,22 +42,22 @@
 
 (deftest exception-tests
   (testing "Constructions which should cause exceptions to be thrown"
-    (is (thrown-with-msg? Exception #"^I did not understand.*"
+    (is (thrown-with-msg? Exception #"^Parse error at line.*"
                           (parse "the quick brown fox jumped over the lazy dog"))
         "Exception thrown if rule text does not match grammar")
-    (is (thrown-with-msg? Exception #"^I did not understand.*"
+    (is (thrown-with-msg? Exception #"^Parse error at line.*"
                           (parse "if i have a cat on my lap then everything is fine"))
         "Exception thrown if rule text does not match grammar")
     ;; TODO: these two should be moved to generate-test; the exception should be
     ;; being thrown (but isn't) in the generate phase.
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (generate (simplify (parse "if state is new then x should be 0"))
+         (generate (simplify (parse "if state is new then x should be 0")))
         "Exception thrown on attempt to set 'x'")
     (is (thrown-with-msg?
          Exception #"The properties 'x' and 'y' of a cell are reserved and should not be set in rule actions"
-         (generate (simplify (parse "if state is new then y should be 0"))))
-        "Exception thrown on attempt to set 'y'")))
+         (generate (simplify (parse "if state is new then y should be 0")))
+        "Exception thrown on attempt to set 'y'")))))
 
 (deftest correctness-tests
   ;; these are, in so far as possible, the same as the correctness-tests in core-tests - i.e., the two compilers
@@ -301,7 +301,7 @@
           "Left hand side of world has no high neighbours, so rule should not fire.")))
 
   ;; more than number neighbours have property more than numeric-value
-  (testing "More than number neighbours have property more than symbolic-value"
+  (testing "More than number neighbours have property more than number"
     (let [afn (first (compile "if more than 2 neighbours have altitude more than 10 then state should be beach"))
           world (transform-world
                  (make-world 3 3)
@@ -492,8 +492,8 @@
                  (make-world 5 5)
                  (compile
                   (join "\n"
-                        (list "if x is less than 2 then altitude should be 11 and state should be grassland"
-                              "if x is more than 1 then altitude should be 0 and state should be water"))))]
+                        (list "if state is new and x is less than 2 then altitude should be 11 and state should be grassland"
+                              "if state is new and x is more than 1 then altitude should be 0 and state should be water"))))]
       (is (= (:state (apply afn (list {:x 2 :y 2} world))) :beach)
           "Rule fires when condition is met (strip of altitude 11 down right hand side)")
       (is (nil? (apply afn (list {:x 0 :y 1} world)))

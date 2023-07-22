@@ -2,10 +2,12 @@
       :author "Simon Brooke"}
  mw-parser.declarative
   (:require [clojure.string :refer [join split-lines]]
-            [instaparse.core :refer [parser]]
+            [instaparse.core :refer [failure? get-failure parser]]
+            [instaparse.failure :refer [pprint-failure]]
             [mw-parser.flow :refer [flow-grammar]]
             [mw-parser.generate :refer [generate]]
             [mw-parser.simplify :refer [simplify]]
+            [taoensso.timbre :as l]
             [trptr.java-wrapper.locale :refer [get-default]])
   (:import [java.util Locale]))
 
@@ -39,50 +41,51 @@
 
 (def ruleset-grammar
   "Experimental: parse a whole file in one go."
-  (join "\n" ["LINES := LINE | LINE CR LINES;"
-              "LINE := RULE | FLOW-RULE | CR | COMMENT | '' ;"
-              "CR := #'[\\r\\n]';"
-              "COMMENT := #'[;#]+[^\\r\\n]*' | #'/\\*.*\\*/'"]))
+  ;; TODO: bug here. We're double-counting (some) blank lines
+  (join "\n" ["LINES := (LINE)+;"
+              "LINE := RULE <CR> | FLOW-RULE <CR> | COMMENT <CR> | <CR> ;"
+              "CR := #'[ \\t]*[\\r\\n][- \\t]*';"
+              "COMMENT := #'[;\\#]+[^\\r\\n]*' | #'/\\*.*\\*/'"]))
 
 (def rule-grammar
   "Basic rule language grammar.
    
   in order to simplify translation into other natural languages, all
   TOKENS within the parser should be unambiguous."
-  (join "\n" ["RULE := IF SPACE CONDITIONS SPACE THEN SPACE ACTIONS;"
-              "ACTIONS := ACTION | ACTION SPACE AND SPACE ACTIONS"
+  (join "\n" ["RULE := IF <SPACE> CONDITIONS <SPACE> <THEN> <SPACE> ACTIONS;"
+              "ACTIONS := ACTION | (ACTION <SPACE> <AND> <SPACE> ACTION)+"
               "ACTION := SIMPLE-ACTION | PROBABLE-ACTION;"
-              "PROBABLE-ACTION := VALUE SPACE CHANCE-IN SPACE VALUE SPACE SIMPLE-ACTION;"
-              "SIMPLE-ACTION := SYMBOL SPACE BECOMES SPACE EXPRESSION;"]))
+              "PROBABLE-ACTION := VALUE <SPACE> <CHANCE-IN> <SPACE> VALUE <SPACE> SIMPLE-ACTION;"
+              "SIMPLE-ACTION := SYMBOL <SPACE> BECOMES <SPACE> EXPRESSION;"]))
 
 (def common-grammar
   "Grammar rules used both in the rule grammar and in the flow grammar"
   (join "\n" ["COMPARATIVE := MORE | LESS;"
-              "COMPARATIVE-QUALIFIER := IS SPACE COMPARATIVE SPACE THAN | COMPARATIVE SPACE THAN;"
+              "COMPARATIVE-QUALIFIER := IS <SPACE> COMPARATIVE <SPACE> THAN | COMPARATIVE <SPACE> THAN;"
               "CONDITION := WITHIN-CONDITION | NEIGHBOURS-CONDITION | PROPERTY-CONDITION;"
               "CONDITIONS := DISJUNCT-CONDITION | CONJUNCT-CONDITION | CONDITION ;"
-              "CONJUNCT-CONDITION := CONDITION SPACE AND SPACE CONDITIONS;"
-              "DISJUNCT-CONDITION := CONDITION SPACE OR SPACE CONDITIONS;"
-              "DISJUNCT-EXPRESSION := IN SPACE DISJUNCT-VALUE;"
-              "DISJUNCT-VALUE := VALUE | VALUE SPACE OR SPACE DISJUNCT-VALUE;"
-              "EQUIVALENCE := IS SPACE EQUAL | EQUAL | IS ;"
+              "CONJUNCT-CONDITION := CONDITION <SPACE> <AND> <SPACE> CONDITIONS;"
+              "DISJUNCT-CONDITION := CONDITION <SPACE> <OR> <SPACE> CONDITIONS;"
+              "DISJUNCT-EXPRESSION := <IN> <SPACE> DISJUNCT-VALUE;"
+              "DISJUNCT-VALUE := (VALUE <SPACE> <OR> <SPACE>)* VALUE;"
+              "EQUIVALENCE := IS <SPACE> EQUAL | EQUAL | IS ;"
               "EXPRESSION := SIMPLE-EXPRESSION | RANGE-EXPRESSION | NUMERIC-EXPRESSION | DISJUNCT-EXPRESSION | VALUE;"
-              "NEGATED-QUALIFIER := QUALIFIER SPACE NOT | NOT SPACE QUALIFIER;"
-              "NEIGHBOURS-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE IS SPACE PROPERTY-CONDITION | QUALIFIER SPACE NEIGHBOURS-CONDITION;"
+              "NEGATED-QUALIFIER := QUALIFIER <SPACE> NOT | NOT <SPACE> QUALIFIER;"
+              "NEIGHBOURS-CONDITION := QUANTIFIER <SPACE> NEIGHBOURS <SPACE> IS <SPACE> PROPERTY-CONDITION | QUALIFIER <SPACE> NEIGHBOURS-CONDITION;"
               "NUMBER := #'[0-9]+' | #'[0-9]+.[0-9]+';"
-              "NUMERIC-EXPRESSION := VALUE | VALUE SPACE OPERATOR SPACE NUMERIC-EXPRESSION;"
+              "NUMERIC-EXPRESSION := VALUE | VALUE <SPACE> OPERATOR <SPACE> NUMERIC-EXPRESSION;"
               "OPERATOR := '+' | '-' | '*' | '/';"
               "PROPERTY := SYMBOL;"
-              "PROPERTY-CONDITION := PROPERTY SPACE QUALIFIER SPACE EXPRESSION | VALUE;"
+              "PROPERTY-CONDITION := PROPERTY <SPACE> QUALIFIER <SPACE> EXPRESSION | VALUE;"
               "PROPERTY-CONDITION-OR-EXPRESSION := PROPERTY-CONDITION | EXPRESSION;"
-              "QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS SPACE QUALIFIER;"
-              "QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE SPACE THAN SPACE NUMBER;"
-              "RANGE-EXPRESSION := BETWEEN SPACE NUMERIC-EXPRESSION SPACE AND SPACE NUMERIC-EXPRESSION;"
-              "SIMPLE-EXPRESSION := QUALIFIER SPACE EXPRESSION | VALUE;"
+              "QUALIFIER := COMPARATIVE-QUALIFIER | NEGATED-QUALIFIER | EQUIVALENCE | IS <SPACE> QUALIFIER;"
+              "QUANTIFIER := NUMBER | SOME | NONE | ALL | COMPARATIVE <SPACE> THAN <SPACE> NUMBER;"
+              "RANGE-EXPRESSION := BETWEEN <SPACE> NUMERIC-EXPRESSION <SPACE> AND <SPACE> NUMERIC-EXPRESSION;"
+              "SIMPLE-EXPRESSION := QUALIFIER <SPACE> EXPRESSION | VALUE;"
               "SPACE := #'[ \\t]+';"
               "VALUE := SYMBOL | NUMBER;"
               "VALUE := SYMBOL | NUMBER;"
-              "WITHIN-CONDITION := QUANTIFIER SPACE NEIGHBOURS SPACE WITHIN SPACE NUMBER SPACE IS SPACE PROPERTY-CONDITION-OR-EXPRESSION;"]))
+              "WITHIN-CONDITION := QUANTIFIER <SPACE> NEIGHBOURS <SPACE> WITHIN <SPACE> NUMBER <SPACE> IS <SPACE> PROPERTY-CONDITION-OR-EXPRESSION;"]))
 
 (def keywords-en
   "English language keyword literals used in rules - both in production
@@ -132,9 +135,19 @@
   ([^Locale _locale]
    keywords-en))
 
-(def parse
-  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
+(def ^:private raw-parser
   (parser (join "\n" [ruleset-grammar rule-grammar flow-grammar common-grammar (keywords-for-locale)])))
+
+(defn parse
+  "Parse the argument, assumed to be a string in the correct syntax, and return a parse tree."
+  [arg]
+  (let [parse-tree-or-error (raw-parser arg :total true)]
+    (if (failure? parse-tree-or-error)
+      (throw (ex-info (format "Some rules were not understood:\n%s" 
+                              (pprint-failure (get-failure parse-tree-or-error)))
+                      {:source arg
+                       :failure (get-failure parse-tree-or-error)}))
+      parse-tree-or-error)))
 
 (defn- compile-rule
   "Compile a rule function from this `parse-tree` derived from this `source`
@@ -143,18 +156,24 @@
    
    * `:rule-type` : the type of rule the function represents;
    * `:parse` : this `parse-tree`;
+   * `:source` : the rule source from which the parse tree was derived;
    * `:lisp` : the lisp source generated from this `parse-tree`;
    * `:line : the one-based line number of the definition in the source file,
      i.e. `(inc n)`."
   [parse-tree source n]
-  (when-not (keyword? parse-tree)
+  (if (#{:COMMENT :LINE} (first parse-tree))
+    (do 
+      (l/info (format "Skipping line %d, `%s`, parse-tree %s." 
+                      (inc n) source parse-tree))
+      nil)
     (let [lisp (generate parse-tree)
           line-no (inc n)]
+      (l/info (format "Compiling rule at line %d, `%s`." line-no source))
       (try
         (if (#{'fn 'fn*} (first lisp))
           (vary-meta
            (eval lisp)
-           merge (meta lisp) {:src source :lisp lisp :line line-no})
+           merge (meta lisp) {:source source :lisp lisp :line line-no})
           (throw
            (Exception.
             (format "Parse of `%s` did not return a function: %s" source lisp))))

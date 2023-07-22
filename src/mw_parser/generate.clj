@@ -212,15 +212,6 @@
   (assert-type tree :ACTIONS)
   (generate-action (first (rest tree)) (second (rest tree))))
 
-(defn generate-disjunct-value
-  "Generate a disjunct value. Essentially what we need here is to generate a
-  flat list of values, since the `member` has already been taken care of."
-  [tree]
-  (assert-type tree :DISJUNCT-VALUE)
-  (if (= (count tree) 4)
-    (cons (generate (second tree)) (generate (nth tree 3)))
-    (list (generate (second tree)))))
-
 (defn generate-numeric-expression
   "From this `tree`, assumed to be a syntactically correct numeric expression,
   generate and return the appropriate clojure fragment."
@@ -288,18 +279,6 @@
                (generate-neighbours-condition '> value pc distance))
        :LESS (let [value (generate (nth quantifier 3))]
                (generate-neighbours-condition '< value pc distance))))))
-
-(defn- generate-disjunct-expression
-  [tree]
-  (assert-type tree :DISJUNCT-EXPRESSION)
-  (try
-    (set (map generate (rest tree)))
-    (catch Exception x
-      (throw
-       (ex-info
-        "Failed to compile :DISJUNCT-EXPRESSION"
-        {:tree tree}
-        x)))))
 
 ;;; Flow rules. ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; A flow rule DOES NOT return a modified cell; instead, it 
@@ -410,8 +389,8 @@
       :CONDITIONS (generate-conditions tree)
       :CONJUNCT-CONDITION (generate-conjunct-condition tree)
       :DISJUNCT-CONDITION (generate-disjunct-condition tree)
-      :DISJUNCT-EXPRESSION (generate-disjunct-expression tree)
-      :DISJUNCT-VALUE (generate-disjunct-value tree)
+      :DISJUNCT-EXPRESSION (set (generate (second tree)))
+      :DISJUNCT-VALUE (map generate (rest tree))
       :EQUIVALENCE '=
       :EXPRESSION (generate (second tree))
       :FLOW-RULE (generate-flow tree)

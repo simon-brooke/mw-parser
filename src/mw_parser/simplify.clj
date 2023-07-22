@@ -65,39 +65,18 @@
    (coll? tree)
     (case (first tree)
       :ACTION (simplify-second-of-two tree)
-      :ACTIONS (cons (first tree) (simplify (rest tree)))
-      :AND nil
-      :CHANCE-IN nil
-      :COMMENT nil
       :COMPARATIVE (simplify-second-of-two tree)
       :CONDITION (simplify-second-of-two tree)
       :CONDITIONS (simplify-second-of-two tree)
-      :CR nil
-      :DISJUNCT-EXPRESSION (simplify-chained-list tree :DISJUNCT-VALUE :VALUE)
+      ;; :DISJUNCT-EXPRESSION (simplify-chained-list tree :DISJUNCT-VALUE :VALUE)
       :EXPRESSION (simplify-second-of-two tree)
       :FLOW-CONDITIONS (simplify-second-of-two tree)
-      :IN nil
       ;; this is like simplify-second-of-two except if there isn't
       ;; a second element it returns nil
-      :LINE (when (= (count tree) 2) (simplify (nth tree 1)))
-      :LINES (loop [lines tree result '()]
-               (let [line (simplify (second lines))
-                     ;; the reason for putting :BLANK in the result in place
-                     ;; of lines that weren't rules is so that we can keep 
-                     ;; track of the source text of the line we're compiling.
-                     result' (concat result (list (or line :BLANK)))]
-                 (when-not (= :LINES (first lines))
-                   (throw (ex-info "Unexpeced parse tree: LINES"
-                                   {:lines lines})))
-                 (case (count lines)
-                   2 result'
-                   4 (recur (nth lines 3) result')
-                   (throw (ex-info "Unexpeced parse tree: LINES"
-                                   {:lines lines})))))
+      :LINE (if (= (count tree) 2) (simplify (nth tree 1)) tree)
+      :LINES (map simplify (rest tree))
       :PROPERTY (simplify-second-of-two tree)
-      :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree)
-      :OR nil
-      :SPACE nil
+      :PROPERTY-CONDITION-OR-EXPRESSION (simplify-second-of-two tree) 
       :STATE (list :PROPERTY-CONDITION
                    (list :SYMBOL "state")
                    '(:QUALIFIER
@@ -105,20 +84,7 @@
                       (:IS "is")))
                    (list :EXPRESSION
                          (list :VALUE (second tree))))
-      :THEN nil
       :VALUE (simplify-second-of-two tree)
+      ;; default
       (remove nil? (map simplify tree)))
     tree))
-
-;; OK, there is a major unresolved problem. If there is a determiner condition,
-;; the tree as parsed from natural language is the wrong shape, and we're 
-;; going to have to restructure it somewhere to being the determiner upstream
-;; of the property conditions. It *may* be possible to do that in `generate`.
-
-(defn simplify-determiner-condition
-  [tree]
-  (apply vector
-         (cons :DETERMINER-CONDITION
-               (cons
-                (simplify-second-of-two (second tree))
-                (rest (rest tree))))))
