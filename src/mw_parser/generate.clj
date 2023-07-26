@@ -302,7 +302,11 @@
    ;; macros are in scope here.
    (macroexpand
     (list 'fn ['cell 'world]
-          (list 'when (list 'and source (list 'pos? (list 'cell property)))
+          (list 'when 
+                (list 'and 
+                      source 
+                      (list 'pos? 
+                            (list 'mw-engine.utils/get-num 'cell property)))
                 (list 'map
                       (list 'fn ['d]
                             {:source (list 'select-keys 'cell [:x :y])
@@ -322,14 +326,18 @@
     ;; TODO :EXPRESSION still needed
     :NUMBER (generate q-clause)
     :PERCENTAGE (let [multiplier (/ (generate (second q-clause)) 100)]
-                  (list '* multiplier (list property 'cell)))
+                  (list '* multiplier 
+                        (list 'mw-engine.utils/get-num 'cell property)))
     :SIMPLE-EXPRESSION (if (= (count q-clause) 2)
-                         (generate-quantity-accessor (second q-clause) property)
+                         (generate-quantity-accessor (second q-clause) 
+                                                     property)
                          (throw (ex-info
-                                 (format "Cannot yet handle q-clause of form: `%s`" q-clause)
+                                 (format 
+                                  "Cannot yet handle q-clause of form: `%s`" 
+                                  q-clause)
                                  {:clause q-clause
                                   :property property})))
-    :SOME (list 'rand (list property 'cell))
+    :SOME (list 'rand (list 'mw-engine.utils/get-num 'cell property))
     (throw (ex-info
             (format "Unexpected QUANTITY type: `%s`" (first q-clause))
             {:clause q-clause
@@ -353,14 +361,19 @@
     (list 'let ['candidates
                 (generate-target-state-filter
                  clause
-                 (list 'mw-engine.utils/get-neighbours 'world 'cell distance))]
+                 (list 'mw-engine.utils/get-neighbours 
+                       'world 'cell distance))]
           (if dc
             (list 'list
-                  (let [determiner (first (second (search-tree dc :DETERMINER)))
+                  (let [determiner (first 
+                                    (second 
+                                     (search-tree dc :DETERMINER)))
                         prop (generate (nth dc 2))]
                     (case determiner
-                      :LEAST (list 'mw-engine.utils/get-least-cell 'candidates prop)
-                      :MOST (list 'mw-engine.utils/get-most-cell 'candidates prop))))
+                      :LEAST (list 'mw-engine.utils/get-least-cell 
+                                   'candidates prop)
+                      :MOST (list 'mw-engine.utils/get-most-cell 
+                                  'candidates prop))))
             'candidates))))
 
 (defn generate-flow

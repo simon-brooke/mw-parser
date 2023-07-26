@@ -32,6 +32,6 @@
               "RANGE := WITHIN SPACE VALUE;"
               "STATE := SYMBOL;"
               "TARGET := STATE | STATE SPACE RANGE;"
-              "TO-HOW := TO | TO-EACH | TO-FIRST;"
+              "TO-HOW := TO | TO-EACH | TO-FIRST;" ;; SHARED BETWEEN
               "TO-EACH := TO SPACE EACH | TO SPACE ALL;"
               "TO-FIRST := TO SPACE FIRST"]))
